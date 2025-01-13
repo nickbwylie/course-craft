@@ -19,6 +19,9 @@ const Dashboard = () => {
       thumbnail_url: "https://i.ytimg.com/vi/k8hgfXmZSHE/maxresdefault.jpg",
       video_id: "",
       video_title: "Jordan Peterson discusses ways to be better",
+      total_duration: "00:10:00",
+      total_videos: 1,
+      created_at: new Date().toDateString(),
     },
   ];
   return (

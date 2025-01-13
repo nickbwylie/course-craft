@@ -30,6 +30,36 @@ type VideoCardProps = {
   onViewCourse: () => void;
   index: number;
 };
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
+
+function getShorthandTime(timeString: string) {
+  // Split the input string into hours, minutes, and seconds
+  const [hours, minutes, seconds] = timeString.split(":").map(Number);
+
+  // Determine shorthand based on the input values
+  if (hours > 0) {
+    return hours === 1 ? "1 hour" : `${hours} hours`;
+  } else if (minutes > 0) {
+    return minutes === 1 ? "1 minute" : `${minutes} minutes`;
+  } else {
+    return "less than a minute";
+  }
+}
+
+//
 
 export const CustomCarousel: React.FC<{ videos: CourseWithFirstVideo[] }> = ({
   videos,
@@ -38,8 +68,6 @@ export const CustomCarousel: React.FC<{ videos: CourseWithFirstVideo[] }> = ({
   const [showLeftArrow, setShowLeftArrow] = useState(false); // State to control left arrow visibility
 
   const [showRightArrow, setShowRightArrow] = useState(true);
-  const navigate = useNavigate();
-
   // Check scroll position to show/hide left and right arrows
   const handleScroll = () => {
     if (carouselRef.current) {
@@ -98,13 +126,7 @@ export const CustomCarousel: React.FC<{ videos: CourseWithFirstVideo[] }> = ({
               className="flex-shrink-0 w-64 relative" // Adjust the width of the card
               style={{ scrollSnapAlign: "start" }}
             >
-              <BookVideoCard
-                title={video.course_title}
-                description={video.course_description}
-                onViewCourse={() => navigate(`/course/${video.course_id}`)}
-                thumbnailUrl={video.thumbnail_url}
-                index={index}
-              />
+              <BookVideoCard {...video} />
             </div>
           ))}
         </div>
@@ -141,12 +163,33 @@ export const CustomCarousel: React.FC<{ videos: CourseWithFirstVideo[] }> = ({
   );
 };
 
-const BookVideoCard: React.FC<VideoCardProps> = ({
-  thumbnailUrl,
-  title,
-  description,
-  onViewCourse,
+const BookVideoCard: React.FC<CourseWithFirstVideo> = ({
+  course_description,
+  course_id,
+  course_title,
+  thumbnail_url,
+  video_id,
+  video_title,
+  total_duration,
+  total_videos,
+  created_at,
 }) => {
+  const navigate = useNavigate();
+
+  const dateToMonthYear = (dateS: string): string => {
+    const newDate = new Date(dateS);
+
+    const currentMonth = newDate.getMonth();
+
+    const year = newDate.getFullYear();
+
+    return `${months[currentMonth]} ${year}`;
+  };
+
+  const onViewCourse = () => {
+    navigate(`/course/${course_id}`);
+  };
+
   return (
     <HoverCard>
       <HoverCardTrigger
@@ -157,8 +200,8 @@ const BookVideoCard: React.FC<VideoCardProps> = ({
         {/* Video Thumbnail */}
         <div className="w-64 h-44 bg-gray-500 overflow-hidden rounded-lg">
           <img
-            src={thumbnailUrl}
-            alt={title}
+            src={thumbnail_url}
+            alt={course_title}
             className="w-full h-full object-cover"
           />
         </div>
@@ -166,19 +209,23 @@ const BookVideoCard: React.FC<VideoCardProps> = ({
         {/* Content */}
         <div className="pt-2 w-full">
           {/* Title */}
-          <h3 className="text-lg font-bold text-slate-900 truncate">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 truncate">
+            {course_title}
+          </h3>
 
           {/* Description */}
           <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-            {description}
+            {course_description}
           </p>
 
           <div className="w-full flex flex-row space-x-2 text-xs text-slate-500 items-center">
-            <span className="text-xs text-slate-500">2.5 hours </span>
+            <span className="text-xs text-slate-500">
+              {getShorthandTime(total_duration)}
+            </span>
             <span>
               <Monitor width={12} height={12} />
             </span>
-            <span>8 lectures </span>
+            <span>{total_videos} videos </span>
             <span>Expert</span>
           </div>
         </div>
@@ -191,23 +238,27 @@ const BookVideoCard: React.FC<VideoCardProps> = ({
       >
         <div className="w-full flex justify-between space-x-4">
           <div className="w-full space-y-1">
-            <h4 className="w-full text-sm font-semibold">{title}</h4>
+            <h4 className="w-full text-sm font-semibold">{course_title}</h4>
             <div
               className=" w-full flex items-center pt-2"
               style={{ color: "rgb(64,126	,139)" }}
             >
               <CalendarDays className="mr-2 h-4 w-4" />{" "}
-              <span className="text-xs ">Created on December 2021</span>
+              <span className="text-xs ">
+                Created {dateToMonthYear(created_at)}
+              </span>
             </div>
             <div className="flex items-center pt-2 pb-4">
               <div className="w-full flex flex-row space-x-2 text-xs text-slate-500 items-center">
-                <span className="text-xs text-slate-500">2.5 hours -</span>
-                <span>8 lectures -</span>
+                <span className="text-xs text-slate-500">
+                  {getShorthandTime(total_duration)} -
+                </span>
+                <span>{total_videos} videos -</span>
                 <span>Expert</span>
               </div>
             </div>
             <p className=" w-full text-sm text-left text-slate-600 pb-2">
-              {description}
+              {course_description}
             </p>
             <div className="w-full flex flex-row">
               <div
@@ -235,6 +286,7 @@ const BookVideoCard: React.FC<VideoCardProps> = ({
                 <Button
                   className="text-sm  text-slate-200 hover:bg-slate-600"
                   style={{ backgroundColor: "rgb(64,126	,139)" }}
+                  onClick={onViewCourse}
                 >
                   View
                 </Button>
@@ -368,7 +420,9 @@ export default function ExplorePage() {
   const { theme, toggleTheme } = useTheme();
 
   async function getCourses() {
-    const { data, error } = await supabase.rpc("get_courses_with_first_video");
+    const { data, error } = await supabase.rpc(
+      "get_courses_with_first_video_and_duration"
+    );
     console.log("course data", data);
 
     setTimeout(() => {

@@ -15,7 +15,6 @@ import {
   FormMessage,
   Form,
 } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
 import {
   AddCourseRequest,
   createCourse,
@@ -26,6 +25,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useToast } from "../hooks/use-toast.ts";
+import { Progress } from "../components/ui/progress.tsx";
+import {
+  Toast,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
+} from "../components/ui/toast.tsx";
 
 const profileFormSchema = z.object({
   title: z
@@ -41,11 +48,36 @@ const profileFormSchema = z.object({
       required_error: "Please enter the course difficulty.",
     })
     .min(2),
-  summaryDetail: z.string().max(50).min(2),
+  courseDetail: z.string().max(50).min(2),
   description: z.string().max(160).min(10),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+function CourseProgressToast({
+  open,
+  progress,
+  onOpenChange,
+}: {
+  open: boolean;
+  progress: number;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Toast
+      open={open}
+      onOpenChange={onOpenChange}
+      className="flex flex-col items-start gap-2"
+    >
+      <ToastTitle>Creating course...</ToastTitle>
+      <ToastDescription>
+        <div className="mt-2 w-24 h-full flex justify-start">
+          <Progress value={progress} className="w-full h-2" />
+        </div>
+      </ToastDescription>
+    </Toast>
+  );
+}
 
 export default function CreateCourse() {
   const form = useForm<ProfileFormValues>({
@@ -123,11 +155,39 @@ export default function CreateCourse() {
   //   return durationTotal;
   // }, [courseVideos]);
 
+  const { toast, dismiss } = useToast();
+  const [toastId, setToastId] = useState<string | undefined>(undefined);
+
+  function showOrUpdateToast(progress: number, oldToastId?: string) {
+    // If there's an older toast, dismiss it
+    if (oldToastId) {
+      dismiss(oldToastId);
+    }
+
+    // Create a new toast and return its ID
+    return toast({
+      title: "Creating course...",
+      description: <Progress value={progress} className="w-full h-2" />,
+      // Keep the toast on-screen until manually dismissed
+      duration: Infinity,
+    });
+  }
+
+  const waitASec = new Promise((resolveInner) => {
+    setTimeout(resolveInner, 10000);
+  });
+
+  const [open, setOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   async function onSubmit(data: ProfileFormValues) {
+    console.log("calling on submit");
     if (courseVideos.length == 0) {
       console.error("no youtube videos");
       return;
     }
+
+    // check all fields
 
     // add course
     //
@@ -137,30 +197,111 @@ export default function CreateCourse() {
       videoIds.push(course.videoId);
     });
 
+    const difficultyToNumber = {
+      Simple: 1,
+      Normal: 3,
+      High: 5,
+    } as const;
+
+    const questionCount = {
+      Simple: 1,
+      Normal: 2,
+      High: 3,
+    } as const;
+
     const courseRequest: AddCourseRequest = {
       title: data.title,
       description: data.description,
       user_id: "0919fa60-bc77-41d4-a7b8-72d4df1c4bf0",
-      video_ids: videoIds,
+      youtube_ids: videoIds,
+      difficulty:
+        difficultyToNumber[
+          data.courseDifficulty as keyof typeof difficultyToNumber
+        ],
+      questionCount:
+        questionCount[data.courseDetail as keyof typeof questionCount] || 2,
+      summary_detail:
+        difficultyToNumber[
+          data.courseDetail as keyof typeof difficultyToNumber
+        ] || 3,
     };
 
-    const response = await createCourse(courseRequest);
+    console.log(courseRequest);
 
-    console.log(response);
+    setOpen(true);
+    setProgress(0);
 
-    setCourseAdded(true);
+    // Start the progress timer
+    let currentProgress = 0;
+    const timer = setInterval(() => {
+      currentProgress += 5;
+      if (currentProgress <= 90) {
+        setProgress(currentProgress);
+      } else {
+        clearInterval(timer);
+      }
+    }, 200); // 1000ms interval
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data)}</code>
-        </pre>
-      ),
-    });
+    try {
+      // Make your real API call here
+      const res = await createCourse(courseRequest);
+      console.log(res);
+
+      // Once API is done, clear the timer and set progress to 100
+      clearInterval(timer);
+      setProgress(100);
+
+      setOpen(false);
+      // Optionally, show an ephemeral success toast
+      toast({
+        title: `Course Created`,
+        description: `Course: ${data.title} has been successfully created.`,
+      });
+      setCourseAdded(true);
+    } catch (error) {
+      clearInterval(timer);
+      console.error(error);
+      setOpen(false);
+      // Optionally, show an error toast
+      toast({
+        title: `Error`,
+        description: `Failed to create course.`,
+      });
+    }
   }
+
+  const handleCreateCourse = () => {
+    console.log("opening toast?");
+    // Start the toast at 0%
+    setProgress(0);
+    setOpen(true);
+
+    let currentProgress = 0;
+
+    const timer = setInterval(() => {
+      currentProgress += 10;
+      console.log("current progress", currentProgress);
+
+      if (currentProgress >= 100) {
+        clearInterval(timer);
+        // Mark final progress, then close toast in a moment
+        setProgress(100);
+        setTimeout(() => {
+          setOpen(false);
+        }, 1000); // give users a moment to see 100% before closing
+      } else {
+        setProgress(currentProgress);
+      }
+    }, 1000);
+  };
+
   return (
     <div className="flex h-screen flex-row">
+      <CourseProgressToast
+        open={open}
+        progress={progress}
+        onOpenChange={setOpen}
+      />
       <div className=" flex-grow flex flex-col py-10 pt-8 px-8 justify-start space-y-6 ">
         <Form {...form}>
           <form
@@ -289,7 +430,7 @@ export default function CreateCourse() {
               <div style={{ width: "70%" }} className="space-y-4 pr-4 mb-8">
                 <FormField
                   control={form.control}
-                  name="summaryDetail"
+                  name="courseDetail"
                   render={({ field }) => (
                     <FormItem className="w-full ">
                       <Select
@@ -298,7 +439,7 @@ export default function CreateCourse() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select level of summary detail" />
+                            <SelectValue placeholder="Select level of course detail" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

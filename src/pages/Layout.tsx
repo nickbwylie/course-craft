@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import SideNav from "../myComponents/SideNav"; // Import your SideNav component
 import "./Layout.css";
 import LoginModal from "./Login";
+import { ToastProvider, ToastViewport } from "../components/ui/toast.tsx";
 
 const Layout = () => {
   const [navOpen, setNavOpen] = useState(true);
@@ -15,33 +16,36 @@ const Layout = () => {
   // }, []);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflowX: "hidden",
-        height: "100%",
-        backgroundColor: "rgb(243	,243	,239)",
-      }}
-      // className="bg-gray-100"
-    >
-      <LoginModal
-        loginModalOpen={loginModalOpen}
-        setLoginModalOpen={setLoginModalOpen}
-      />
-      <div className="fixed">
-        <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
-      </div>
+    <ToastProvider>
       <div
-        className={`w-full bg-white rounded-2xl ${
-          navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
-        } `}
-        style={{ backgroundColor: "rgb(252,252,249)" }}
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflowX: "hidden",
+          height: "100%",
+          backgroundColor: "rgb(243	,243	,239)",
+        }}
+        // className="bg-gray-100"
       >
-        <Outlet /> {/* This renders the matched child route */}
+        <LoginModal
+          loginModalOpen={loginModalOpen}
+          setLoginModalOpen={setLoginModalOpen}
+        />
+        <div className="fixed">
+          <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
+        </div>
+        <div
+          className={`w-full bg-white rounded-2xl ${
+            navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
+          } `}
+          style={{ backgroundColor: "rgb(252,252,249)" }}
+        >
+          <Outlet /> {/* This renders the matched child route */}
+        </div>
       </div>
-    </div>
+      <ToastViewport />
+    </ToastProvider>
   );
 };
 

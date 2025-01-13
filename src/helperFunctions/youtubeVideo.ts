@@ -4,8 +4,11 @@ import axios from "axios";
 export interface AddCourseRequest {
   title: string;
   description: string;
-  video_ids: string[];
+  youtube_ids: string[];
   user_id: string;
+  difficulty: 1 | 3 | 5;
+  questionCount: 1 | 2 | 3;
+  summary_detail: 1 | 3 | 5;
 }
 
 export type YoutubeVideoPreview = {

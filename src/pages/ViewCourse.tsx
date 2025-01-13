@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tv } from "lucide-react";
 import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
+import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
+
 const parseSummary = (text: string) => {
   // Split the text by "###" marker to separate sections
   const sections = text.split("### ").filter(Boolean); // Remove empty strings from array
@@ -150,12 +152,13 @@ export interface CourseVideo {
   course_description: string;
   course_id: string;
   course_title: string;
-  question_text: string;
+  quiz: QuizQuestion[];
   video_summary: string;
   quiz_id: string;
   video_id: string;
   video_title: string;
   video_duration: string;
+  youtube_id: string;
 }
 
 export default function ViewCourse() {
@@ -233,7 +236,7 @@ export default function ViewCourse() {
               <div className="absolute inset-0 flex justify-center items-center">
                 <iframe
                   className="w-full h-full max-h-full max-w-full"
-                  src={`https://www.youtube.com/embed/${courseVideos[selectedCourse].video_id}`}
+                  src={`https://www.youtube.com/embed/${courseVideos[selectedCourse].youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
                   title={courseVideos[selectedCourse].video_title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
@@ -317,10 +320,25 @@ export default function ViewCourse() {
             <Button
               variant="link"
               className="bg-slate-100 text-lg text-cyan-600"
+              onClick={() =>
+                setSelectedCourse((prev) => {
+                  if (!courseVideos) return 0;
+
+                  return prev <= 0 ? courseVideos.length - 1 : prev - 1;
+                })
+              }
             >
               Back
             </Button>
-            <Button className="bg-cyan-500 text-lg hover:bg-cyan-600 text-slate-100">
+            <Button
+              className="bg-cyan-500 text-lg hover:bg-cyan-600 text-slate-100"
+              onClick={() =>
+                setSelectedCourse((prev) => {
+                  if (!courseVideos) return 0;
+                  return (prev + 1) % courseVideos.length;
+                })
+              }
+            >
               Next Video
             </Button>
           </div>
@@ -330,7 +348,15 @@ export default function ViewCourse() {
         <div className="w-full flex justify-center items-center ">
           <div className="w-[350px] md:w-[500px] lg:w-[800px] mt-4">
             {courseVideos &&
+              showSummary &&
               parseSummary(courseVideos[selectedCourse].video_summary)}
+
+            {courseVideos && !showSummary && (
+              <Quiz
+                key={selectedCourse}
+                quiz={courseVideos[selectedCourse].quiz}
+              />
+            )}
           </div>
         </div>
       </div>

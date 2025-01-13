@@ -17,9 +17,10 @@ import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
 import { useEffect, useState } from "react";
 
-import testLogo from "../assets/Perplexity-Brand-Assets/Boundless-Book/blackTestLogo.png";
+import testLogo from "../assets/logoC.png";
 
 import { Button } from "@/components/ui/button";
+import { useToast } from "../hooks/use-toast.ts";
 
 const navItems = [
   {
@@ -41,6 +42,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const url = location.pathname;
+  const { toast } = useToast();
 
   const [delayedOpen, setDelayedOpen] = useState(navOpen);
   const [width, setWidth] = useState(window.innerWidth);
@@ -93,7 +95,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               navOpen ? "justify-between" : "justify-center"
             } items-center`}
           >
-            {navOpen && <img src={testLogo} width={30} height={30} />}
+            {navOpen && <img src={testLogo} width={35} height={35} />}
 
             {navOpen && (
               <span className="text-slate-800 text-md flex flex-nowrap">
@@ -219,7 +221,9 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                     !navOpen && "justify-center"
                   }  p-2 rounded-lg cursor-pointer`}
                   style={{ backgroundColor: "rgb(64, 126, 139)" }}
-                  onClick={() => console.log("Logout")}
+                  onClick={() =>
+                    toast({ title: "Toast title", description: "testing" })
+                  }
                 >
                   <LogIn
                     className={`${navOpen && "mr-3"} h-5 w-5 text-white`}

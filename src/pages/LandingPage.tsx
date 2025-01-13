@@ -44,7 +44,7 @@ const LandingPage = () => {
       >
         {/* Centered Text */}
         <div
-          className="w-full h-full flex flex-col space-y-4 justify-center items-center backdrop-blur-lg"
+          className="w-full h-full flex flex-col space-y-4 justify-center items-center backdrop-blur-sm"
           style={{ position: "relative", zIndex: 10 }}
         >
           <h1
@@ -75,21 +75,10 @@ const LandingPage = () => {
               Explore Courses
             </Button>
           </div>
-          <div className="w-full flex justify-center">
-            <video
-              src={screenRecording}
-              autoPlay
-              muted
-              loop
-              className="rounded-lg shadow-lg"
-              style={{ width: "80%", maxWidth: "800px" }}
-            >
-              Your browser does not support the video tag.
-            </video>
-          </div>
         </div>
+      </div>
 
-        {/* Parallax Images
+      <div>
         <Parallax
           speed={5}
           style={{ position: "absolute", top: "20%", left: "10%" }}
@@ -107,7 +96,7 @@ const LandingPage = () => {
           style={{ position: "absolute", bottom: "20%", left: "5%" }}
         >
           <img src={image2} alt="Small Image 3" style={{ width: "300px" }} />
-        </Parallax> */}
+        </Parallax>
       </div>
 
       {/* Add more content to enable scrolling */}
