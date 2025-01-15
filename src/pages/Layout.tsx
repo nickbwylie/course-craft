@@ -41,7 +41,7 @@ const Layout = () => {
             setLoginModalOpen={setLoginModalOpen}
           />
         )}
-        <div className="fixed">
+        <div className="fixed h-full ">
           <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
         </div>
         <div
