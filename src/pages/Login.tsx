@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseconsant";
 import { Session } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
@@ -58,6 +59,15 @@ export default function LoginModal({
         emailRedirectTo: "https://example.com/welcome",
       },
     });
+    //
+    // TODO
+    // create a user
+    await supabase.from("users").insert({
+      id: data.user?.id,
+      email: email,
+      created_at: new Date(),
+      name: "",
+    });
 
     if (data) {
       alert("User has been created");
@@ -67,31 +77,6 @@ export default function LoginModal({
 
     setLoading(false);
   };
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSession(session);
-        setLoginModalOpen(false);
-      } else {
-        setLoginModalOpen(true);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setSession(session);
-        setLoginModalOpen(false);
-      } else {
-        setLoginModalOpen(true);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   return (
     <>
       {/* Modal Overlay */}

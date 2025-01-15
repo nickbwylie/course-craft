@@ -206,7 +206,7 @@ export default function ViewCourse() {
     if (id) {
       getCourseContent(id);
     }
-  }, []);
+  }, [window.location.pathname]);
 
   return (
     <div className="w-full flex flex-col flex-nowrap ">

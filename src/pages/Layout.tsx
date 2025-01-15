@@ -5,15 +5,22 @@ import SideNav from "../myComponents/SideNav"; // Import your SideNav component
 import "./Layout.css";
 import LoginModal from "./Login";
 import { ToastProvider, ToastViewport } from "../components/ui/toast.tsx";
+import { useAuth } from "@/contexts/AuthContext.tsx";
+import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 
 const Layout = () => {
   const [navOpen, setNavOpen] = useState(true);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  // useEffect(() => {
-  //   // if user is not authenticated
-  //   setLoginModalOpen(true);
-  // }, []);
+  const { user } = useAuth();
+  const { getUserCourses } = useCoursesActivity();
+
+  // when the user changes fetch user courses
+  useEffect(() => {
+    if (user) {
+      getUserCourses();
+    }
+  }, [user?.id]);
 
   return (
     <ToastProvider>
@@ -28,10 +35,12 @@ const Layout = () => {
         }}
         // className="bg-gray-100"
       >
-        <LoginModal
-          loginModalOpen={loginModalOpen}
-          setLoginModalOpen={setLoginModalOpen}
-        />
+        {!user?.id && (
+          <LoginModal
+            loginModalOpen={true}
+            setLoginModalOpen={setLoginModalOpen}
+          />
+        )}
         <div className="fixed">
           <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
         </div>

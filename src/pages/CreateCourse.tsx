@@ -30,9 +30,9 @@ import { Progress } from "../components/ui/progress.tsx";
 import {
   Toast,
   ToastDescription,
-  ToastProvider,
   ToastTitle,
 } from "../components/ui/toast.tsx";
+import { useAuth } from "@/contexts/AuthContext.tsx";
 
 const profileFormSchema = z.object({
   title: z
@@ -84,6 +84,9 @@ export default function CreateCourse() {
     resolver: zodResolver(profileFormSchema),
     mode: "onChange",
   });
+
+  // user
+  const { user } = useAuth();
 
   // logic to add youtube videos to the data table
 
@@ -187,6 +190,11 @@ export default function CreateCourse() {
       return;
     }
 
+    if (!user?.id) {
+      console.error("the user is undefined");
+      return;
+    }
+
     // check all fields
 
     // add course
@@ -212,7 +220,7 @@ export default function CreateCourse() {
     const courseRequest: AddCourseRequest = {
       title: data.title,
       description: data.description,
-      user_id: "0919fa60-bc77-41d4-a7b8-72d4df1c4bf0",
+      user_id: user.id,
       youtube_ids: videoIds,
       difficulty:
         difficultyToNumber[

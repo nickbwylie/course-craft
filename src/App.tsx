@@ -18,7 +18,10 @@ export default function App() {
         {/*  */}
         {/* Routes that require the side navigation */}
         <Route element={<Layout />}>
-          <Route path="course/:id" element={<ViewCourse />} />
+          <Route
+            path="course/:id"
+            element={<ViewCourse key={window.location.pathname} />}
+          />
 
           {/* Explore Page Route */}
           <Route path="/explore" element={<ExplorePage />} />

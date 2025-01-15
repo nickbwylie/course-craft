@@ -21,6 +21,10 @@ import testLogo from "../assets/logoC.png";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "../hooks/use-toast.ts";
+import { CourseWithFirstVideo } from "@/types/CourseType";
+import { useAuth } from "@/contexts/AuthContext.tsx";
+import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
+import { useParams } from "react-router-dom";
 
 const navItems = [
   {
@@ -46,6 +50,13 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
 
   const [delayedOpen, setDelayedOpen] = useState(navOpen);
   const [width, setWidth] = useState(window.innerWidth);
+
+  // const [userVideos, setUserVideos] = useState<CourseWithFirstVideo[]>();
+
+  const { courses } = useCoursesActivity();
+  const { user, isLoading, signOut } = useAuth();
+
+  const { id } = useParams();
 
   useEffect(() => {
     async function delayedOpenUpdate() {
@@ -145,27 +156,31 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           <Separator />
 
           {/* My Courses Section */}
-          {navOpen && (
-            <>
-              <div className="flex flex-col space-y-2 rounded-lg hover:bg-white">
-                {/* Example Course */}
+          {navOpen && courses && courses.length > 0 && (
+            <div>
+              <h5 className="p-2 mb-2 text-lg font-semibold">My Courses</h5>
+              {courses.map((video: CourseWithFirstVideo) => (
                 <div
-                  className="flex items-center p-2 cursor-pointer"
-                  onClick={() =>
-                    navigate("/course/625474d7-21d4-4a7a-b6c8-bfbcd1e758cf")
-                  }
+                  key={video.course_id}
+                  className={`flex flex-col w-full space-y-1 rounded-lg hover:bg-white ${
+                    video.course_id === id ? "bg-white" : ""
+                  }  cursor-pointer mb-4`}
+                  onClick={() => navigate(`/course/${video.course_id}`)}
                 >
-                  <Book className="mr-3 h-5 w-5 text-gray-500" />
-                  <h5 className="truncate text-base">
-                    How to improve yourself
-                  </h5>
+                  {/* Example Course */}
+                  <div className="flex items-center pl-2 pr-2 pt-1 pb-1">
+                    <Book className="h-5 w-5 text-gray-500 absolute" />
+                    <h5 className="pl-6 truncate text-base">
+                      {video.video_title}
+                    </h5>
+                  </div>
+                  <div className="flex items-center space-x-2 px-2">
+                    <Progress value={45} className="h-2 flex-grow" />
+                    <span className="text-xs text-gray-600">45%</span>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 px-2">
-                  <Progress value={45} className="h-2 flex-grow" />
-                  <span className="text-xs text-gray-600">45%</span>
-                </div>
-              </div>
-            </>
+              ))}
+            </div>
           )}
 
           {navOpen && <Separator />}
