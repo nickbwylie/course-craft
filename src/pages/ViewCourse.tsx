@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tv } from "lucide-react";
 import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
 import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
+import { Json } from "supabase-types.ts";
 
 const parseSummary = (text: string) => {
   // Split the text by "###" marker to separate sections
@@ -30,129 +31,11 @@ const parseSummary = (text: string) => {
   });
 };
 
-const parseQuizData = (rawQuiz) => {
-  console.log(rawQuiz);
-  const lines = rawQuiz.split("\n").filter(Boolean); // Split by lines and filter out empty lines
-  let quiz = {
-    title: "",
-    questions: [],
-  };
-
-  let currentQuestion = null;
-
-  lines.forEach((line) => {
-    line = line.trim();
-    // Identify the title (line starting with "Quiz: ")
-    if (line.startsWith("**Quiz:")) {
-      let newL = line.replace("**Quiz:", "").trim();
-      quiz.title = newL.replaceAll("*", "");
-    }
-
-    // Identify a new question (starting with a number, e.g., "1. ")
-    else if (/^\d+\./.test(line)) {
-      if (currentQuestion) {
-        quiz.questions.push(currentQuestion); // Push the previous question
-      }
-      currentQuestion = {
-        question_text: line.trim(),
-        options: [],
-        correct_answer: "",
-      };
-    }
-
-    // Identify multiple-choice options (lines starting with "a)", "b)", etc.)
-    else if (/^[abcd]\)/.test(line.trim())) {
-      console.log(line);
-      if (currentQuestion) {
-        currentQuestion.options.push(line.trim());
-      }
-    }
-
-    // Identify correct answers (lines starting with "**Correct Answer:" or "**Answer:")
-    else if (
-      line.startsWith("**Correct Answer:") ||
-      line.startsWith("**Answer:")
-    ) {
-      console.log("lined found with answer", line);
-      if (currentQuestion) {
-        const correctAnswer = line
-          .match(/\*\*(Correct Answer|Answer):\s*(.*)/)[2]
-          .trim();
-        currentQuestion.correct_answer = correctAnswer.replaceAll("*", "");
-
-        // If it's a multiple-choice question, mark the correct option in the list
-        if (currentQuestion.options.length > 0) {
-          currentQuestion.options = currentQuestion.options.map((option) => {
-            // Find the correct option based on the first part (e.g., 'c)')
-            return option;
-          });
-        }
-      }
-    }
-  });
-
-  // Add the last question to the list if present
-  if (currentQuestion) {
-    quiz.questions.push(currentQuestion);
-  }
-
-  return quiz;
-};
-
-const QuizComponent = ({
-  rawQuiz,
-  showQuizAnswers,
-}: {
-  rawQuiz: string;
-  showQuizAnswers: boolean;
-}) => {
-  const [quiz, setQuiz] = useState(null);
-
-  useEffect(() => {
-    const parsedQuiz = parseQuizData(rawQuiz);
-    setQuiz(parsedQuiz);
-    console.log(parsedQuiz);
-  }, [rawQuiz]);
-
-  if (!quiz) {
-    return <p>Loading quiz...</p>;
-  }
-
-  return (
-    <div className="quiz-container">
-      <h2 className="quiz-title">{quiz.title}</h2>
-      {quiz.questions.map((question, index) => (
-        <div key={index} className="quiz-question">
-          <h4 className="question-text">{question.question_text}</h4>
-          {question.options.length > 0 && (
-            <ul className="question-options">
-              {question.options.map((option, idx) => (
-                <li key={idx}>
-                  {question.correct_answer === option && showQuizAnswers
-                    ? "✅ "
-                    : ""}
-                  {option}
-                </li>
-              ))}
-            </ul>
-          )}
-          {question.options.length === 0 && showQuizAnswers && (
-            <p className="correct-answer">
-              <strong>Answer:</strong> {question.correct_answer}
-            </p>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export interface CourseVideo {
-  correct_answer: string;
   course_description: string;
   course_id: string;
   course_title: string;
-  quiz: QuizQuestion[];
+  quiz: Json;
   video_summary: string;
   quiz_id: string;
   video_id: string;
@@ -164,30 +47,25 @@ export interface CourseVideo {
 export default function ViewCourse() {
   const [courseVideos, setCourseVideos] = useState<CourseVideo[]>();
 
-  const [quizData, setQuizData] = useState(null);
-
   const [selectedCourse, setSelectedCourse] = useState(0);
-  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const { id } = useParams();
-
-  const [showQuizAnswers, setShowQuizAnswers] = useState<boolean>(false);
 
   const [showSummary, setShowSummary] = useState(true);
 
   async function getCourseContent(courseId: string) {
     // get_course_details(course_id UUID)
     // Call the RPC function to get course details
-    setLoading(true);
     const { data, error } = await supabase.rpc("filtered_course_details", {
       course_id: courseId,
     });
 
     try {
-      console.log(data);
       setTimeout(() => {
-        setCourseVideos(data);
-        console.log("course video", data);
+        if (data) {
+          setCourseVideos(data);
+          console.log("course video", data);
+        }
       }, 1000);
     } catch (e) {
       console.log(e);
@@ -196,8 +74,6 @@ export default function ViewCourse() {
     if (error) {
       console.log("error getting course content");
     }
-
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -258,7 +134,6 @@ export default function ViewCourse() {
             {courseVideos?.map((courseVideo, index) => (
               <div
                 onClick={() => {
-                  setShowQuizAnswers(false);
                   setSelectedCourse(index);
                 }}
               >
@@ -354,7 +229,7 @@ export default function ViewCourse() {
             {courseVideos && !showSummary && (
               <Quiz
                 key={selectedCourse}
-                quiz={courseVideos[selectedCourse].quiz}
+                quiz={courseVideos[selectedCourse].quiz as QuizQuestion[]}
               />
             )}
           </div>

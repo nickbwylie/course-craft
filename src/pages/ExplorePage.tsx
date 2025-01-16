@@ -426,7 +426,9 @@ export default function ExplorePage() {
     console.log("course data", data);
 
     setTimeout(() => {
-      setYouTubeVideos(data);
+      if (data) {
+        setYouTubeVideos(data);
+      }
     }, 500);
 
     if (error) {
