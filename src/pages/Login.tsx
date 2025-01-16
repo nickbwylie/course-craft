@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseconsant";
-import { Session } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
 interface LoginModalProps {
@@ -16,8 +14,6 @@ export default function LoginModal({
   loginModalOpen,
   setLoginModalOpen,
 }: LoginModalProps) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -43,8 +39,6 @@ export default function LoginModal({
       return;
     }
 
-    setLoading(true);
-
     const signInAttempt = await signInWithEmail();
 
     if (signInAttempt.data?.user) {
@@ -52,7 +46,7 @@ export default function LoginModal({
       return;
     }
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -65,7 +59,7 @@ export default function LoginModal({
     await supabase.from("users").insert({
       id: data.user?.id,
       email: email,
-      created_at: new Date(),
+      created_at: new Date().toISOString(),
       name: "",
     });
 
@@ -74,8 +68,6 @@ export default function LoginModal({
     } else {
       alert("Error logging in");
     }
-
-    setLoading(false);
   };
   return (
     <>
