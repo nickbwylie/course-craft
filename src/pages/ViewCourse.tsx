@@ -61,12 +61,10 @@ export default function ViewCourse() {
     });
 
     try {
-      setTimeout(() => {
-        if (data) {
-          setCourseVideos(data);
-          console.log("course video", data);
-        }
-      }, 1000);
+      if (data) {
+        setCourseVideos(data);
+        console.log("course video", data);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -81,6 +79,7 @@ export default function ViewCourse() {
     console.log(id);
     if (id) {
       getCourseContent(id);
+      setSelectedCourse(0);
     }
   }, [window.location.pathname]);
 
@@ -99,7 +98,9 @@ export default function ViewCourse() {
           </h2>
 
           {/* YouTube Video Player */}
-          {courseVideos && courseVideos.length > 0 ? (
+          {courseVideos &&
+          courseVideos.length > 0 &&
+          selectedCourse < courseVideos.length ? (
             <div
               className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg"
               style={{
@@ -226,15 +227,19 @@ export default function ViewCourse() {
           <div className="w-[350px] md:w-[500px] lg:w-[800px] mt-4">
             {courseVideos &&
               courseVideos.length > 0 &&
+              selectedCourse < courseVideos.length &&
               showSummary &&
               parseSummary(courseVideos[selectedCourse].video_summary)}
 
-            {courseVideos && !showSummary && (
-              <Quiz
-                key={selectedCourse}
-                quiz={courseVideos[selectedCourse].quiz as QuizQuestion[]}
-              />
-            )}
+            {courseVideos &&
+              courseVideos.length > 0 &&
+              selectedCourse < courseVideos.length &&
+              !showSummary && (
+                <Quiz
+                  key={selectedCourse}
+                  quiz={courseVideos[selectedCourse].quiz as QuizQuestion[]}
+                />
+              )}
           </div>
         </div>
       </div>

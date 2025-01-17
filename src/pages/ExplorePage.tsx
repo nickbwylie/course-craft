@@ -265,7 +265,7 @@ const BookVideoCard: React.FC<CourseWithFirstVideo> = ({
               {course_description}
             </p>
             <div className="w-full flex flex-row">
-              <div
+              {/* <div
                 style={{
                   width: "50%",
                   display: "flex",
@@ -278,17 +278,17 @@ const BookVideoCard: React.FC<CourseWithFirstVideo> = ({
                   4.1k &nbsp;
                   <Eye width={16} height={16} />{" "}
                 </span>
-              </div>
+              </div> */}
               <div
                 style={{
-                  width: "50%",
+                  width: "100%",
                   display: "flex",
                   justifyContent: "right",
                 }}
                 className="text-sm text-slate-700"
               >
                 <Button
-                  className="text-sm  text-slate-200 hover:bg-slate-600"
+                  className="text-sm w-full  text-slate-200 hover:bg-slate-600"
                   style={{ backgroundColor: "rgb(64,126	,139)" }}
                   onClick={onViewCourse}
                 >
