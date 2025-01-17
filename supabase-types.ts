@@ -266,6 +266,8 @@ export type Database = {
           quiz_id: string
           quiz: Json
           youtube_id: string
+          course_difficulty: number
+          detaillevel: string
         }[]
       }
       get_course_data: {
@@ -299,6 +301,8 @@ export type Database = {
           quiz_id: string
           quiz: Json
           youtube_id: string
+          course_difficulty: number
+          detaillevel: string
         }[]
       }
       get_course_info: {
@@ -340,6 +344,8 @@ export type Database = {
           total_duration: string
           total_videos: number
           created_at: string
+          course_difficulty: number
+          detaillevel: string
         }[]
       }
       get_user_courses_with_first_video_and_duration: {
@@ -356,6 +362,8 @@ export type Database = {
           total_duration: string
           total_videos: number
           created_at: string
+          course_difficulty: number
+          detaillevel: string
         }[]
       }
     }

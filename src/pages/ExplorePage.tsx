@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { CourseWithFirstVideo } from "../types/CourseType";
+import { courseDifficultyMap, CourseWithFirstVideo } from "../types/CourseType";
 import { supabase } from "@/supabaseconsant";
 
 import {
@@ -21,7 +21,6 @@ import {
 import { Arrow } from "@radix-ui/react-hover-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
-import { useTheme } from "@/styles/useTheme";
 
 type VideoCardProps = {
   thumbnailUrl: string;
@@ -168,11 +167,10 @@ const BookVideoCard: React.FC<CourseWithFirstVideo> = ({
   course_id,
   course_title,
   thumbnail_url,
-  video_id,
-  video_title,
   total_duration,
   total_videos,
   created_at,
+  course_difficulty,
 }) => {
   const navigate = useNavigate();
 
@@ -226,7 +224,13 @@ const BookVideoCard: React.FC<CourseWithFirstVideo> = ({
               <Monitor width={12} height={12} />
             </span>
             <span>{total_videos} videos </span>
-            <span>Expert</span>
+            <span>
+              {course_difficulty in courseDifficultyMap
+                ? courseDifficultyMap[
+                    course_difficulty as keyof typeof courseDifficultyMap
+                  ]
+                : "Simple"}
+            </span>
           </div>
         </div>
       </HoverCardTrigger>
@@ -417,7 +421,6 @@ function SkeletonCardGrid() {
 
 export default function ExplorePage() {
   const [youTubeVideos, setYouTubeVideos] = useState<CourseWithFirstVideo[]>();
-  const { theme, toggleTheme } = useTheme();
 
   async function getCourses() {
     const { data, error } = await supabase.rpc(

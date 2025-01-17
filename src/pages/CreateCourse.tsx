@@ -158,28 +158,7 @@ export default function CreateCourse() {
   //   return durationTotal;
   // }, [courseVideos]);
 
-  const { toast, dismiss } = useToast();
-  const [toastId, setToastId] = useState<string | undefined>(undefined);
-
-  function showOrUpdateToast(progress: number, oldToastId?: string) {
-    // If there's an older toast, dismiss it
-    if (oldToastId) {
-      dismiss(oldToastId);
-    }
-
-    // Create a new toast and return its ID
-    return toast({
-      title: "Creating course...",
-      description: <Progress value={progress} className="w-full h-2" />,
-      // Keep the toast on-screen until manually dismissed
-      duration: Infinity,
-    });
-  }
-
-  const waitASec = new Promise((resolveInner) => {
-    setTimeout(resolveInner, 10000);
-  });
-
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -277,31 +256,6 @@ export default function CreateCourse() {
       });
     }
   }
-
-  const handleCreateCourse = () => {
-    console.log("opening toast?");
-    // Start the toast at 0%
-    setProgress(0);
-    setOpen(true);
-
-    let currentProgress = 0;
-
-    const timer = setInterval(() => {
-      currentProgress += 10;
-      console.log("current progress", currentProgress);
-
-      if (currentProgress >= 100) {
-        clearInterval(timer);
-        // Mark final progress, then close toast in a moment
-        setProgress(100);
-        setTimeout(() => {
-          setOpen(false);
-        }, 1000); // give users a moment to see 100% before closing
-      } else {
-        setProgress(currentProgress);
-      }
-    }, 1000);
-  };
 
   return (
     <div className="flex h-screen flex-row">

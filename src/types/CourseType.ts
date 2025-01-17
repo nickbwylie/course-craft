@@ -27,4 +27,15 @@ export interface CourseWithFirstVideo {
   total_duration: string;
   total_videos: number;
   created_at: string;
+  course_difficulty: number;
+  detaillevel: string;
 }
+
+export const courseDifficultyMap = {
+  0: "Easy",
+  1: "Easy",
+  2: "Intermediate",
+  3: "Intermediate",
+  4: "Advanced",
+  5: "Expert",
+} as const;

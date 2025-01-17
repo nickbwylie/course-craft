@@ -99,7 +99,7 @@ export default function ViewCourse() {
           </h2>
 
           {/* YouTube Video Player */}
-          {courseVideos && courseVideos ? (
+          {courseVideos && courseVideos.length > 0 ? (
             <div
               className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg"
               style={{
@@ -112,7 +112,9 @@ export default function ViewCourse() {
               <div className="absolute inset-0 flex justify-center items-center">
                 <iframe
                   className="w-full h-full max-h-full max-w-full"
-                  src={`https://www.youtube.com/embed/${courseVideos[selectedCourse].youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
+                  src={`https://www.youtube.com/embed/${
+                    courseVideos[selectedCourse]?.youtube_id || ""
+                  }?rel=0&modestbranding=1&showinfo=0&autohide=1`}
                   title={courseVideos[selectedCourse].video_title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
@@ -223,6 +225,7 @@ export default function ViewCourse() {
         <div className="w-full flex justify-center items-center ">
           <div className="w-[350px] md:w-[500px] lg:w-[800px] mt-4">
             {courseVideos &&
+              courseVideos.length > 0 &&
               showSummary &&
               parseSummary(courseVideos[selectedCourse].video_summary)}
 

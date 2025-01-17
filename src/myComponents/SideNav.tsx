@@ -159,19 +159,19 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           {navOpen && courses && courses.length > 0 && (
             <div>
               <h5 className="p-2 mb-2 text-lg font-semibold">My Courses</h5>
-              {courses.map((video: CourseWithFirstVideo) => (
+              {courses.map((course: CourseWithFirstVideo) => (
                 <div
-                  key={video.course_id}
+                  key={course.course_id}
                   className={`flex flex-col w-full space-y-1 rounded-lg hover:bg-white ${
-                    video.course_id === id ? "bg-white" : ""
+                    course.course_id === id ? "bg-white" : ""
                   }  cursor-pointer mb-4`}
-                  onClick={() => navigate(`/course/${video.course_id}`)}
+                  onClick={() => navigate(`/course/${course.course_id}`)}
                 >
                   {/* Example Course */}
                   <div className="flex items-center pl-2 pr-2 pt-1 pb-1">
                     <Book className="h-5 w-5 text-gray-500 absolute" />
                     <h5 className="pl-6 truncate text-base">
-                      {video.video_title}
+                      {course.course_title}
                     </h5>
                   </div>
                   <div className="flex items-center space-x-2 px-2">
