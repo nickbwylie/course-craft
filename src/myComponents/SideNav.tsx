@@ -2,7 +2,6 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import {
-  Settings,
   Compass,
   CirclePlus,
   Book,
@@ -12,19 +11,27 @@ import {
   ArrowLeftToLine,
   ArrowRightToLine,
   LogIn,
+  MoreVertical,
+  Trash,
+  MoreHorizontal,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
 import { useEffect, useState } from "react";
 
-import testLogo from "../assets/logoC.png";
-
 import { Button } from "@/components/ui/button";
 import { useToast } from "../hooks/use-toast.ts";
-import { CourseWithFirstVideo } from "@/types/CourseType";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 import { useParams } from "react-router-dom";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover.tsx";
+import { SERVER } from "@/constants.ts";
+import { supabase } from "@/supabaseconsant.ts";
+import { FaFeatherAlt } from "react-icons/fa";
 
 const navItems = [
   {
@@ -41,22 +48,86 @@ interface SideNavProps {
   navOpen: boolean;
   setNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+interface CourseItemProps {
+  item: string;
+  onDelete: (item: string) => void;
+}
+const CourseItem = ({ item, onDelete }: CourseItemProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      className="flex items-center justify-between p-2 border rounded-md hover:bg-gray-100 transition"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span>{item}</span>
+
+      {isHovered && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <MoreVertical className="w-5 h-5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-32">
+            <Button
+              variant="destructive"
+              className="w-full flex items-center gap-2"
+              onClick={() => onDelete(item)}
+            >
+              <Trash className="w-4 h-4" />
+              Delete
+            </Button>
+          </PopoverContent>
+        </Popover>
+      )}
+    </div>
+  );
+};
 
 export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const url = location.pathname;
   const { toast } = useToast();
+  const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
 
   const [delayedOpen, setDelayedOpen] = useState(navOpen);
   const [width, setWidth] = useState(window.innerWidth);
 
-  // const [userVideos, setUserVideos] = useState<CourseWithFirstVideo[]>();
-
   const { courses } = useCoursesActivity();
-  const { user, isLoading, signOut } = useAuth();
+  const { user, signOut, setShowLoginModal } = useAuth();
 
   const { id } = useParams();
+
+  const deleteCourse = async (courseId: string) => {
+    // Implement the delete logic here
+    // For now, just log the courseId to be deleted
+    try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      const res = await fetch(`${SERVER}/delete_course`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`, // Include JWT
+        },
+        body: JSON.stringify({ course_id: courseId }),
+      });
+      console.log("data returned", res);
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete course",
+      });
+      return;
+    }
+  };
 
   useEffect(() => {
     async function delayedOpenUpdate() {
@@ -65,7 +136,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
       } else {
         setTimeout(() => {
           setDelayedOpen(navOpen);
-        }, 100);
+        }, 50);
       }
     }
 
@@ -105,8 +176,10 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
             className={`w-full text-center font-semibold text-xl font-bold text-slate-600 flex flex-row truncate ${
               navOpen ? "justify-between" : "justify-center"
             } items-center`}
+
+            // style={navOpen ? { width: "100%" } : { width: "auto" }}
           >
-            {navOpen && <img src={testLogo} width={35} height={35} />}
+            {navOpen && <FaFeatherAlt className="h-5 w-5 text-slate-800" />}
 
             {navOpen && (
               <span className="text-slate-800 text-md flex flex-nowrap">
@@ -116,15 +189,15 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
             <div className="p-2 rounded-full">
               {navOpen ? (
                 <ArrowLeftToLine
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
                   className="text-slate-700 cursor-pointer"
                   onClick={() => setNavOpen(false)}
                 />
               ) : (
                 <ArrowRightToLine
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
                   className="text-slate-700 cursor-pointer justify-self-center"
                   onClick={() => setNavOpen(true)}
                 />
@@ -133,47 +206,103 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           </h3>
 
           {/* Navigation Links */}
-          {navItems.map((item) => (
-            <div
-              key={item.href}
-              className={`flex flex-row items-center p-2 rounded-lg cursor-pointer transition-all font-semibold  ${
-                !navOpen && "justify-center"
-              } ${
-                item.href === url
-                  ? "bg-white text-slate-900 border border-2 border-slate-400"
-                  : "text-gray-500 hover:bg-white border border-2 border-slate-100"
-              }`}
-              onClick={() => navigate(item.href)}
-            >
-              <item.icon className={`${navOpen && "mr-2"} h-5 w-5`} />
+          {navItems.map((item) => {
+            if (item.name === "dashboard" && !user?.id) return null;
 
-              {delayedOpen && (
-                <h5 className="text-base capitalize">{item.name}</h5>
-              )}
-            </div>
-          ))}
+            return (
+              <div
+                key={item.href}
+                className={`flex flex-row items-center p-2 rounded-lg cursor-pointer transition-all font-semibold  ${
+                  !navOpen && "justify-center"
+                } ${
+                  item.href === url
+                    ? "bg-white text-slate-900 border border-2 border-slate-400"
+                    : "text-gray-500 hover:bg-white border border-2 border-transparent"
+                }`}
+                onClick={() => navigate(item.href)}
+              >
+                <div>
+                  <item.icon className={`${navOpen && "mr-2"} h-5 w-5`} />
+                </div>
+                {delayedOpen && (
+                  <h5 className="text-base capitalize">{item.name}</h5>
+                )}
+              </div>
+            );
+          })}
 
-          <Separator />
+          {navOpen && courses && courses.length > 0 && <Separator />}
 
           {/* My Courses Section */}
           {navOpen && courses && courses.length > 0 && (
             <div>
-              <h5 className="p-2 mb-2 text-lg font-semibold">My Courses</h5>
-              {courses.map((course: CourseWithFirstVideo) => (
+              {/* Ensure the parent allows overflow */}
+              <h5 className="p-2 mb-2 text-md font-semibold truncate">
+                My Courses
+              </h5>
+              {courses.map((course) => (
                 <div
                   key={course.course_id}
-                  className={`flex flex-col w-full space-y-1 rounded-lg hover:bg-white ${
+                  className={`relative flex flex-col w-full space-y-1 rounded-lg transition hover:bg-white ${
                     course.course_id === id ? "bg-white" : ""
-                  }  cursor-pointer mb-4`}
+                  } cursor-pointer mb-4 overflow-visible`} // Ensure visibility
+                  onMouseEnter={() => setHoveredCourse(course.course_id)}
+                  onMouseLeave={() => setHoveredCourse(null)}
                   onClick={() => navigate(`/course/${course.course_id}`)}
                 >
-                  {/* Example Course */}
-                  <div className="flex items-center pl-2 pr-2 pt-1 pb-1">
-                    <Book className="h-5 w-5 text-gray-500 absolute" />
-                    <h5 className="pl-6 truncate text-base">
-                      {course.course_title}
-                    </h5>
+                  {/* Course Title with Hover Actions */}
+                  <div className="flex items-center justify-between px-2 py-1 relative">
+                    <div className="flex items-center overflow-hidden">
+                      <div>
+                        <Book className="h-4 w-4 text-gray-500" />
+                      </div>
+                      <h5 className="pl-1 truncate text-sm">
+                        {course.course_title}
+                      </h5>
+                    </div>
+
+                    {/* Always Render the Popover, but Only Show the Button on Hover */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          // size="icon"
+                          className={`p-1 w-8 h-8 transition absolute right-2 top-1 ${
+                            hoveredCourse === course.course_id
+                              ? "opacity-100 visible"
+                              : "opacity-0 invisible"
+                          }`}
+                          style={{
+                            backgroundColor:
+                              hoveredCourse === course.course_id
+                                ? "rgba(255, 255, 255, 0.3)"
+                                : "transparent",
+                            zIndex: 50,
+                          }}
+                          onClick={(e) => e.stopPropagation()} // Prevents navigation on click
+                        >
+                          <MoreHorizontal className="w-4 h-4 text-gray-600" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-32 p-0 bg-white shadow-lg rounded-md border z-50"
+                        align="center" // Ensures it aligns within the viewport
+                        side="right" // Ensures it's not cut off
+                        sideOffset={4} // Moves it slightly down to prevent clipping
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full flex items-center gap-2"
+                          onClick={() => deleteCourse(course.course_id)}
+                        >
+                          <Trash className="w-4 h-4 text-red-800" />
+                          Delete
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
                   </div>
+
+                  {/* Progress Bar */}
                   <div className="flex items-center space-x-2 px-2">
                     <Progress value={45} className="h-2 flex-grow" />
                     <span className="text-xs text-gray-600">45%</span>
@@ -193,41 +322,39 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               }  p-2 rounded-lg hover:bg-gray-100 cursor-pointer`}
               onClick={() => navigate("/support")}
             >
-              <Settings
-                className={`${navOpen && "mr-3"}  h-5 w-5 text-gray-500`}
-              />
-              {navOpen && <h5 className="text-base">Settings</h5>}
-            </div>
-            <div
-              className={`flex w-full items-center ${
-                !navOpen && "justify-center"
-              }  p-2 rounded-lg hover:bg-gray-100 cursor-pointer`}
-              onClick={() => navigate("/support")}
-            >
               <HelpCircle
                 className={`${navOpen && "mr-3"} h-5 w-5 text-gray-500`}
               />
               {navOpen && <h5 className="text-base">Support</h5>}
             </div>
-            {true === false ? (
-              <div
-                className={`flex w-full items-center ${
-                  !navOpen && "justify-center"
-                }  p-2 rounded-lg hover:bg-red-100 cursor-pointer`}
-                onClick={() => console.log("Logout")}
-              >
-                <LogOut
-                  className={`${navOpen && "mr-3"} h-5 w-5 `}
-                  style={{ color: "rgb(240, 128, 128)" }}
-                />
-                {navOpen && (
-                  <h5
-                    className="text-base "
-                    style={{ color: "rgb(240, 128, 128)" }}
-                  >
-                    Log Out
-                  </h5>
-                )}
+
+            {user?.id ? (
+              <div className="w-full absolute bottom-4 pr-8">
+                <Button
+                  className={`w-full flex flex-row items-center ${
+                    !navOpen && "justify-center"
+                  }  p-2 rounded-lg cursor-pointer`}
+                  style={{
+                    backgroundColor: "transparent",
+                    border: "2px solid gray",
+                  }}
+                  onClick={() => {
+                    // if route is dashboard navigate to home
+                    if (url === "/dashboard") {
+                      navigate("/");
+                    }
+                    signOut();
+                    toast({
+                      title: "Log out",
+                      description: "User has logged out",
+                    });
+                  }}
+                >
+                  <LogOut
+                    className={`${navOpen && "mr-3"} h-5 w-5 text-black`}
+                  />
+                  {navOpen && <h5 className="text-base text-black">Log Out</h5>}
+                </Button>
               </div>
             ) : (
               <div className="w-full absolute bottom-4 pr-8">
@@ -236,9 +363,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                     !navOpen && "justify-center"
                   }  p-2 rounded-lg cursor-pointer`}
                   style={{ backgroundColor: "rgb(64, 126, 139)" }}
-                  onClick={() =>
-                    toast({ title: "Toast title", description: "testing" })
-                  }
+                  onClick={() => setShowLoginModal(true)}
                 >
                   <LogIn
                     className={`${navOpen && "mr-3"} h-5 w-5 text-white`}

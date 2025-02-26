@@ -10,8 +10,6 @@ import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 
 const Layout = () => {
   const [navOpen, setNavOpen] = useState(true);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
-
   const { user } = useAuth();
   const { getUserCourses } = useCoursesActivity();
 
@@ -35,17 +33,12 @@ const Layout = () => {
         }}
         // className="bg-gray-100"
       >
-        {!user?.id && (
-          <LoginModal
-            loginModalOpen={true}
-            setLoginModalOpen={setLoginModalOpen}
-          />
-        )}
+        {!user?.id && <LoginModal />}
         <div className="fixed h-full ">
           <SideNav navOpen={navOpen} setNavOpen={setNavOpen} />
         </div>
         <div
-          className={`w-full bg-white rounded-2xl ${
+          className={`w-full bg-white h-full rounded-2xl ${
             navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
           } `}
           style={{ backgroundColor: "rgb(252,252,249)" }}

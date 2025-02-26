@@ -1,11 +1,17 @@
 /* Base side navigation styles */
 .side-nav {
-  width: 220px; /* Open width */
-  transition: width 0.2s ease-in-out; /* Smooth transition */
-  /* Other styles, such as background, position, etc. */
+  width: 100px; /* Start with closed width */
+  transition: width 0.25s ease-in-out; /* Default transition */
+}
+
+/* Open state */
+.side-nav:not(.closed) {
+  width: 220px;
+  transition: width 0.2s ease-in-out; /* Longer duration when opening */
 }
 
 /* Closed state */
 .side-nav.closed {
   width: 100px; /* Closed width */
+  transition: width 0.25s ease-in-out; /* Shorter duration when closing */
 }

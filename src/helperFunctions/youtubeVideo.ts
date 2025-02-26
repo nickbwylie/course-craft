@@ -1,4 +1,5 @@
 import { SERVER } from "@/constants";
+import { supabase } from "@/supabaseconsant";
 import axios from "axios";
 
 export interface AddCourseRequest {
@@ -20,13 +21,47 @@ export type YoutubeVideoPreview = {
 };
 
 export async function createCourse(courseRequest: AddCourseRequest) {
-  console.log(courseRequest);
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+  let token = session?.access_token || " ";
 
-  const data = await axios.post(`${SERVER}/create_course/`, {
-    ...courseRequest,
-  });
+  const decoded = JSON.parse(atob(token.split(".")[1])); // Decode payload (base64)
+  const isExpired = decoded.exp < Math.floor(Date.now() / 1000);
 
-  return data.data;
+  if (isExpired) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error) {
+      console.log(error);
+      return;
+    }
+    token = data.session?.access_token || "";
+    console.log("Refreshed Token:", token);
+  }
+
+  try {
+    const res = await fetch(`${SERVER}/create_course`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Include JWT
+      },
+      body: JSON.stringify(courseRequest),
+    });
+
+    const data = await res.json();
+    console.log("data returned", data);
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to create course");
+    }
+
+    return data.data;
+  } catch (e: any) {
+    console.error("Error creating course:", e);
+    throw new Error("Failed to create course");
+  }
 }
 function parseDuration(duration: string): number {
   const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;

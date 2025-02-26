@@ -5,7 +5,7 @@ import ViewCourse from "./pages/ViewCourse";
 import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
+// import Login from "./pages/Login";
 
 export default function App() {
   return (

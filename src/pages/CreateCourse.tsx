@@ -1,6 +1,36 @@
-import { Input } from "@/components/ui/input";
-import YoutubeDataTable from "@/myComponents/YoutubeDataTable";
+import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { supabase } from "@/supabaseconsant";
+import { FaYoutube } from "react-icons/fa";
+import {
+  Briefcase,
+  Check,
+  ChevronRight,
+  Clock,
+  HelpCircle,
+  ListTodo,
+  MonitorPlay,
+  Plus,
+  Upload,
+  X,
+  Youtube,
+} from "lucide-react";
+
+// UI Components
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -9,51 +39,77 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-  Form,
-} from "@/components/ui/form";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Progress } from "../components/ui/progress";
+import { Toast, ToastDescription, ToastTitle } from "../components/ui/toast";
+import { useToast } from "../hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+// Helpers and types
 import {
   AddCourseRequest,
   createCourse,
   getYouTubeVideoData,
   YoutubeVideoPreview,
+  calculateTotalDuration,
+  parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useToast } from "../hooks/use-toast.ts";
-import { Progress } from "../components/ui/progress.tsx";
-import {
-  Toast,
-  ToastDescription,
-  ToastTitle,
-} from "../components/ui/toast.tsx";
-import { useAuth } from "@/contexts/AuthContext.tsx";
+import { useAuth } from "@/contexts/AuthContext";
 
-const profileFormSchema = z.object({
+// Define form schema
+const courseFormSchema = z.object({
   title: z
     .string()
-    .min(2, {
-      message: "Title must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Title must not be longer than 30 characters.",
+    .min(2, { message: "Title must be at least 2 characters." })
+    .max(60, { message: "Title must not be longer than 60 characters." }),
+  description: z
+    .string()
+    .min(10, { message: "Description must be at least 10 characters." })
+    .max(500, {
+      message: "Description must not be longer than 500 characters.",
     }),
-  courseDifficulty: z
-    .string({
-      required_error: "Please enter the course difficulty.",
-    })
-    .min(2),
-  courseDetail: z.string().max(50).min(2),
-  description: z.string().max(160).min(10),
+  courseDifficulty: z.string({
+    required_error: "Please select the course difficulty.",
+  }),
+  courseDetail: z.string({
+    required_error: "Please select the level of detail.",
+  }),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type CourseFormValues = z.infer<typeof courseFormSchema>;
 
+// CourseProgressToast Component
 function CourseProgressToast({
   open,
   progress,
@@ -69,391 +125,908 @@ function CourseProgressToast({
       onOpenChange={onOpenChange}
       className="flex flex-col items-start gap-2"
     >
-      <ToastTitle>Creating course...</ToastTitle>
-      <ToastDescription>
-        <div className="mt-2 w-24 h-full flex justify-start">
+      <ToastTitle>Creating your course</ToastTitle>
+      <ToastDescription className="w-full">
+        <div className="mt-2 mb-1 w-full h-full">
           <Progress value={progress} className="w-full h-2" />
         </div>
+        <div className="text-xs text-right">{progress}%</div>
       </ToastDescription>
     </Toast>
   );
 }
 
+// VideoCard Component
+const VideoCard = ({
+  video,
+  onRemove,
+}: {
+  video: YoutubeVideoPreview;
+  onRemove: (id: string) => void;
+}) => {
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex">
+        <div className="w-32 h-24 relative">
+          <img
+            src={video.thumbnail}
+            alt={video.title}
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs py-0.5 px-1 rounded">
+            {parseYouTubeDuration(video.duration)}
+          </div>
+        </div>
+        <div className="flex-1 p-3 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-1 right-1 h-6 w-6 rounded-full hover:bg-red-50 hover:text-red-500"
+            onClick={() => onRemove(video.videoId)}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+          <h4 className="font-medium text-sm line-clamp-2">{video.title}</h4>
+          <p className="text-xs text-gray-500 mt-1">{video.channel}</p>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+// Helper functions
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsedUrl = new URL(url);
+
+    if (
+      parsedUrl.hostname === "www.youtube.com" ||
+      parsedUrl.hostname === "youtube.com"
+    ) {
+      return parsedUrl.searchParams.get("v");
+    }
+
+    if (parsedUrl.hostname === "youtu.be") {
+      return parsedUrl.pathname.substring(1);
+    }
+
+    return null;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+// Main Component
 export default function CreateCourse() {
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+  // Form and state management
+  const form = useForm<CourseFormValues>({
+    resolver: zodResolver(courseFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      courseDifficulty: "",
+      courseDetail: "",
+    },
     mode: "onChange",
   });
 
-  // user
   const { user } = useAuth();
+  const { toast } = useToast();
 
-  // logic to add youtube videos to the data table
-
-  const [courseAdded, setCourseAdded] = useState(false);
-
-  const [youtubeVideoUrl, setYoutubeVideoUrl] = useState("");
-
+  const [videoUrl, setVideoUrl] = useState("");
   const [courseVideos, setCourseVideos] = useState<YoutubeVideoPreview[]>([]);
+  const [isAddingVideo, setIsAddingVideo] = useState(false);
+  const [addVideoError, setAddVideoError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [createdCourseId, setCreatedCourseId] = useState("");
 
-  function extractYouTubeVideoId(url: string): string | null {
+  // Calculate total duration
+  const totalDuration = calculateTotalDuration(
+    courseVideos.map((video) => video.duration)
+  );
+  const totalVideos = courseVideos.length;
+
+  // Handle video addition
+  async function handleAddVideo() {
+    setAddVideoError("");
+    if (!videoUrl.trim()) {
+      setAddVideoError("Please enter a YouTube URL");
+      return;
+    }
+
+    const videoId = extractYouTubeVideoId(videoUrl);
+    if (!videoId) {
+      setAddVideoError("Invalid YouTube URL");
+      return;
+    }
+
+    // Check if video already exists in the list
+    if (courseVideos.some((v) => v.videoId === videoId)) {
+      setAddVideoError("This video is already in your course");
+      return;
+    }
+
+    setIsAddingVideo(true);
+
     try {
-      // Use URL constructor to safely parse the URL
-      const parsedUrl = new URL(url);
-
-      // Check if it's a YouTube domain
-      if (
-        parsedUrl.hostname === "www.youtube.com" ||
-        parsedUrl.hostname === "youtube.com"
-      ) {
-        const videoId = parsedUrl.searchParams.get("v");
-        return videoId ? videoId : null;
+      const videoData = await getYouTubeVideoData(videoId);
+      if (!videoData) {
+        setAddVideoError("Could not fetch video data");
+        return;
       }
 
-      // Also support shortened YouTube URLs like youtu.be
-      if (parsedUrl.hostname === "youtu.be") {
-        const videoId = parsedUrl.pathname.substring(1);
-        return videoId ? videoId : null;
-      }
-
-      // If it's not a valid YouTube URL, return null
-      return null;
+      setCourseVideos((prev) => [...prev, videoData]);
+      setVideoUrl("");
     } catch (error) {
       console.error(error);
-      // If the input is not a valid URL, catch the error and return null
-      return null;
+      setAddVideoError("Error adding video");
+    } finally {
+      setIsAddingVideo(false);
     }
   }
 
-  async function addYoutubeUrl() {
-    // first need to stript the url to find just the video id
-    const videoId = extractYouTubeVideoId(youtubeVideoUrl);
-
-    if (!videoId) return;
-
-    if (courseVideos?.find((vid) => vid.videoId === videoId)) return;
-
-    const newVideo = await getYouTubeVideoData(videoId);
-
-    if (!newVideo) return;
-
-    // add video to the array
-    if (courseVideos && courseVideos?.length > 0) {
-      setCourseVideos([...courseVideos, newVideo]);
-    } else {
-      setCourseVideos([newVideo]);
-    }
-    setYoutubeVideoUrl("");
+  // Handle video removal
+  function handleRemoveVideo(videoId: string) {
+    setCourseVideos((prev) =>
+      prev.filter((video) => video.videoId !== videoId)
+    );
   }
 
-  // const totalCourseTime = useMemo(() => {
-  //   const durationArray: string[] = [];
-
-  //   courseVideos.map((video) => {
-  //     durationArray.push(video.duration);
-  //   });
-
-  //   const durationTotal = calculateTotalDuration(durationArray);
-
-  //   return durationTotal;
-  // }, [courseVideos]);
-
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  async function onSubmit(data: ProfileFormValues) {
-    console.log("calling on submit");
-    if (courseVideos.length == 0) {
-      console.error("no youtube videos");
+  // Form submission
+  async function onSubmit(data: CourseFormValues) {
+    if (courseVideos.length === 0) {
+      toast({
+        title: "No videos added",
+        description: "Please add at least one video to your course",
+        variant: "destructive",
+      });
       return;
     }
 
     if (!user?.id) {
-      console.error("the user is undefined");
+      toast({
+        title: "Not signed in",
+        description: "Please sign in to create a course",
+        variant: "destructive",
+      });
       return;
     }
 
-    // check all fields
-
-    // add course
-    //
-    const videoIds: string[] = [];
-
-    courseVideos.map((course) => {
-      videoIds.push(course.videoId);
-    });
-
-    const difficultyToNumber = {
-      Simple: 1,
-      Normal: 3,
-      High: 5,
-    } as const;
-
-    const questionCount = {
-      Simple: 1,
-      Normal: 2,
-      High: 3,
-    } as const;
-
-    const courseRequest: AddCourseRequest = {
-      title: data.title,
-      description: data.description,
-      user_id: user.id,
-      youtube_ids: videoIds,
-      difficulty:
-        difficultyToNumber[
-          data.courseDifficulty as keyof typeof difficultyToNumber
-        ],
-      questionCount:
-        questionCount[data.courseDetail as keyof typeof questionCount] || 2,
-      summary_detail:
-        difficultyToNumber[
-          data.courseDetail as keyof typeof difficultyToNumber
-        ] || 3,
-    };
-
-    console.log(courseRequest);
-
-    setOpen(true);
+    setIsSubmitting(true);
     setProgress(0);
 
     // Start the progress timer
-    let currentProgress = 0;
     const timer = setInterval(() => {
-      currentProgress += 5;
-      if (currentProgress <= 90) {
-        setProgress(currentProgress);
-      } else {
-        clearInterval(timer);
-      }
-    }, 200); // 1000ms interval
+      setProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(timer);
+          return prev;
+        }
+        return prev + 5;
+      });
+    }, 500);
 
     try {
-      // Make your real API call here
-      const res = await createCourse(courseRequest);
-      console.log(res);
+      const difficultyToNumber = {
+        Simple: 1,
+        Normal: 3,
+        High: 5,
+      } as const;
 
-      // Once API is done, clear the timer and set progress to 100
+      const questionCount = {
+        Simple: 1,
+        Normal: 2,
+        High: 3,
+      } as const;
+
+      const courseRequest: AddCourseRequest = {
+        title: data.title,
+        description: data.description,
+        user_id: user.id,
+        youtube_ids: courseVideos.map((video) => video.videoId),
+        difficulty:
+          difficultyToNumber[
+            data.courseDifficulty as keyof typeof difficultyToNumber
+          ],
+        questionCount:
+          questionCount[data.courseDetail as keyof typeof questionCount] || 2,
+        summary_detail:
+          difficultyToNumber[
+            data.courseDetail as keyof typeof difficultyToNumber
+          ] || 3,
+      };
+
+      const response = await createCourse(courseRequest);
+      setCreatedCourseId(response.body.course_id || "");
+
       clearInterval(timer);
       setProgress(100);
 
-      setOpen(false);
-      // Optionally, show an ephemeral success toast
-      toast({
-        title: `Course Created`,
-        description: `Course: ${data.title} has been successfully created.`,
-      });
-      setCourseAdded(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSuccessModalOpen(true);
+      }, 500);
     } catch (error) {
       clearInterval(timer);
       console.error(error);
-      setOpen(false);
-      // Optionally, show an error toast
+      setIsSubmitting(false);
+
       toast({
-        title: `Error`,
-        description: `Failed to create course.`,
+        title: "Error creating course",
+        description:
+          "An error occurred while creating your course. Please try again.",
+        variant: "destructive",
       });
     }
   }
 
   return (
-    <div className="flex h-screen flex-row">
+    <div className="max-w-5xl mx-auto px-4 py-8">
       <CourseProgressToast
-        open={open}
+        open={isSubmitting}
         progress={progress}
-        onOpenChange={setOpen}
+        onOpenChange={setIsSubmitting}
       />
-      <div className=" flex-grow flex flex-col py-10 pt-8 px-8 justify-start space-y-6 ">
+
+      {/* Success dialog */}
+      <AlertDialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Check className="h-6 w-6 text-green-500" />
+              Course Created Successfully!
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your course has been created and is now available for others to
+              explore. What would you like to do next?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogAction
+              onClick={() =>
+                (window.location.href = `/course/${createdCourseId}`)
+              }
+              className="w-full sm:w-auto"
+              style={{ backgroundColor: "rgb(64,126,139)" }}
+            >
+              View My Course
+            </AlertDialogAction>
+            <AlertDialogAction
+              onClick={() => (window.location.href = "/explore")}
+              className="w-full sm:w-auto bg-gray-100 text-gray-900 hover:bg-gray-200"
+            >
+              Explore Courses
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Create a New Course</h1>
+          <p className="text-gray-500 mt-1">
+            Build a custom course by adding YouTube videos and configuring
+            settings
+          </p>
+        </div>
+
+        {/* Progress indicator */}
+        <div className="hidden sm:flex items-center gap-6">
+          <div className="flex items-center">
+            <div
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                currentStep >= 1
+                  ? "bg-cyan-600 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              1
+            </div>
+            <div
+              className={`ml-2 ${
+                currentStep >= 1 ? "text-gray-900" : "text-gray-500"
+              }`}
+            >
+              <div className="text-sm font-medium">Course Info</div>
+            </div>
+          </div>
+
+          <ChevronRight className="h-4 w-4 text-gray-400" />
+
+          <div className="flex items-center">
+            <div
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                currentStep >= 2
+                  ? "bg-cyan-600 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              2
+            </div>
+            <div
+              className={`ml-2 ${
+                currentStep >= 2 ? "text-gray-900" : "text-gray-500"
+              }`}
+            >
+              <div className="text-sm font-medium">Add Videos</div>
+            </div>
+          </div>
+
+          <ChevronRight className="h-4 w-4 text-gray-400" />
+
+          <div className="flex items-center">
+            <div
+              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                currentStep >= 3
+                  ? "bg-cyan-600 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
+              3
+            </div>
+            <div
+              className={`ml-2 ${
+                currentStep >= 3 ? "text-gray-900" : "text-gray-500"
+              }`}
+            >
+              <div className="text-sm font-medium">Customize</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Tabs
+        defaultValue="step1"
+        className="w-full"
+        value={`step${currentStep}`}
+        onValueChange={(value) => {
+          if (value === "step1") setCurrentStep(1);
+          else if (value === "step2") setCurrentStep(2);
+          else if (value === "step3") setCurrentStep(3);
+        }}
+      >
+        {/* <TabsList className="w-full mb-8">
+          <TabsTrigger value="step1">Course Information</TabsTrigger>
+          <TabsTrigger value="step2">Add Videos</TabsTrigger>
+          <TabsTrigger value="step3">Customize</TabsTrigger>
+        </TabsList> */}
+
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 text-left mt-0"
-          >
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                borderBottomWidth: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "40%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-                className="pr-2"
-              >
-                <h3 className="text-xl text-left font-semibold pb-2">
-                  Course Information
-                </h3>
-                <div className="text-sm text-left text-slate-500">
-                  Use this to create an awesome name description for your course
-                </div>
-              </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Left panel - always visible */}
+              <div className="md:col-span-2 space-y-8">
+                <TabsContent value="step1" className="mt-0 space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Briefcase className="h-5 w-5 text-cyan-600" />
+                        Course Information
+                      </CardTitle>
+                      <CardDescription>
+                        Add a compelling title and description for your course
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course Title</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="e.g. Complete Guide to Machine Learning"
+                                {...field}
+                                className="bg-white"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              A clear, specific title helps learners find your
+                              course
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-              <div style={{ width: "70%" }} className="space-y-4 pr-4 mb-8">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          id="title"
-                          placeholder="Course Title"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          type="description"
-                          placeholder="Description"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                borderBottomWidth: 2,
-              }}
-            >
-              <div
-                style={{
-                  width: "40%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-                className="pr-2"
-              >
-                <h3 className="text-xl text-left font-semibold pb-2">
-                  Add YouTube Videos
-                </h3>
-                <div className="text-sm text-left text-slate-500">
-                  1. Find the YouTube video to add. <br /> 2. Copy and paste the
-                  url.
-                  <br />
-                  3. Click add to add the video to the course.
-                </div>
-              </div>
-              <div style={{ width: "70%" }} className="space-y-4 pr-4 mb-8">
-                <YoutubeDataTable
-                  addYoutubeVideo={addYoutubeUrl}
-                  courseVideos={courseVideos}
-                  setYoutubeVideoUrl={setYoutubeVideoUrl}
-                  youtubeVideoUrl={youtubeVideoUrl}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <div
-                style={{
-                  width: "40%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-                className="pr-2 mb-8"
-              >
-                <h3 className="text-xl text-left font-semibold pb-2">
-                  Customization
-                </h3>
-                <div className="text-sm text-left text-slate-500">
-                  Provide the course a provide a course difficulty from simple
-                  to advanced. And a level of detail ( increasing the length of
-                  the summaries)
-                </div>
-              </div>
-              <div style={{ width: "70%" }} className="space-y-4 pr-4 mb-8">
-                <FormField
-                  control={form.control}
-                  name="courseDetail"
-                  render={({ field }) => (
-                    <FormItem className="w-full ">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Course Description</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Describe what learners will gain from your course"
+                                {...field}
+                                className="min-h-[100px] bg-white"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              A good description helps learners understand the
+                              value and content of your course
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <Button
+                        variant="outline"
+                        type="button"
+                        className="hover:bg-gray-100"
+                        disabled
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select level of course detail" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Simple">Simple</SelectItem>
-                          <SelectItem value="Normal">
-                            Normal (Recommended)
-                          </SelectItem>
-                          <SelectItem value="High">High</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        Back
+                      </Button>
+                      <Button
+                        type="button"
+                        style={{ backgroundColor: "rgb(64,126,139)" }}
+                        onClick={() => {
+                          form.trigger(["title", "description"]);
+                          const titleValid =
+                            form.getFieldState("title").invalid === false;
+                          const descValid =
+                            form.getFieldState("description").invalid === false;
 
-                <FormField
-                  control={form.control}
-                  name="courseDifficulty"
-                  render={({ field }) => (
-                    <FormItem className="w-full ">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+                          if (titleValid && descValid) {
+                            setCurrentStep(2);
+                          }
+                        }}
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select level of course difficulty" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Simple">Easy</SelectItem>
-                          <SelectItem value="Normal">
-                            Normal (Recommended)
-                          </SelectItem>
-                          <SelectItem value="High">Difficult</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        Next: Add Videos
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="step2" className="mt-0 space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Youtube className="h-5 w-5 text-red-600" />
+                        Add YouTube Videos
+                      </CardTitle>
+                      <CardDescription>
+                        Find and add videos that will make up your course
+                        curriculum
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="relative">
+                          <div className="flex gap-2">
+                            <div className="relative flex-grow">
+                              <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                <FaYoutube className="h-5 w-5 text-red-600" />
+                              </div>
+                              <Input
+                                placeholder="Paste YouTube video URL here"
+                                value={videoUrl}
+                                onChange={(e) => {
+                                  setVideoUrl(e.target.value);
+                                  setAddVideoError("");
+                                }}
+                                className="pl-10 pr-4 py-3 bg-white"
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleAddVideo();
+                                  }
+                                }}
+                              />
+                            </div>
+                            <Button
+                              onClick={handleAddVideo}
+                              disabled={isAddingVideo || !videoUrl.trim()}
+                              style={{ backgroundColor: "rgb(64,126,139)" }}
+                            >
+                              {isAddingVideo ? "Adding..." : "Add Video"}
+                            </Button>
+                          </div>
+                          {addVideoError && (
+                            <p className="text-sm text-red-500 mt-1">
+                              {addVideoError}
+                            </p>
+                          )}
+                          <FormDescription className="mt-2 text-sm text-gray-500">
+                            Add videos by pasting YouTube URLs (e.g.,
+                            https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+                          </FormDescription>
+                        </div>
+
+                        {courseVideos.length > 0 ? (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <h3 className="text-sm font-medium">
+                                Course Videos ({courseVideos.length})
+                              </h3>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 text-xs"
+                                onClick={() => {
+                                  if (
+                                    confirm(
+                                      "Are you sure you want to remove all videos?"
+                                    )
+                                  ) {
+                                    setCourseVideos([]);
+                                  }
+                                }}
+                              >
+                                Clear All
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto p-1">
+                              {courseVideos.map((video, index) => (
+                                <VideoCard
+                                  key={video.videoId}
+                                  video={video}
+                                  onRemove={handleRemoveVideo}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center bg-gray-50">
+                            <MonitorPlay className="h-10 w-10 text-gray-400 mx-auto mb-4" />
+                            <h3 className="text-lg font-medium text-gray-900 mb-1">
+                              No videos added yet
+                            </h3>
+                            <p className="text-sm text-gray-500 max-w-md mx-auto">
+                              Add videos by pasting YouTube URLs above. These
+                              videos will make up your course content.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => setCurrentStep(1)}
+                        className="hover:bg-gray-100"
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        type="button"
+                        style={{ backgroundColor: "rgb(64,126,139)" }}
+                        disabled={courseVideos.length === 0}
+                        onClick={() => {
+                          if (courseVideos.length === 0) {
+                            toast({
+                              title: "No videos added",
+                              description:
+                                "Please add at least one video before proceeding",
+                            });
+                            return;
+                          }
+
+                          setCurrentStep(3);
+                        }}
+                      >
+                        Next: Customize
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="step3" className="mt-0 space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <ListTodo className="h-5 w-5 text-cyan-600" />
+                        Customize Course
+                      </CardTitle>
+                      <CardDescription>
+                        Adjust settings to tailor the learning experience
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="courseDifficulty"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Course Difficulty</FormLabel>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger className="bg-white">
+                                    <SelectValue placeholder="Select difficulty level" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Simple">Easy</SelectItem>
+                                    <SelectItem value="Normal">
+                                      Normal (Recommended)
+                                    </SelectItem>
+                                    <SelectItem value="High">
+                                      Advanced
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormDescription>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 cursor-help">
+                                        <HelpCircle className="h-3 w-3" />
+                                        How does this affect my course?
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="max-w-xs">
+                                        Difficulty setting affects the
+                                        complexity of quiz questions generated
+                                        for your course. Higher difficulty means
+                                        more challenging questions.
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="courseDetail"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Summary Detail Level</FormLabel>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <SelectTrigger className="bg-white">
+                                    <SelectValue placeholder="Select level of detail" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Simple">
+                                      Brief
+                                    </SelectItem>
+                                    <SelectItem value="Normal">
+                                      Standard (Recommended)
+                                    </SelectItem>
+                                    <SelectItem value="High">
+                                      Comprehensive
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormDescription>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 cursor-help">
+                                        <HelpCircle className="h-3 w-3" />
+                                        How does this affect my course?
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="max-w-xs">
+                                        Detail level controls the length and
+                                        depth of AI-generated summaries. Higher
+                                        detail provides more comprehensive
+                                        summaries for each video.
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="advanced">
+                          <AccordionTrigger className="text-sm">
+                            Advanced Settings
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-4 pt-2 pb-1">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <h4 className="text-sm font-medium">
+                                    Quiz Questions per Video
+                                  </h4>
+                                  <p className="text-xs text-gray-500">
+                                    Number of quiz questions generated for each
+                                    video
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                    className="h-7 px-2"
+                                  >
+                                    -
+                                  </Button>
+                                  <span className="text-sm font-medium w-6 text-center">
+                                    {form.watch("courseDifficulty") === "Simple"
+                                      ? "1"
+                                      : form.watch("courseDifficulty") ===
+                                        "Normal"
+                                      ? "2"
+                                      : "3"}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                    className="h-7 px-2"
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => setCurrentStep(2)}
+                        className="hover:bg-gray-100"
+                      >
+                        Back
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        style={{ backgroundColor: "rgb(64,126,139)" }}
+                      >
+                        {isSubmitting ? "Creating Course..." : "Create Course"}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </TabsContent>
+              </div>
+
+              {/* Right sidebar - course summary */}
+              <div className="md:col-span-1">
+                <div className="sticky top-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Course Summary</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Course Title
+                        </h3>
+                        <p className="text-sm mt-1">
+                          {form.watch("title") || "Not specified yet"}
+                        </p>
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Videos
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <MonitorPlay className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm">
+                            {totalVideos}{" "}
+                            {totalVideos === 1 ? "video" : "videos"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Duration
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Clock className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm">
+                            {totalDuration === "00:00:00"
+                              ? "No videos added"
+                              : totalDuration}
+                          </span>
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">
+                          Settings
+                        </h3>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {form.watch("courseDifficulty") && (
+                            <Badge
+                              variant="secondary"
+                              className="bg-gray-100 hover:bg-gray-100 cursor-default"
+                            >
+                              {form.watch("courseDifficulty")} Difficulty
+                            </Badge>
+                          )}
+                          {form.watch("courseDetail") && (
+                            <Badge
+                              variant="secondary"
+                              className="bg-gray-100 hover:bg-gray-100 cursor-default"
+                            >
+                              {form.watch("courseDetail")} Detail
+                            </Badge>
+                          )}
+                          {!form.watch("courseDifficulty") &&
+                            !form.watch("courseDetail") && (
+                              <span className="text-sm text-gray-500">
+                                No settings configured
+                              </span>
+                            )}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {courseVideos.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-500">
+                            Video Preview
+                          </h3>
+                          <div className="mt-2 space-y-2 max-h-[200px] overflow-y-auto">
+                            {courseVideos.slice(0, 3).map((video, index) => (
+                              <div
+                                key={video.videoId}
+                                className="flex items-center gap-2"
+                              >
+                                <div className="h-8 w-8 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                                  <img
+                                    src={video.thumbnail}
+                                    alt=""
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
+                                <p className="text-xs line-clamp-1">
+                                  {video.title}
+                                </p>
+                              </div>
+                            ))}
+                            {courseVideos.length > 3 && (
+                              <p className="text-xs text-gray-500 italic">
+                                +{courseVideos.length - 3} more videos
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </div>
-            <Button
-              className="w-48 p-4 justify-self-start bg-cyan-600 hover:bg-cyan-500"
-              type="submit"
-            >
-              Add Course
-            </Button>
           </form>
         </Form>
-      </div>
+      </Tabs>
+
+      {/* No longer needed */}
     </div>
   );
 }

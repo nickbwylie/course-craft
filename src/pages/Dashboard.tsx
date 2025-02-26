@@ -43,138 +43,149 @@ const Dashboard = () => {
   }, [courses]);
 
   return (
-    <div
-      className="grid gap-6 p-8 pt-6 rounded-2xl"
-      style={{ backgroundColor: "rgb(252,252,249)" }}
-    >
-      {/* Active Courses */}
+    <div className="flex grow flex-col">
       <div
-        className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        style={{ backgroundColor: "rgb(243,243	,238)" }}
+        className="grid gap-6 p-8 pt-6 rounded-2xl"
+        style={{ backgroundColor: "rgb(252,252,249)" }}
       >
-        <div className="flex items-center mb-4">
-          <PlayCircle
-            className="text-purple-500 w-6 h-6 mr-3"
-            style={{ color: "rgb(240, 128, 128)" }}
-          />
-          <h2 className="text-xl text-gray-700 uppercase tracking-wider">
-            Active Courses
-          </h2>
+        <div className="w-full flex grow flex-col overflow-hidden">
+          <div
+            className="grid gap-6 pt-6 rounded-2xl overflow-auto"
+            style={{ backgroundColor: "rgb(252,252,249)" }}
+          >
+            {/* Active Courses */}
+            <div
+              className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              style={{ backgroundColor: "rgb(243,243,238)" }}
+            >
+              <div className="flex items-center mb-4">
+                <PlayCircle
+                  className="text-purple-500 w-6 h-6 mr-3"
+                  style={{ color: "rgb(240, 128, 128)" }}
+                />
+                <h2 className="text-xl text-gray-700 uppercase tracking-wider">
+                  Active Courses
+                </h2>
+              </div>
+              <div className="relative mb-4 ">
+                <CustomCarousel videos={courses} />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="mb-4">
-          <CustomCarousel videos={courses} />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        {/* Quick Overview */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* Quick Overview */}
+          <div
+            className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+            style={{ backgroundColor: "rgb(243,243	,238)" }}
+          >
+            <div className="flex items-center mb-4">
+              <BookOpen
+                className="w-6 h-6 mr-3"
+                style={{ color: "rgb(70, 130, 180)" }}
+              />
+              <h2 className="text-xl text-gray-700 uppercase tracking-wider">
+                Overview
+              </h2>
+            </div>
+
+            <p className="text-sm ml-1 text-gray-600">
+              <span
+                className=" font-bold mr-2 text-2xl opacity-100"
+                style={{ color: "rgb(70, 130, 180)" }}
+              >
+                {courses?.length || 0}
+              </span>
+              <span className="opacity-85">Total Courses</span>
+            </p>
+            <p className="text-sm ml-1  text-gray-600 ">
+              <span
+                className=" font-bold mr-2 text-2xl opacity-100"
+                style={{ color: "rgb(70, 130, 180)" }}
+              >
+                {courses?.length || 0}
+              </span>
+              <span className="opacity-85">In Progress</span>
+            </p>
+            <p className="text-sm ml-1 text-gray-600">
+              <span
+                className="font-bold mr-2 text-2xl opacity-100"
+                style={{ color: "rgb(70, 130, 180)" }}
+              >
+                3
+              </span>
+              <span className="opacity-85">Completed </span>
+            </p>
+          </div>
+
+          {/* Learning Stats */}
+          <div
+            className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+            style={{ backgroundColor: "rgb(243,243	,238)" }}
+          >
+            <div className="flex items-center mb-4">
+              <BarChart2
+                className=" w-6 h-6 mr-3"
+                style={{ color: "rgb(34, 87, 73)" }}
+              />
+              <h2 className="text-xl text-gray-700 uppercase tracking-wider">
+                Learning Stats
+              </h2>
+            </div>
+            <p className="text-sm text-gray-600">
+              <span
+                className="font-bold text-green-600 text-2xl opacity-100"
+                style={{ color: "rgb(34, 87, 73)" }}
+              >
+                {hoursWatched} hours
+              </span>{" "}
+              <span className="opacity-85">studied</span>
+            </p>
+            <p className="text-sm text-gray-600 opacity-85">
+              <span
+                className="font-bold text-2xl opacity-100"
+                style={{ color: "rgb(34, 87, 73)" }}
+              >
+                85%
+              </span>{" "}
+              <span className="opacity-85">average score</span>
+            </p>
+            <p className="text-sm text-gray-600 opacity-85">
+              <span
+                className="font-bold text-2xl opacity-100"
+                style={{ color: "rgb(34, 87, 73)" }}
+              >
+                75%
+              </span>{" "}
+              <span className="opacity-85"> progress rate</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Recommended Courses */}
         <div
-          className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+          className="p-6  rounded-lg shadow-sm hover:shadow-md transition-shadow"
           style={{ backgroundColor: "rgb(243,243	,238)" }}
         >
           <div className="flex items-center mb-4">
-            <BookOpen
-              className="w-6 h-6 mr-3"
-              style={{ color: "rgb(70, 130, 180)" }}
+            <Clock
+              className="text-indigo-500 w-6 h-6 mr-3"
+              style={{ color: "rgb(225, 129, 107)" }}
             />
             <h2 className="text-xl text-gray-700 uppercase tracking-wider">
-              Overview
+              Recommended Courses
             </h2>
           </div>
-
-          <p className="text-sm ml-1 text-gray-600">
-            <span
-              className=" font-bold mr-2 text-2xl opacity-100"
-              style={{ color: "rgb(70, 130, 180)" }}
-            >
-              {courses?.length || 0}
-            </span>
-            <span className="opacity-85">Total Courses</span>
-          </p>
-          <p className="text-sm ml-1  text-gray-600 ">
-            <span
-              className=" font-bold mr-2 text-2xl opacity-100"
-              style={{ color: "rgb(70, 130, 180)" }}
-            >
-              {courses?.length || 0}
-            </span>
-            <span className="opacity-85">In Progress</span>
-          </p>
-          <p className="text-sm ml-1 text-gray-600">
-            <span
-              className="font-bold mr-2 text-2xl opacity-100"
-              style={{ color: "rgb(70, 130, 180)" }}
-            >
-              3
-            </span>
-            <span className="opacity-85">Completed </span>
-          </p>
-        </div>
-
-        {/* Learning Stats */}
-        <div
-          className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-          style={{ backgroundColor: "rgb(243,243	,238)" }}
-        >
-          <div className="flex items-center mb-4">
-            <BarChart2
-              className=" w-6 h-6 mr-3"
-              style={{ color: "rgb(34, 87, 73)" }}
-            />
-            <h2 className="text-xl text-gray-700 uppercase tracking-wider">
-              Learning Stats
-            </h2>
+          <div>
+            <h3 className="text-lg font-medium text-gray-800">
+              Course Title A
+            </h3>
+            <p className="text-gray-600 mb-2">Explore advanced topics...</p>
+            <button className="text-indigo-500 font-semibold hover:underline">
+              View Course
+            </button>
           </div>
-          <p className="text-sm text-gray-600">
-            <span
-              className="font-bold text-green-600 text-2xl opacity-100"
-              style={{ color: "rgb(34, 87, 73)" }}
-            >
-              {hoursWatched} hours
-            </span>{" "}
-            <span className="opacity-85">studied</span>
-          </p>
-          <p className="text-sm text-gray-600 opacity-85">
-            <span
-              className="font-bold text-2xl opacity-100"
-              style={{ color: "rgb(34, 87, 73)" }}
-            >
-              85%
-            </span>{" "}
-            <span className="opacity-85">average score</span>
-          </p>
-          <p className="text-sm text-gray-600 opacity-85">
-            <span
-              className="font-bold text-2xl opacity-100"
-              style={{ color: "rgb(34, 87, 73)" }}
-            >
-              75%
-            </span>{" "}
-            <span className="opacity-85"> progress rate</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Recommended Courses */}
-      <div
-        className="p-6  rounded-lg shadow-sm hover:shadow-md transition-shadow"
-        style={{ backgroundColor: "rgb(243,243	,238)" }}
-      >
-        <div className="flex items-center mb-4">
-          <Clock
-            className="text-indigo-500 w-6 h-6 mr-3"
-            style={{ color: "rgb(225, 129, 107)" }}
-          />
-          <h2 className="text-xl text-gray-700 uppercase tracking-wider">
-            Recommended Courses
-          </h2>
-        </div>
-        <div>
-          <h3 className="text-lg font-medium text-gray-800">Course Title A</h3>
-          <p className="text-gray-600 mb-2">Explore advanced topics...</p>
-          <button className="text-indigo-500 font-semibold hover:underline">
-            View Course
-          </button>
         </div>
       </div>
     </div>
