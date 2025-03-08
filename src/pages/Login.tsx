@@ -1,8 +1,18 @@
+import { LoginForm } from "@/components/login-form";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/supabaseconsant";
+import { X } from "lucide-react";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
@@ -21,6 +31,26 @@ export default function LoginModal() {
     });
     return { data, error };
   }
+
+  const loginWithEmail = async (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    const { data, error } = await signInWithEmail();
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    if (data?.user) {
+      setShowLoginModal(false);
+      alert("Successfully signed in!");
+      return;
+    }
+
+    alert("Unable to sign in. Please check your credentials.");
+  };
 
   const handleLogin = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -83,7 +113,7 @@ export default function LoginModal() {
         }}
       >
         {/* Modal Content */}
-        <div
+        {/* <div
           style={{
             backgroundColor: "white",
             padding: "20px",
@@ -142,6 +172,72 @@ export default function LoginModal() {
               Continue with Email
             </Button>
           </div>
+        </div> */}
+        <div className="relative flex flex-col gap-6">
+          <Button
+            className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+            variant="ghost"
+            size="icon"
+            aria-label="Close"
+            onClick={() => setShowLoginModal(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardDescription>
+                Enter your email below to login to your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form>
+                <div className="flex flex-col gap-6">
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="m@example.com"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="flex items-center">
+                      <Label htmlFor="password">Password</Label>
+                      <a
+                        href="#"
+                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </a>
+                    </div>
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <Button className="w-full" onClick={(e) => loginWithEmail(e)}>
+                    Login
+                  </Button>
+                  <Button variant="outline" className="w-full">
+                    Login with Google
+                  </Button>
+                </div>
+                <div className="mt-4 text-center text-sm">
+                  Don&apos;t have an account?{" "}
+                  <a href="#" className="underline underline-offset-4">
+                    Sign up
+                  </a>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>

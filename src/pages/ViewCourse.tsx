@@ -43,6 +43,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Progress } from "@/components/ui/progress";
@@ -85,10 +86,10 @@ const parseSummary = (text: string) => {
 
     return (
       <div key={index} className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <h3 className="text-lg font-semibold text-slate-800 mb-2">
           {cleanedHeading}
         </h3>
-        <p className="text-gray-600 leading-relaxed">
+        <p className="text-slate-600 leading-relaxed">
           {content.join(" ").trim()}
         </p>
       </div>
@@ -160,7 +161,7 @@ export default function ViewCourse() {
       : null;
 
   return (
-    <div className="flex flex-col w-full bg-gray-50 min-h-screen">
+    <div className="flex flex-col max-w-4xl mx-auto min-h-screen">
       {/* Mobile Nav Toggle */}
       <div className="lg:hidden fixed top-4 right-4 z-50">
         <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
@@ -168,15 +169,20 @@ export default function ViewCourse() {
             <Button
               variant="outline"
               size="icon"
-              className="bg-white shadow-md"
+              className="bg-white shadow-md border-slate-200"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5 text-slate-700" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80 sm:w-96 p-0">
-            <div className="p-4 border-b">
-              <h2 className="font-semibold text-lg">Course Content</h2>
-              <p className="text-sm text-gray-500">
+          <SheetContent
+            side="right"
+            className="w-80 sm:w-96 p-0 bg-white border-l border-slate-200"
+          >
+            <div className="p-4 border-b border-slate-200">
+              <h2 className="font-semibold text-lg text-slate-800">
+                Course Content
+              </h2>
+              <p className="text-sm text-slate-500">
                 {courseVideos ? `${courseVideos.length} videos` : "Loading..."}
               </p>
             </div>
@@ -200,7 +206,7 @@ export default function ViewCourse() {
                       className={`flex items-start p-3 mb-2 rounded-lg cursor-pointer ${
                         index === selectedCourse
                           ? "bg-cyan-50 border border-cyan-200"
-                          : "hover:bg-gray-100"
+                          : "hover:bg-slate-50"
                       }`}
                     >
                       <div className="flex-shrink-0 mr-3 relative">
@@ -213,7 +219,7 @@ export default function ViewCourse() {
                             />
                           </div>
                         )}
-                        <div className="w-20 h-12 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
+                        <div className="w-20 h-12 bg-slate-200 rounded overflow-hidden flex items-center justify-center">
                           <img
                             src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
                             alt="Video Thumbnail"
@@ -224,14 +230,16 @@ export default function ViewCourse() {
                       <div className="flex-1">
                         <h4
                           className={`text-sm ${
-                            index === selectedCourse ? "font-medium" : ""
+                            index === selectedCourse
+                              ? "font-medium text-slate-800"
+                              : "text-slate-700"
                           }`}
                         >
                           {courseVideo.video_title}
                         </h4>
                         <div className="flex items-center mt-1">
-                          <Clock className="h-3 w-3 text-gray-400 mr-1" />
-                          <span className="text-xs text-gray-500">
+                          <Clock className="h-3 w-3 text-slate-400 mr-1" />
+                          <span className="text-xs text-slate-500">
                             {parseYouTubeDuration(courseVideo.video_duration)}
                           </span>
                         </div>
@@ -245,8 +253,8 @@ export default function ViewCourse() {
 
       {/* Course Header - Only visible on larger screens and when not in theater mode */}
       {!isTheaterMode && (
-        <div className="px-4 py-6 md:px-8 mb-2">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
+        <div className="px-4 py-6 md:px-8 mb-2  border-b border-slate-200">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
             {isLoading ? (
               <Skeleton className="h-8 w-3/4" />
             ) : (
@@ -257,7 +265,7 @@ export default function ViewCourse() {
           {isLoading ? (
             <Skeleton className="h-4 w-1/2" />
           ) : (
-            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500"></div>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500"></div>
           )}
         </div>
       )}
@@ -288,7 +296,7 @@ export default function ViewCourse() {
           `}
           >
             {isLoading || !currentVideo ? (
-              <Skeleton className="w-full h-full bg-gray-800" />
+              <Skeleton className="w-full h-full bg-slate-800" />
             ) : (
               <>
                 <iframe
@@ -307,7 +315,7 @@ export default function ViewCourse() {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 bg-black/40 border-gray-700 text-white hover:bg-black/60"
+                          className="h-8 w-8 bg-black/40 border-slate-700 text-white hover:bg-black/60"
                           onClick={() => setIsTheaterMode(!isTheaterMode)}
                         >
                           {isTheaterMode ? (
@@ -317,7 +325,7 @@ export default function ViewCourse() {
                           )}
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="bg-slate-900 text-white border-slate-800">
                         <p>
                           {isTheaterMode ? "Exit Theater Mode" : "Theater Mode"}
                         </p>
@@ -339,10 +347,10 @@ export default function ViewCourse() {
                 </>
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold text-gray-800">
+                  <h2 className="text-lg font-semibold text-slate-800">
                     {currentVideo.video_title}
                   </h2>
-                  <p className="text-sm text-gray-500 flex items-center mt-1">
+                  <p className="text-sm text-slate-500 flex items-center mt-1">
                     <Clock className="h-4 w-4 mr-1" />
                     {parseYouTubeDuration(currentVideo.video_duration)}
                   </p>
@@ -356,7 +364,7 @@ export default function ViewCourse() {
                 size="sm"
                 onClick={goToPreviousVideo}
                 disabled={isLoading || !courseVideos}
-                className="text-gray-700"
+                className="text-slate-700 border-slate-300 hover:bg-slate-50"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
@@ -366,7 +374,7 @@ export default function ViewCourse() {
                 size="sm"
                 onClick={goToNextVideo}
                 disabled={isLoading || !courseVideos}
-                style={{ backgroundColor: "rgb(64,126,139)" }}
+                className="bg-cyan-600 hover:bg-cyan-500 text-white"
               >
                 Next
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -378,17 +386,17 @@ export default function ViewCourse() {
           {!isTheaterMode && (
             <div className="mb-8">
               <Tabs defaultValue="summary" className="w-full">
-                <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto">
+                <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100">
                   <TabsTrigger
                     value="summary"
-                    className="text-sm font-medium"
+                    className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
                     onClick={() => setShowSummary(true)}
                   >
                     Summary
                   </TabsTrigger>
                   <TabsTrigger
                     value="quiz"
-                    className="text-sm font-medium"
+                    className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
                     onClick={() => setShowSummary(false)}
                   >
                     Quiz
@@ -422,7 +430,7 @@ export default function ViewCourse() {
                       <Skeleton className="h-24 w-full" />
                     </div>
                   ) : (
-                    <div className="bg-white p-6 rounded-lg shadow-sm">
+                    <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
                       <Quiz
                         key={selectedCourse}
                         quiz={currentVideo.quiz as QuizQuestion[]}
@@ -438,13 +446,15 @@ export default function ViewCourse() {
         {/* Right Sidebar - Course Modules (hidden in theater mode and on mobile) */}
         <div
           className={`
-          lg:w-1/3 border-l border-gray-200 bg-white
+          lg:w-1/3 border-l border-slate-200 
           ${isTheaterMode ? "hidden" : "hidden lg:block"}
         `}
         >
-          <div className="p-4 border-b">
-            <h2 className="font-semibold text-lg">Course Content</h2>
-            <p className="text-sm text-gray-500">
+          <div className="p-4 border-b border-slate-200">
+            <h2 className="font-semibold text-lg text-slate-800">
+              Course Content
+            </h2>
+            <p className="text-sm text-slate-500">
               {courseVideos ? `${courseVideos.length} videos` : "Loading..."}
             </p>
           </div>
@@ -467,19 +477,21 @@ export default function ViewCourse() {
                       onClick={() => setSelectedCourse(index)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         index === selectedCourse
-                          ? "bg-cyan-50 border border-cyan-200"
-                          : "hover:bg-gray-100"
+                          ? " border border-[#407e8b] "
+                          : "hover:bg-slate-50"
                       }`}
                     >
                       <div className="flex items-start">
                         <div className="flex-shrink-0 mr-3">
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center">
                             {index < selectedCourse ? (
-                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <CheckCircle className="h-5 w-5 text-emerald-700" />
                             ) : index === selectedCourse ? (
-                              <Play className="h-4 w-4 text-cyan-500 fill-cyan-500" />
+                              <div className="bg-cyan-100 rounded-full p-1.5">
+                                <Play className="h-4 w-4 text-cyan-600 fill-cyan-600" />
+                              </div>
                             ) : (
-                              <span className="text-xs font-medium text-gray-700">
+                              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 text-xs font-medium text-slate-700">
                                 {index + 1}
                               </span>
                             )}
@@ -488,14 +500,16 @@ export default function ViewCourse() {
                         <div className="flex-1">
                           <h4
                             className={`text-sm ${
-                              index === selectedCourse ? "font-medium" : ""
+                              index === selectedCourse
+                                ? "font-medium text-slate-800"
+                                : "text-slate-700"
                             } line-clamp-2`}
                           >
                             {courseVideo.video_title}
                           </h4>
                           <div className="flex items-center mt-1">
-                            <Tv className="h-3 w-3 text-gray-400 mr-1" />
-                            <span className="text-xs text-gray-500">
+                            <Tv className="h-3 w-3 text-slate-400 mr-1" />
+                            <span className="text-xs text-slate-500">
                               {parseYouTubeDuration(courseVideo.video_duration)}
                             </span>
                           </div>
@@ -506,11 +520,11 @@ export default function ViewCourse() {
                         <div className="mt-2 pl-11">
                           <div className="flex gap-2">
                             <Badge
-                              variant="outline"
+                              variant={showSummary ? "default" : "outline"}
                               className={`text-xs ${
                                 showSummary
-                                  ? "bg-cyan-50 text-cyan-700 border-cyan-200"
-                                  : ""
+                                  ? "bg-cyan-600 hover:bg-cyan-500"
+                                  : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                               }`}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -520,11 +534,11 @@ export default function ViewCourse() {
                               Summary
                             </Badge>
                             <Badge
-                              variant="outline"
+                              variant={!showSummary ? "default" : "outline"}
                               className={`text-xs ${
                                 !showSummary
-                                  ? "bg-cyan-50 text-cyan-700 border-cyan-200"
-                                  : ""
+                                  ? "bg-cyan-600 hover:bg-cyan-500"
+                                  : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                               }`}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -547,12 +561,16 @@ export default function ViewCourse() {
 
       {/* Theater Mode Content Tab */}
       {isTheaterMode && currentVideo && (
-        <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
+        <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg">
           <Collapsible>
             <div className="px-4 py-3 flex items-center justify-between">
-              <h3 className="font-medium">Content</h3>
+              <h3 className="font-medium text-slate-800">Content</h3>
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-slate-600 hover:bg-slate-100"
+                >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </CollapsibleTrigger>
@@ -561,15 +579,17 @@ export default function ViewCourse() {
             <CollapsibleContent>
               <div className="px-4 pb-4">
                 <Tabs defaultValue="summary" className="w-full">
-                  <TabsList className="mb-6">
+                  <TabsList className="mb-6 bg-slate-100">
                     <TabsTrigger
                       value="summary"
+                      className="data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
                       onClick={() => setShowSummary(true)}
                     >
                       Summary
                     </TabsTrigger>
                     <TabsTrigger
                       value="quiz"
+                      className="data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
                       onClick={() => setShowSummary(false)}
                     >
                       Quiz
@@ -583,7 +603,7 @@ export default function ViewCourse() {
                   </TabsContent>
 
                   <TabsContent value="quiz">
-                    <div className="bg-white rounded-lg">
+                    <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
                       <Quiz
                         key={selectedCourse}
                         quiz={currentVideo.quiz as QuizQuestion[]}

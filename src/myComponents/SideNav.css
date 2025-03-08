@@ -1,17 +1,112 @@
-/* Base side navigation styles */
+/* Modern side navigation styles */
 .side-nav {
-  width: 100px; /* Start with closed width */
-  transition: width 0.25s ease-in-out; /* Default transition */
+  /* background-color: #f9fafb; */
+  border-right: 1px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  height: 100vh;
+  position: fixed;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Open state */
 .side-nav:not(.closed) {
-  width: 220px;
-  transition: width 0.2s ease-in-out; /* Longer duration when opening */
+  width: 240px;
 }
 
 /* Closed state */
 .side-nav.closed {
-  width: 100px; /* Closed width */
-  transition: width 0.25s ease-in-out; /* Shorter duration when closing */
+  width: 72px;
+}
+
+/* Nav item styling */
+.nav-item {
+  border-radius: 8px;
+  margin-bottom: 6px;
+  transition: all 0.2s;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.nav-item:hover {
+  background-color: rgba(64, 126, 139, 0.08);
+  cursor: pointer;
+}
+
+.nav-item.active {
+  background-color: rgba(64, 126, 139, 0.12);
+  color: rgb(64, 126, 139);
+  font-weight: 500;
+}
+
+.nav-item.active svg {
+  color: rgb(64, 126, 139);
+}
+
+/* Course item styling */
+.course-item {
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  overflow: hidden;
+}
+
+.course-item:hover {
+  background-color: rgba(64, 126, 139, 0.05);
+  cursor: pointer;
+}
+
+.course-item.active {
+  background-color: rgba(64, 126, 139, 0.08);
+  color: rgb(64, 126, 139);
+}
+.course-item.active svg {
+  color: rgb(64, 126, 139);
+}
+
+/* Logo section */
+.logo-section {
+  padding: 0px 6px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+/* Action buttons */
+.action-button {
+  transition: all 0.15s ease;
+  border-radius: 6px;
+  background-color: transparent;
+}
+
+.action-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Progress bar styled */
+.progress-bar {
+  height: 4px;
+  border-radius: 2px;
+  background-color: #e5e7eb;
+  overflow: hidden;
+}
+
+.progress-bar .progress {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgb(64, 126, 139) 0%,
+    rgb(86, 156, 170) 100%
+  );
+  border-radius: 2px;
+}
+
+/* Footer buttons */
+.footer-button {
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.footer-button:hover {
+  background-color: rgba(0, 0, 0, 0.04);
 }
