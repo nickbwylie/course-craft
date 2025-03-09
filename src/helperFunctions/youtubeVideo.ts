@@ -132,8 +132,6 @@ export async function getYouTubeVideoData(
   try {
     const data = await axios.get(`${SERVER}/video_data/${videoId}`);
 
-    console.log(data);
-
     const videoData = data.data.items[0];
 
     // channel title
