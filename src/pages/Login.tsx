@@ -1,27 +1,239 @@
-import { LoginForm } from "@/components/login-form";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { X } from "lucide-react";
+import { supabase } from "@/supabaseconsant";
+import { useAuth } from "@/contexts/AuthContext";
+
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/supabaseconsant";
-import { X } from "lucide-react";
-import { useState } from "react";
-import { FaGoogle } from "react-icons/fa";
+
+import { toast as SonnerToast } from "sonner";
+
+// Form validation schema
+const formSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+  terms: z.boolean().refine((value) => value === true, {
+    message: "You must agree to the terms and conditions",
+  }),
+});
+
+function SignupForm({
+  setShowLoginModal,
+  setShowSignUpModal,
+}: {
+  setShowLoginModal: (state: boolean) => void;
+  setShowSignUpModal: (state: boolean) => void;
+}) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      terms: false,
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) {
+        SonnerToast.error("Error", {
+          description: error.message,
+        });
+
+        return;
+      }
+
+      if (data?.user?.id) {
+        // Create user record in the users table
+        await supabase.from("users").insert({
+          id: data.user.id,
+          email: values.email,
+          created_at: new Date().toISOString(),
+          name: "",
+        });
+
+        SonnerToast("Success", {
+          description: "Your account has been created.",
+        });
+
+        // Switch back to login view
+        setShowLoginModal(false);
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      SonnerToast.error("Error", {
+        description: "An unexpected error occurred. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="relative flex flex-col gap-6 w-[400px]">
+      <Button
+        className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+        variant="ghost"
+        size="icon"
+        aria-label="Close"
+        onClick={() => setShowLoginModal(false)}
+      >
+        <X className="h-4 w-4" />
+      </Button>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl">Create an account</CardTitle>
+          <CardDescription>
+            Enter your information to get started
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Create a password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Must be at least 8 characters
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="terms"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        I agree to the{" "}
+                        <a
+                          href="/terms"
+                          className="text-primary hover:underline"
+                        >
+                          terms of service
+                        </a>{" "}
+                        and{" "}
+                        <a
+                          href="/privacy"
+                          className="text-primary hover:underline"
+                        >
+                          privacy policy
+                        </a>
+                      </FormLabel>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Creating account..." : "Sign up"}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <a
+              onClick={() => setShowSignUpModal(false)}
+              className="text-primary cursor-pointer hover:underline"
+            >
+              Sign in
+            </a>
+          </p>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}
 
 export default function LoginModal() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { showLoginModal, setShowLoginModal } = useAuth();
+  const [showSignUpModal, setShowSignUpModal] = useState(false);
   if (!showLoginModal) {
     return <></>;
+  }
+
+  async function forgotPassword() {
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+
+      console.log(data);
+      console.log(error);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async function signInWithEmail() {
@@ -112,133 +324,87 @@ export default function LoginModal() {
           zIndex: 1000,
         }}
       >
-        {/* Modal Content */}
-        {/* <div
-          style={{
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "8px",
-            maxWidth: "500px",
-            width: "100%",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-            position: "relative",
-          }}
-        >
-          <Button
-            className="absolute top-2 right-2"
-            variant="ghost"
-            size="icon"
-            aria-label="Close"
-            onClick={() => setShowLoginModal(false)}
-          >
-            X
-          </Button>
-
-          <h3 className="text-3xl text-center">Sign in to Create a Course</h3>
-          <h5 className="text-sm font-light text-center">
-            Sign in or sign up to continue
-          </h5>
-
-          <div className="w-full flex flex-col pt-8 space-y-2">
+        {!showSignUpModal ? (
+          <div className="relative flex flex-col gap-6 w-[400px]">
             <Button
-              className="w-full p-2"
-              style={{ backgroundColor: "rgb(64,126,139)" }}
+              className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
+              variant="ghost"
+              size="icon"
+              aria-label="Close"
+              onClick={() => setShowLoginModal(false)}
             >
-              <h5 className="w-full text-white text-md flex flex-row space-x-2 justify-center items-center ">
-                <FaGoogle />
-                <div>Continue with Google</div>
-              </h5>
+              <X className="h-4 w-4" />
             </Button>
-            <Separator />
-
-            <Input
-              type="email"
-              placeholder="Enter your Email"
-              className="inputField"
-              value={email}
-              required={true}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <Input
-              type="password"
-              placeholder="Enter your Password"
-              className="inputField"
-              value={password}
-              required={true}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button variant="secondary" onClick={(e) => handleLogin(e)}>
-              Continue with Email
-            </Button>
-          </div>
-        </div> */}
-        <div className="relative flex flex-col gap-6">
-          <Button
-            className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
-            variant="ghost"
-            size="icon"
-            aria-label="Close"
-            onClick={() => setShowLoginModal(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Login</CardTitle>
-              <CardDescription>
-                Enter your email below to login to your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form>
-                <div className="flex flex-col gap-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Login</CardTitle>
+                <CardDescription>
+                  Enter your email below to login to your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form>
+                  <div className="flex flex-col gap-6">
+                    <div className="grid gap-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="m@example.com"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <div className="grid gap-2">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">Password</Label>
+                        <a
+                          href="#"
+                          className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                          onClick={() => forgotPassword()}
+                        >
+                          Forgot your password?
+                        </a>
+                      </div>
+                      <Input
+                        id="password"
+                        type="password"
+                        required
+                        value={password}
+                        placeholder="Create a password"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      className="w-full"
+                      onClick={(e) => loginWithEmail(e)}
+                    >
+                      Login
+                    </Button>
+                    <Button variant="outline" className="w-full">
+                      Login with Google
+                    </Button>
                   </div>
-                  <Button className="w-full" onClick={(e) => loginWithEmail(e)}>
-                    Login
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    Login with Google
-                  </Button>
-                </div>
-                <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <a href="#" className="underline underline-offset-4">
-                    Sign up
-                  </a>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+                  <div className="mt-4 text-center text-sm">
+                    Don&apos;t have an account?{" "}
+                    <a
+                      onClick={() => setShowSignUpModal(true)}
+                      className="underline underline-offset-4 cursor-pointer"
+                    >
+                      Sign up
+                    </a>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <SignupForm
+            setShowSignUpModal={setShowSignUpModal}
+            setShowLoginModal={setShowLoginModal}
+          />
+        )}
       </div>
     </>
   );

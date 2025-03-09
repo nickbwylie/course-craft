@@ -9,10 +9,10 @@ import {
   LogOut,
   LayoutDashboard,
   ArrowLeftToLine,
-  ArrowRightToLine,
   LogIn,
   MoreHorizontal,
   Trash,
+  Library,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
@@ -37,12 +37,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
+import SupportModal from "./SupportModal.tsx";
 
 const navItems = [
   {
-    name: "dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    name: "library",
+    href: "/library",
+    icon: Library,
   },
   { name: "explore", href: "/explore", icon: Compass },
   { name: "create", href: "/create", icon: CirclePlus },
@@ -65,6 +66,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const { courses } = useCoursesActivity();
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
+  const [supportModalOpen, setSupportModalOpen] = useState(false);
 
   const deleteCourse = async (courseId: string) => {
     try {
@@ -114,9 +116,9 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
-      if (window.innerWidth <= 768) {
-        setNavOpen(false);
-      }
+      // if (window.innerWidth <= 768) {
+      //   setNavOpen(false);
+      // }
     };
 
     window.addEventListener("resize", handleResize);
@@ -188,7 +190,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           {/* Main navigation */}
           <div className="space-y-1 mt-2">
             {navItems.map((item) => {
-              if (item.name === "dashboard" && !user?.id) return null;
+              if (item.name === "library" && !user?.id) return null;
               const isActive = item.href === url;
 
               return (
@@ -279,7 +281,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                       </div>
 
                       {/* Progress bar */}
-                      <div className="mt-2 flex items-center space-x-2">
+                      {/* <div className="mt-2 flex items-center space-x-2">
                         <div className="progress-bar flex-grow">
                           <div
                             className="progress"
@@ -287,7 +289,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                           ></div>
                         </div>
                         <span className="text-xs ">45%</span>
-                      </div>
+                      </div> */}
                     </div>
                   );
                 })}
@@ -303,11 +305,11 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               className={`footer-button p-2 flex items-center cursor-pointer ${
                 !delayedOpen ? "justify-center " : ""
               }`}
-              onClick={() => navigate("/support")}
+              onClick={() => setSupportModalOpen(true)}
             >
               <HelpCircle className="h-5 w-5 text-slate-600" />
               {navOpen && (
-                <span className="ml-3 text-sm font-medium">Support</span>
+                <span className="ml-3 text-sm font-medium">Help</span>
               )}
             </div>
 
@@ -341,6 +343,10 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           </div>
         </div>
       </ScrollArea>
+      <SupportModal
+        supportModalOpen={supportModalOpen}
+        setSupportModalOpen={setSupportModalOpen}
+      />
     </div>
   );
 }

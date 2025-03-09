@@ -10,6 +10,7 @@ export interface AddCourseRequest {
   difficulty: 1 | 3 | 5;
   questionCount: 1 | 2 | 3;
   summary_detail: 1 | 3 | 5;
+  is_public: boolean;
 }
 
 export type YoutubeVideoPreview = {

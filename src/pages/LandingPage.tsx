@@ -188,7 +188,6 @@ const LandingPage = () => {
           </motion.div>
         </div>
       </section>
-
       {/* How it Works Section */}
       <section className="py-24 px-6 bg-gradient-to-b from-white to-slate-50">
         <div className="max-w-7xl mx-auto">
@@ -229,7 +228,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* Take Control Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -284,7 +282,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* Explore Section */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
@@ -339,7 +336,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
       {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-7xl mx-auto px-6">
@@ -398,40 +394,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Pricing Section
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <FadeInWhenVisible>
-            <div className="text-center mb-16">
-              <span className="inline-block py-1 px-3 text-sm font-medium bg-primary/10 text-primary rounded-full mb-4">
-                Pricing Plans
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Get Started Now and Transform Your Learning
-              </h2>
-              <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
-              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                Choose the plan that fits your learning needs. All plans include
-                our core features.
-              </p>
-            </div>
-          </FadeInWhenVisible>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FadeInWhenVisible delay={0.2}>
-              <PricingBlock priceLevel="starter" />
-            </FadeInWhenVisible>
-            <FadeInWhenVisible delay={0.4}>
-              <PricingBlock priceLevel="premium" />
-            </FadeInWhenVisible>
-            <FadeInWhenVisible delay={0.6}>
-              <PricingBlock priceLevel="advanced" />
-            </FadeInWhenVisible>
-          </div>
-        </div>
-      </section> */}
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary to-blue-600 text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -455,7 +417,6 @@ const LandingPage = () => {
           </FadeInWhenVisible>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="py-12 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">

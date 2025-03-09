@@ -201,7 +201,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
     navigate(`/course/${course_id}`);
   }, [course_id, navigate]);
 
-  const getDifficultyColor = useCallback((difficulty: string) => {
+  const getDifficultyColor = useCallback((difficulty: number) => {
     const type = difficulty as keyof typeof courseDifficultyMap;
 
     switch (type) {
@@ -235,11 +235,13 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
       >
         <div className="relative group bg-white rounded-lg overflow-hidden">
           {/* Thumbnail with overlay */}
-          <div className="w-full h-40 overflow-hidden">
+          <div className="w-full relative pb-[56.25%] overflow-hidden">
+            {" "}
+            {/* 16:9 aspect ratio */}
             <img
               src={thumbnail_url}
               alt={course_title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute top-2 right-2 bg-black/70 text-white text-xs font-medium px-2 py-1 rounded-md backdrop-blur-sm">
               {shortTime}
@@ -275,7 +277,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-lg border-slate-200"
+        className="w-80 p-0 shadow-lg border-slate-200 hidden sm:block "
         side="right"
         align="start"
       >
@@ -517,7 +519,7 @@ export default function ExplorePage() {
     : [];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 ">
+    <div className="max-w-4xl mx-auto px-8 py-8 ">
       {/* Main content */}
       <div className="space-y-12">
         {/* Featured courses section */}
@@ -530,13 +532,13 @@ export default function ExplorePage() {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
                 <SkeletonFeatureCard key={i} />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {featuredCourses.map((course, index) => (
                 <FeatureCard key={course.course_id || index} {...course} />
               ))}
@@ -649,13 +651,13 @@ export default function ExplorePage() {
 
             <TabsContent value="all" className="mt-0">
               {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                     <FastSkeletonCard key={i} />
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {filteredCourses?.map((course, index) => (
                     <CourseCard key={course.course_id || index} {...course} />
                   ))}

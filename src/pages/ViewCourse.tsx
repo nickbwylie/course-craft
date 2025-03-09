@@ -163,7 +163,7 @@ export default function ViewCourse() {
   return (
     <div className="flex flex-col max-w-4xl mx-auto min-h-screen">
       {/* Mobile Nav Toggle */}
-      <div className="lg:hidden fixed top-4 right-4 z-50">
+      <div className="lg:hidden fixed top-4 right-8 z-50">
         <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
           <SheetTrigger asChild>
             <Button
@@ -253,7 +253,7 @@ export default function ViewCourse() {
 
       {/* Course Header - Only visible on larger screens and when not in theater mode */}
       {!isTheaterMode && (
-        <div className="px-4 py-6 md:px-8 mb-2  border-b border-slate-200">
+        <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200">
           <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
             {isLoading ? (
               <Skeleton className="h-8 w-3/4" />
@@ -279,21 +279,21 @@ export default function ViewCourse() {
         {/* Left Content Area - Video and Tabs */}
         <div
           className={`
-          ${
-            isTheaterMode
-              ? "w-full h-full flex flex-col"
-              : "lg:w-2/3 px-4 md:px-8 pb-8"
-          } 
-          transition-all duration-300
-        `}
+            ${
+              isTheaterMode
+                ? "w-full h-full flex flex-col"
+                : "lg:w-2/3 px-8 pt-4 md:px-8 pb-8"
+            } 
+            transition-all duration-300
+          `}
         >
           {/* Video Container */}
           <div
             className={`
-            relative bg-black rounded-lg overflow-hidden shadow-lg 
-            ${isTheaterMode ? "flex-1" : "aspect-video"}
-            mb-4
-          `}
+              relative bg-black rounded-lg overflow-hidden shadow-lg 
+              ${isTheaterMode ? "flex-1" : "aspect-video"}
+              mb-6
+            `}
           >
             {isLoading || !currentVideo ? (
               <Skeleton className="w-full h-full bg-slate-800" />
@@ -416,7 +416,7 @@ export default function ViewCourse() {
                         </div>
                       ))
                   ) : (
-                    <div className="prose prose-sm max-w-none">
+                    <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
                       {parseSummary(currentVideo.video_summary)}
                     </div>
                   )}
@@ -430,7 +430,7 @@ export default function ViewCourse() {
                       <Skeleton className="h-24 w-full" />
                     </div>
                   ) : (
-                    <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <div className="border border-slate-100 rounded-lg bg-white">
                       <Quiz
                         key={selectedCourse}
                         quiz={currentVideo.quiz as QuizQuestion[]}
@@ -446,9 +446,9 @@ export default function ViewCourse() {
         {/* Right Sidebar - Course Modules (hidden in theater mode and on mobile) */}
         <div
           className={`
-          lg:w-1/3 border-l border-slate-200 
-          ${isTheaterMode ? "hidden" : "hidden lg:block"}
-        `}
+            lg:w-1/3 lg:border-l lg:border-slate-200
+            ${isTheaterMode ? "hidden" : "hidden lg:block"}
+          `}
         >
           <div className="p-4 border-b border-slate-200">
             <h2 className="font-semibold text-lg text-slate-800">
@@ -477,7 +477,7 @@ export default function ViewCourse() {
                       onClick={() => setSelectedCourse(index)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         index === selectedCourse
-                          ? " border border-[#407e8b] "
+                          ? "bg-[#407e8b14] "
                           : "hover:bg-slate-50"
                       }`}
                     >
@@ -597,13 +597,13 @@ export default function ViewCourse() {
                   </TabsList>
 
                   <TabsContent value="summary">
-                    <div className="prose prose-sm max-w-none">
+                    <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
                       {parseSummary(currentVideo.video_summary)}
                     </div>
                   </TabsContent>
 
                   <TabsContent value="quiz">
-                    <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
+                    <div className="border border-slate-100 rounded-lg bg-white">
                       <Quiz
                         key={selectedCourse}
                         quiz={currentVideo.quiz as QuizQuestion[]}

@@ -6,6 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
 import { useMemo } from "react";
+import LibraryPage from "./pages/LibraryPage";
 // import Login from "./pages/Login";
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/create" element={<CreateCourse />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/library" element={<LibraryPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

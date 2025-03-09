@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FaYoutube } from "react-icons/fa";
+import { FaMagic, FaYoutube } from "react-icons/fa";
 import {
   CheckCircle,
-  Clock,
   HelpCircle,
   MonitorPlay,
+  Sparkle,
+  Sparkles,
   Trash,
-  X,
 } from "lucide-react";
 
 // UI Components
@@ -50,6 +50,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Helpers and types
 import {
@@ -61,6 +62,7 @@ import {
   parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
+import { MagicWandIcon } from "@radix-ui/react-icons";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -80,6 +82,7 @@ const courseFormSchema = z.object({
   courseDetail: z.string({
     required_error: "Please select the level of detail.",
   }),
+  isPublic: z.boolean().default(true),
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
@@ -94,6 +97,7 @@ export default function CreateCoursePage() {
       description: "",
       courseDifficulty: "Normal",
       courseDetail: "Normal",
+      isPublic: true,
     },
   });
 
@@ -243,6 +247,7 @@ export default function CreateCoursePage() {
           difficultyToNumber[
             data.courseDetail as keyof typeof difficultyToNumber
           ] || 3,
+        is_public: data.isPublic,
       };
 
       const response = await createCourse(courseRequest);
@@ -270,18 +275,19 @@ export default function CreateCoursePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-8 py-8">
       {/* Header */}
-      <div className="mb-4">
+      <div className="mb-4 flex flex-row space-x-2 items-center">
+        <Sparkles className="text-[#407e8b] h-5 w-5" />
         <h1 className="text-xl font-bold">Create a New Course</h1>
       </div>
 
       {/* Main form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8">
             {/* Course form (left side) */}
-            <div className="md:col-span-2 space-y-6">
+            <div className="w-full space-y-6">
               {/* Course information section */}
               <div className="bg-white p-6 rounded-lg border shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">
@@ -319,6 +325,29 @@ export default function CreateCoursePage() {
                         />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isPublic"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-6">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Make course public</FormLabel>
+                        <FormDescription>
+                          Public courses will appear in explore page and will be
+                          accessible to all users. Private courses are only
+                          visible to you.
+                        </FormDescription>
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -546,7 +575,7 @@ export default function CreateCoursePage() {
             </div>
 
             {/* Course summary sidebar (right side) */}
-            <div className="md:col-span-1">
+            <div className="w-full">
               <div className="sticky top-6 bg-white p-6 rounded-lg border shadow-sm">
                 <h2 className="text-lg font-semibold mb-4">Course Summary</h2>
 
@@ -577,6 +606,16 @@ export default function CreateCoursePage() {
                       </Badge>
                       <Badge variant="outline" className="bg-gray-100">
                         {form.watch("courseDetail") || "Normal"} Detail
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={
+                          form.watch("isPublic")
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100"
+                        }
+                      >
+                        {form.watch("isPublic") ? "Public" : "Private"}
                       </Badge>
                     </div>
                   </div>

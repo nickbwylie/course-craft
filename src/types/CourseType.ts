@@ -29,6 +29,7 @@ export interface CourseWithFirstVideo {
   created_at: string;
   course_difficulty: number;
   detaillevel: string;
+  public: boolean;
 }
 
 export const courseDifficultyMap = {
