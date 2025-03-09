@@ -7,6 +7,10 @@ import {
   Library,
   Trash,
   PlayCircle,
+  BookOpenCheck,
+  Search,
+  PlusCircle,
+  BookMarked,
 } from "lucide-react";
 import { CourseWithFirstVideo } from "@/types/CourseType";
 import { Button } from "@/components/ui/button";
@@ -21,6 +25,7 @@ import {
 import { supabase } from "@/supabaseconsant";
 import { SERVER } from "@/constants";
 import { toast } from "@/hooks/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
@@ -177,6 +182,63 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
   );
 }
 
+// Empty state component
+function EmptyLibrary({ onCreateClick }: { onCreateClick: () => void }) {
+  return (
+    <Card className="w-full border border-dashed border-gray-300 bg-white/50">
+      <CardContent className="flex flex-col items-center justify-center py-16">
+        <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+          <BookMarked className="h-8 w-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-700 mb-2">
+          Your library is empty
+        </h3>
+        <p className="text-gray-500 text-center max-w-md mb-6">
+          Create your first course by combining YouTube videos into a
+          personalized learning experience.
+        </p>
+        <Button
+          className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700"
+          onClick={onCreateClick}
+        >
+          <PlusCircle className="h-4 w-4" />
+          Create a Course
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// In Progress empty state
+function EmptyInProgress() {
+  const navigate = useNavigate();
+
+  return (
+    <Card className="w-full border border-dashed border-gray-300 bg-white/50">
+      <CardContent className="flex flex-col items-center justify-center py-16">
+        <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+          <BookOpenCheck className="h-8 w-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-700 mb-2">
+          No courses in progress
+        </h3>
+        <p className="text-gray-500 text-center max-w-md mb-6">
+          Start learning from your courses or explore new ones to see them
+          appear here.
+        </p>
+        <Button
+          variant="outline"
+          className="flex items-center gap-2"
+          onClick={() => navigate("/explore")}
+        >
+          <Search className="h-4 w-4" />
+          Explore Courses
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 function LibraryPage() {
   const [selected, setSelected] = useState(0);
   const tabs = ["MyCourses", "In Progress"];
@@ -216,6 +278,7 @@ function LibraryPage() {
       });
     }
   };
+  const navigate = useNavigate();
 
   const selectedStyle =
     "pb-2 text-lg cursor-pointer border-b-2  font-normal border-gray-800";
@@ -251,6 +314,10 @@ function LibraryPage() {
             }}
           />
         ))}
+        {courses.length === 0 && selected === 0 && (
+          <EmptyLibrary onCreateClick={() => navigate("/create")} />
+        )}
+        {courses.length === 0 && selected === 1 && <EmptyInProgress />}
       </div>
     </div>
   );
