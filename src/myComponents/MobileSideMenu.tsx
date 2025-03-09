@@ -1,26 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCoursesActivity } from "@/contexts/CoursesActivityContext";
 import { useParams } from "react-router-dom";
 import { FaFeatherAlt } from "react-icons/fa";
-import { Progress } from "@/components/ui/progress";
 import { SERVER } from "@/constants";
 import { supabase } from "@/supabaseconsant";
-import {
-  Book,
-  HelpCircle,
-  LogOut,
-  LogIn,
-  Trash,
-  PlusCircle,
-  BookOpen,
-  Lightbulb,
-  CheckCircle,
-} from "lucide-react";
+import { Book, HelpCircle, LogOut, LogIn, Trash } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,15 +19,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import SupportModal from "./SupportModal";
 
 interface MobileSideMenuProps {

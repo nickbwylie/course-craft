@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MobileSideMenu from "@/myComponents/MobileSideMenu";
-import {
-  CirclePlus,
-  LayoutDashboard,
-  Search,
-  Menu,
-  Activity,
-  ChevronLeft,
-  MessageSquare,
-  Library,
-} from "lucide-react";
+import { CirclePlus, Search, Menu, ChevronLeft, Library } from "lucide-react";
 
 const navItems = [
   {
@@ -26,16 +17,10 @@ const navItems = [
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
 ] as const;
 
-interface BottomNavProps {
-  navOpen: boolean;
-  setNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function BottomNav({ navOpen, setNavOpen }: BottomNavProps) {
+export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setShowLoginModal } = useAuth();
-  const { id } = useParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const isCoursePage = location.pathname.includes("/course/");
   const [safeAreaBottom, setSafeAreaBottom] = useState(
@@ -89,22 +74,6 @@ export default function BottomNav({ navOpen, setNavOpen }: BottomNavProps) {
                 <ChevronLeft className="h-6 w-6" />
                 <span className="text-sm font-medium mt-1">Back</span>
               </Button>
-              {/* <Button
-                variant="ghost"
-                className={getButtonStyles(true)}
-                onClick={() => {}}
-              >
-                <Activity className="h-6 w-6" />
-                <span className="text-sm font-medium mt-1">Progress</span>
-              </Button>
-              <Button
-                variant="ghost"
-                className={getButtonStyles(false)}
-                onClick={() => {}}
-              >
-                <MessageSquare className="h-6 w-6" />
-                <span className="text-sm font-medium mt-1">Notes</span>
-              </Button> */}
             </>
           ) : (
             <>

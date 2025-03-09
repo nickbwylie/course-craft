@@ -15,8 +15,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import CreateACourseForm from "@/myComponents/CreateACourseForm";
-import { NavigationMenuDemo } from "@/myComponents/test";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { z } from "zod";

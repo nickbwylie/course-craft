@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CourseWithFirstVideo } from "@/pages/ExplorePage";
+import { CourseWithFirstVideo } from "@/types/CourseType";
 import { Link } from "react-router-dom";
 
 export interface CourseResult {
@@ -12,8 +12,6 @@ export default function CourseResult({
   course_id,
   course_title,
   thumbnail_url,
-  video_id,
-  video_title,
 }: CourseWithFirstVideo) {
   return (
     <div className="flex w-full no-wrap border-b-2 pb-4">

@@ -2,12 +2,11 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FaMagic, FaYoutube } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa";
 import {
   CheckCircle,
   HelpCircle,
   MonitorPlay,
-  Sparkle,
   Sparkles,
   Trash,
 } from "lucide-react";
@@ -62,7 +61,6 @@ import {
   parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
-import { MagicWandIcon } from "@radix-ui/react-icons";
 
 // Form schema
 const courseFormSchema = z.object({
