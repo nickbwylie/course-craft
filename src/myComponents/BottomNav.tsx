@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,30 +23,79 @@ export default function BottomNav() {
   const { user, setShowLoginModal } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const isCoursePage = location.pathname.includes("/course/");
-  const [safeAreaBottom, setSafeAreaBottom] = useState(
+  const [safeAreaBottom, setSafeAreaBottom] = useState<string>(
     "env(safe-area-inset-bottom, 0px)"
   );
+  const [navHeight, setNavHeight] = useState<number>(56); // Default height
+  const navRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
 
-  // iOS detection and safe area handling
+  // Handle viewport and safe area
   useEffect(() => {
     const isIOS =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
-    if (isIOS) {
-      const updateSafeArea = () => {
-        // Small delay to ensure safe area values are updated after orientation change
-        setTimeout(() => {
+    const updateSafeArea = () => {
+      // Small delay to ensure safe area values are updated after orientation change
+      setTimeout(() => {
+        if (isIOS) {
           setSafeAreaBottom("env(safe-area-inset-bottom, 16px)");
-        }, 100);
-      };
+        } else {
+          setSafeAreaBottom("env(safe-area-inset-bottom, 0px)");
+        }
 
-      window.addEventListener("orientationchange", updateSafeArea);
-      updateSafeArea(); // Initial call
+        // Update nav height based on actual element height
+        if (navRef.current) {
+          const actualHeight = navRef.current.offsetHeight;
+          setNavHeight(actualHeight);
+        }
+      }, 100);
+    };
 
-      return () =>
-        window.removeEventListener("orientationchange", updateSafeArea);
-    }
+    // Update on resize and orientation change
+    window.addEventListener("resize", updateSafeArea);
+    window.addEventListener("orientationchange", updateSafeArea);
+
+    // Initial call
+    updateSafeArea();
+
+    // Clean up event listeners
+    return () => {
+      window.removeEventListener("resize", updateSafeArea);
+      window.removeEventListener("orientationchange", updateSafeArea);
+    };
   }, []);
+
+  // Handle scroll behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Show nav when scrolling up or at top/bottom of page
+      if (
+        currentScrollY <= 20 ||
+        currentScrollY < lastScrollY ||
+        currentScrollY + window.innerHeight >= document.body.scrollHeight - 20
+      ) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Hide nav when scrolling down (beyond first 100px)
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Make sure nav is visible on page load
+    setIsVisible(true);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
 
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
@@ -58,9 +107,17 @@ export default function BottomNav() {
   return (
     <>
       <div
-        className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md z-50 md:hidden"
+        ref={navRef}
+        className={`fixed left-0 right-0 bg-white border-t border-gray-200 shadow-md z-50 md:hidden transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "translate-y-full"
+        }`}
         style={{
+          bottom: 0,
           paddingBottom: safeAreaBottom,
+          // Add viewport-relative positioning as a fallback
+          position: "fixed",
+          // Ensure the nav sits above other elements
+          zIndex: 999,
         }}
       >
         <div className="flex items-center justify-between px-3">
@@ -123,9 +180,14 @@ export default function BottomNav() {
           </Sheet>
         </div>
       </div>
+      {/* Spacer to prevent content from being hidden behind the nav */}
       <div
         className="h-20 md:hidden"
-        style={{ marginBottom: safeAreaBottom }}
+        style={{
+          marginBottom: safeAreaBottom,
+          visibility: isVisible ? "visible" : "hidden",
+          transition: "height 0.3s ease",
+        }}
       />
     </>
   );
