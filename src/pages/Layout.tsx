@@ -87,9 +87,7 @@ const Layout = () => {
             </div>
 
             {/* Show bottom navigation on mobile */}
-            {isMobile && (
-              <BottomNav navOpen={navOpen} setNavOpen={setNavOpen} />
-            )}
+            {isMobile && <BottomNav />}
           </div>
           <ToastViewport />
         </ToastProvider>

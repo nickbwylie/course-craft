@@ -43,7 +43,6 @@
 .nav-item.active svg {
   color: rgb(64, 126, 139);
 }
-
 /* Course item styling */
 .course-item {
   border-radius: 8px;
@@ -109,4 +108,31 @@
 
 .footer-button:hover {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.scroll-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  height: calc(100vh - 64px - 100px);
+}
+
+.scroll-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+/* Fixed footer at bottom */
+.fixed-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 6px 16px 6px;
+  z-index: 10;
+  background-color: rgb(243, 243, 239);
 }
