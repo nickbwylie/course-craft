@@ -100,9 +100,7 @@ export default function MobileSideMenu({
                 return (
                   <div
                     key={course.course_id}
-                    className={`course-item p-2 relative ${
-                      isActive ? "active" : ""
-                    }`}
+                    className={`course-item p-2 ${isActive ? "active" : ""}`}
                   >
                     <div className="flex items-center justify-between">
                       <div

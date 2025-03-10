@@ -1,22 +1,65 @@
-/* Modern side navigation styles */
+/* Modern side navigation styles with flexbox */
 .side-nav {
-  /* background-color: #f9fafb; */
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(243, 243, 239);
   border-right: 1px solid #e5e7eb;
   transition: all 0.2s ease-in-out;
-  overflow: hidden;
   height: 100vh;
   position: fixed;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 40;
 }
 
 /* Open state */
-.side-nav:not(.closed) {
+.side-nav.open {
   width: 240px;
 }
 
 /* Closed state */
 .side-nav.closed {
   width: 72px;
+}
+
+/* Fixed header section */
+.side-nav-header {
+  padding: 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* Main scrollable content */
+.side-nav-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.side-nav-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.side-nav-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.side-nav-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+/* Fixed footer */
+.side-nav-footer {
+  padding: 12px 8px;
+  border-top: 1px solid #eaeaea;
+  flex-shrink: 0;
+  background-color: rgb(243, 243, 239);
 }
 
 /* Nav item styling */
@@ -43,11 +86,15 @@
 .nav-item.active svg {
   color: rgb(64, 126, 139);
 }
+
 /* Course item styling */
 .course-item {
   border-radius: 8px;
   transition: all 0.15s ease;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .course-item:hover {
@@ -59,16 +106,9 @@
   background-color: rgba(64, 126, 139, 0.08);
   color: rgb(64, 126, 139);
 }
+
 .course-item.active svg {
   color: rgb(64, 126, 139);
-}
-
-/* Logo section */
-.logo-section {
-  padding: 0px 6px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 0px;
 }
 
 /* Action buttons */
@@ -82,24 +122,6 @@
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-/* Progress bar styled */
-.progress-bar {
-  height: 4px;
-  border-radius: 2px;
-  background-color: #e5e7eb;
-  overflow: hidden;
-}
-
-.progress-bar .progress {
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgb(64, 126, 139) 0%,
-    rgb(86, 156, 170) 100%
-  );
-  border-radius: 2px;
-}
-
 /* Footer buttons */
 .footer-button {
   transition: all 0.2s;
@@ -110,29 +132,10 @@
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-.scroll-container {
-  flex: 1;
-  position: relative;
+/* Title text truncation */
+.truncate-text {
+  white-space: nowrap;
   overflow: hidden;
-  height: calc(100vh - 64px - 100px);
-}
-
-.scroll-view {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto;
-}
-
-/* Fixed footer at bottom */
-.fixed-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 16px 6px 16px 6px;
-  z-index: 10;
-  background-color: rgb(243, 243, 239);
+  text-overflow: ellipsis;
+  max-width: 150px;
 }

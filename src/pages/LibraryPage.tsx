@@ -212,7 +212,6 @@ function EmptyLibrary({ onCreateClick }: { onCreateClick: () => void }) {
 // In Progress empty state
 function EmptyInProgress() {
   const navigate = useNavigate();
-
   return (
     <Card className="w-full border border-dashed border-gray-300 bg-white/50">
       <CardContent className="flex flex-col items-center justify-center py-16">

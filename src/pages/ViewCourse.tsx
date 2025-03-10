@@ -1,52 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { supabase } from "../supabaseconsant";
 import "./CoursePage.css";
 
 import {
-  BookOpen,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Clock,
-  Download,
-  List,
-  Maximize2,
   Menu,
-  Minimize2,
-  MonitorPlay,
   Play,
-  Share2,
-  Star,
-  User,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tv } from "lucide-react";
@@ -101,11 +70,8 @@ export default function ViewCourse() {
   const [courseVideos, setCourseVideos] = useState<CourseVideo[]>();
   const [selectedCourse, setSelectedCourse] = useState(0);
   const [showSummary, setShowSummary] = useState(true);
-  const [isTheaterMode, setIsTheaterMode] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const location = useLocation();
   const { id } = useParams();
 
   async function getCourseContent(courseId: string) {
@@ -148,11 +114,6 @@ export default function ViewCourse() {
       prev <= 0 ? courseVideos.length - 1 : prev - 1
     );
   };
-
-  // Calculate progress percentage
-  const progressPercentage = courseVideos
-    ? Math.round(((selectedCourse + 1) / courseVideos.length) * 100)
-    : 0;
 
   // Get current video data
   const currentVideo =
@@ -250,49 +211,35 @@ export default function ViewCourse() {
           </SheetContent>
         </Sheet>
       </div>
-
       {/* Course Header - Only visible on larger screens and when not in theater mode */}
-      {!isTheaterMode && (
-        <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200">
-          <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
-            {isLoading ? (
-              <Skeleton className="h-8 w-3/4" />
-            ) : (
-              courseVideos && courseVideos[0]?.course_title
-            )}
-          </h1>
 
+      <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200">
+        <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
           {isLoading ? (
-            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-8 w-3/4" />
           ) : (
-            <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500"></div>
+            courseVideos && courseVideos[0]?.course_title
           )}
-        </div>
-      )}
+        </h1>
+
+        {isLoading ? (
+          <Skeleton className="h-4 w-1/2" />
+        ) : (
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500"></div>
+        )}
+      </div>
 
       {/* Main Content Area */}
-      <div
-        className={`flex flex-col lg:flex-row w-full ${
-          isTheaterMode ? "h-screen" : ""
-        }`}
-      >
+      <div className={`flex flex-col lg:flex-row w-full`}>
         {/* Left Content Area - Video and Tabs */}
         <div
-          className={`
-            ${
-              isTheaterMode
-                ? "w-full h-full flex flex-col"
-                : "lg:w-2/3 px-8 pt-4 md:px-8 pb-8"
-            } 
-            transition-all duration-300
+          className={`lg:w-2/3 px-8 pt-4 md:px-8 pb-8 transition-all duration-300
           `}
         >
           {/* Video Container */}
           <div
             className={`
-              relative bg-black rounded-lg overflow-hidden shadow-lg 
-              ${isTheaterMode ? "flex-1" : "aspect-video"}
-              mb-6
+              relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6
             `}
           >
             {isLoading || !currentVideo ? (
@@ -306,33 +253,6 @@ export default function ViewCourse() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 ></iframe>
-
-                {/* Video Controls Overlay */}
-                <div className="absolute top-4 right-4 flex items-center gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 bg-black/40 border-slate-700 text-white hover:bg-black/60"
-                          onClick={() => setIsTheaterMode(!isTheaterMode)}
-                        >
-                          {isTheaterMode ? (
-                            <Minimize2 className="h-4 w-4" />
-                          ) : (
-                            <Maximize2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-slate-900 text-white border-slate-800">
-                        <p>
-                          {isTheaterMode ? "Exit Theater Mode" : "Theater Mode"}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
               </>
             )}
           </div>
@@ -382,73 +302,68 @@ export default function ViewCourse() {
             </div>
           </div>
 
-          {/* Content Tabs */}
-          {!isTheaterMode && (
-            <div className="mb-8">
-              <Tabs defaultValue="summary" className="w-full">
-                <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100">
-                  <TabsTrigger
-                    value="summary"
-                    className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                    onClick={() => setShowSummary(true)}
-                  >
-                    Summary
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="quiz"
-                    className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                    onClick={() => setShowSummary(false)}
-                  >
-                    Quiz
-                  </TabsTrigger>
-                </TabsList>
+          <div className="mb-8">
+            <Tabs defaultValue="summary" className="w-full">
+              <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100">
+                <TabsTrigger
+                  value="summary"
+                  className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                  onClick={() => setShowSummary(true)}
+                >
+                  Summary
+                </TabsTrigger>
+                <TabsTrigger
+                  value="quiz"
+                  className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                  onClick={() => setShowSummary(false)}
+                >
+                  Quiz
+                </TabsTrigger>
+              </TabsList>
 
-                <TabsContent value="summary" className="mt-0">
-                  {isLoading || !currentVideo ? (
-                    Array(3)
-                      .fill(0)
-                      .map((_, i) => (
-                        <div key={i} className="mb-6">
-                          <Skeleton className="h-6 w-48 mb-2" />
-                          <Skeleton className="h-4 w-full mb-1" />
-                          <Skeleton className="h-4 w-full mb-1" />
-                          <Skeleton className="h-4 w-3/4" />
-                        </div>
-                      ))
-                  ) : (
-                    <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
-                      {parseSummary(currentVideo.video_summary)}
-                    </div>
-                  )}
-                </TabsContent>
+              <TabsContent value="summary" className="mt-0">
+                {isLoading || !currentVideo ? (
+                  Array(3)
+                    .fill(0)
+                    .map((_, i) => (
+                      <div key={i} className="mb-6">
+                        <Skeleton className="h-6 w-48 mb-2" />
+                        <Skeleton className="h-4 w-full mb-1" />
+                        <Skeleton className="h-4 w-full mb-1" />
+                        <Skeleton className="h-4 w-3/4" />
+                      </div>
+                    ))
+                ) : (
+                  <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
+                    {parseSummary(currentVideo.video_summary)}
+                  </div>
+                )}
+              </TabsContent>
 
-                <TabsContent value="quiz" className="mt-0">
-                  {isLoading || !currentVideo ? (
-                    <div className="space-y-4">
-                      <Skeleton className="h-8 w-full" />
-                      <Skeleton className="h-24 w-full" />
-                      <Skeleton className="h-24 w-full" />
-                    </div>
-                  ) : (
-                    <div className="border border-slate-100 rounded-lg bg-white">
-                      <Quiz
-                        key={selectedCourse}
-                        quiz={currentVideo.quiz as QuizQuestion[]}
-                      />
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </div>
-          )}
+              <TabsContent value="quiz" className="mt-0">
+                {isLoading || !currentVideo ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                  </div>
+                ) : (
+                  <div className="border border-slate-100 rounded-lg bg-white">
+                    <Quiz
+                      key={selectedCourse}
+                      quiz={currentVideo.quiz as QuizQuestion[]}
+                    />
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
 
         {/* Right Sidebar - Course Modules (hidden in theater mode and on mobile) */}
         <div
           className={`
-            lg:w-1/3 lg:border-l lg:border-slate-200
-            ${isTheaterMode ? "hidden" : "hidden lg:block"}
-          `}
+            lg:w-1/3 lg:border-l lg:border-slate-200 hidden lg:block`}
         >
           <div className="p-4 border-b border-slate-200">
             <h2 className="font-semibold text-lg text-slate-800">
@@ -558,64 +473,6 @@ export default function ViewCourse() {
           </ScrollArea>
         </div>
       </div>
-
-      {/* Theater Mode Content Tab */}
-      {isTheaterMode && currentVideo && (
-        <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg">
-          <Collapsible>
-            <div className="px-4 py-3 flex items-center justify-between">
-              <h3 className="font-medium text-slate-800">Content</h3>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-slate-600 hover:bg-slate-100"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-
-            <CollapsibleContent>
-              <div className="px-4 pb-4">
-                <Tabs defaultValue="summary" className="w-full">
-                  <TabsList className="mb-6 bg-slate-100">
-                    <TabsTrigger
-                      value="summary"
-                      className="data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                      onClick={() => setShowSummary(true)}
-                    >
-                      Summary
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="quiz"
-                      className="data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                      onClick={() => setShowSummary(false)}
-                    >
-                      Quiz
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="summary">
-                    <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
-                      {parseSummary(currentVideo.video_summary)}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="quiz">
-                    <div className="border border-slate-100 rounded-lg bg-white">
-                      <Quiz
-                        key={selectedCourse}
-                        quiz={currentVideo.quiz as QuizQuestion[]}
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-      )}
     </div>
   );
 }

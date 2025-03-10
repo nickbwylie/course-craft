@@ -10,6 +10,8 @@ import {
   MoreHorizontal,
   Trash,
   Library,
+  ChevronRight,
+  ArrowRightToLine,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
@@ -28,7 +30,6 @@ import {
 import { SERVER } from "@/constants.ts";
 import { supabase } from "@/supabaseconsant.ts";
 import { FaFeatherAlt } from "react-icons/fa";
-import React from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -113,9 +114,6 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
-      // if (window.innerWidth <= 768) {
-      //   setNavOpen(false);
-      // }
     };
 
     window.addEventListener("resize", handleResize);
@@ -126,243 +124,241 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
 
   return (
     <div className={`side-nav ${navOpen ? "open" : "closed"}`}>
-      <div className="scroll-container">
-        <div className="scroll-view">
-          <div className="flex flex-col h-full px-3 py-4 relative">
-            {/* Logo and toggle button */}
-            <div className="logo-section">
-              {navOpen ? (
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <FaFeatherAlt className="h-5 w-5 text-slate-800" />
-                    <span className="ml-2 font-semibold text-slate-800">
-                      CourseCraft
-                    </span>
-                  </div>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-2 action-button justify-self-end rounded-full"
-                        onClick={() => setNavOpen(false)}
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                      >
-                        <ArrowLeftToLine size={18} className="bg-transparent" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      sideOffset={5}
-                      className="z-50 bg-slate-800 hover:bg-slate-900 text-white"
-                    >
-                      <p>Collapse</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center w-full">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-2 action-button justify-self-end rounded-full"
-                        onClick={() => setNavOpen(true)}
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                      >
-                        <ArrowLeftToLine size={18} className="bg-transparent" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="z-100 bg-slate-800 hover:bg-slate-900 text-white">
-                      <p>Collapse</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              )}
+      {/* Fixed Header */}
+      <div className="side-nav-header">
+        {navOpen ? (
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              <FaFeatherAlt className="h-5 w-5 text-slate-800" />
+              <span className="ml-2 font-semibold text-slate-800">
+                CourseCraft
+              </span>
             </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-2 action-button justify-self-end rounded-full"
+                  onClick={() => setNavOpen(false)}
+                >
+                  <ArrowLeftToLine size={18} className="bg-transparent" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                className="z-50 bg-slate-800 text-white"
+              >
+                <p>Collapse</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-2 action-button rounded-full"
+                  onClick={() => setNavOpen(true)}
+                >
+                  <ArrowRightToLine size={18} className="bg-transparent" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="z-50 bg-slate-800 text-white"
+              >
+                <p>Expand</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+      </div>
 
-            {/* Main navigation */}
-            <div className="space-y-1 mt-2">
-              {navItems.map((item) => {
-                if (item.name === "library" && !user?.id) return null;
-                const isActive = item.href === url;
+      {/* Scrollable Content Area */}
+      <div className="side-nav-content">
+        {/* Main navigation */}
+        <div className="space-y-1 pb-2">
+          {navItems.map((item) => {
+            if (item.name === "library" && !user?.id) return null;
+            const isActive = item.href === url;
+
+            return (
+              <div
+                key={item.href}
+                className={`nav-item ${isActive ? "active" : ""} ${
+                  !delayedOpen ? "justify-center" : ""
+                }`}
+                onClick={() => navigate(item.href)}
+              >
+                <item.icon className="h-5 w-5 text-slate-600" />
+                {delayedOpen && (
+                  <span className="ml-3 text-sm font-medium capitalize">
+                    {item.name}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* My Courses Section */}
+        {delayedOpen && courses && courses.length > 0 && (
+          <div className="mt-4">
+            <Separator className="my-4" />
+            <div className="mb-2 px-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                My Courses
+              </h3>
+            </div>
+            <div className="space-y-1">
+              {courses.map((course) => {
+                const isActive = course.course_id === id;
 
                 return (
                   <div
-                    key={item.href}
-                    className={`nav-item ${isActive ? "active" : " "} ${
-                      !delayedOpen ? "justify-center " : ""
+                    key={course.course_id}
+                    className={`course-item p-2 relative ${
+                      isActive ? "active" : ""
                     }`}
-                    onClick={() => navigate(item.href)}
+                    onMouseEnter={() => setHoveredCourse(course.course_id)}
+                    onMouseLeave={() => setHoveredCourse(null)}
+                    onClick={() => navigate(`/course/${course.course_id}`)}
                   >
-                    <item.icon className="h-5 w-5 text-slate-600" />
-                    {delayedOpen && (
-                      <span className="ml-3 text-sm font-medium capitalize">
-                        {item.name}
+                    <div className="flex items-center overflow-hidden">
+                      <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                      <span className="ml-2 text-sm truncate-text">
+                        {course.course_title}
                       </span>
-                    )}
+                    </div>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`p-1 h-7 w-7 action-button transition-opacity ${
+                            hoveredCourse === course.course_id
+                              ? "opacity-100"
+                              : "opacity-0"
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="p-0 w-32 shadow-md"
+                        align="end"
+                        side="right"
+                        sideOffset={5}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCourse(course.course_id);
+                          }}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                );
+              })}
+              {courses.map((course) => {
+                const isActive = course.course_id === id;
+
+                return (
+                  <div
+                    key={course.course_id}
+                    className={`course-item p-2 relative ${
+                      isActive ? "active" : ""
+                    }`}
+                    onMouseEnter={() => setHoveredCourse(course.course_id)}
+                    onMouseLeave={() => setHoveredCourse(null)}
+                    onClick={() => navigate(`/course/${course.course_id}`)}
+                  >
+                    <div className="flex items-center overflow-hidden">
+                      <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                      <span className="ml-2 text-sm truncate-text">
+                        {course.course_title}
+                      </span>
+                    </div>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`p-1 h-7 w-7 action-button transition-opacity ${
+                            hoveredCourse === course.course_id
+                              ? "opacity-100"
+                              : "opacity-0"
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="p-0 w-32 shadow-md"
+                        align="end"
+                        side="right"
+                        sideOffset={5}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteCourse(course.course_id);
+                          }}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 );
               })}
             </div>
-
-            {/* My Courses Section */}
-            {navOpen && courses && courses.length > 0 && (
-              <div>
-                <Separator className="my-4" />
-                <div className="mb-2 px-2">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    My Courses
-                  </h3>
-                </div>
-                <div className="space-y-1">
-                  {courses.map((course) => {
-                    const isActive = course.course_id === id;
-
-                    return (
-                      <div
-                        key={course.course_id}
-                        className={`course-item p-2 relative ${
-                          isActive ? "active" : ""
-                        }`}
-                        onMouseEnter={() => setHoveredCourse(course.course_id)}
-                        onMouseLeave={() => setHoveredCourse(null)}
-                        onClick={() => navigate(`/course/${course.course_id}`)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center overflow-hidden">
-                            <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                            <span className="ml-2 text-sm truncate">
-                              {course.course_title}
-                            </span>
-                          </div>
-
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`p-1 h-7 w-7 action-button transition-opacity ${
-                                  hoveredCourse === course.course_id
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                }`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="p-0 w-32 shadow-md"
-                              align="end"
-                              side="right"
-                              sideOffset={5}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteCourse(course.course_id);
-                                }}
-                              >
-                                <Trash className="h-4 w-4 mr-2" />
-                                Delete
-                              </Button>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {courses.map((course) => {
-                    const isActive = course.course_id === id;
-
-                    return (
-                      <div
-                        key={course.course_id}
-                        className={`course-item p-2 relative ${
-                          isActive ? "active" : ""
-                        }`}
-                        onMouseEnter={() => setHoveredCourse(course.course_id)}
-                        onMouseLeave={() => setHoveredCourse(null)}
-                        onClick={() => navigate(`/course/${course.course_id}`)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center overflow-hidden">
-                            <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                            <span className="ml-2 text-sm truncate">
-                              {course.course_title}
-                            </span>
-                          </div>
-
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`p-1 h-7 w-7 action-button transition-opacity ${
-                                  hoveredCourse === course.course_id
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                }`}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="p-0 w-32 shadow-md"
-                              align="end"
-                              side="right"
-                              sideOffset={5}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteCourse(course.course_id);
-                                }}
-                              >
-                                <Trash className="h-4 w-4 mr-2" />
-                                Delete
-                              </Button>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
-        </div>
+        )}
       </div>
-      <div className="fixed-footer">
-        <Separator className="mb-4" />
-        <div className="px-3">
-          <div
-            className={`footer-button p-2 flex items-center cursor-pointer ${
-              !delayedOpen ? "justify-center " : ""
+
+      {/* Fixed Footer */}
+      <div className="side-nav-footer">
+        <div className="flex justify-center flex-col">
+          <Button
+            variant="ghost"
+            className={`footer-button w-full p-2 flex items-center cursor-pointer mb-2 ${
+              !delayedOpen ? "justify-center" : "justify-start"
             }`}
             onClick={() => setSupportModalOpen(true)}
           >
             <HelpCircle className="h-5 w-5 text-slate-600" />
-            {navOpen && <span className="ml-3 text-sm font-medium">Help</span>}
-          </div>
+            {delayedOpen && (
+              <span className="ml-3 text-sm font-medium">Help</span>
+            )}
+          </Button>
 
           {user?.id ? (
             <Button
               variant="outline"
-              className="w-full mt-2 gap-2 justify-start border-slate-300"
+              className={`${
+                delayedOpen
+                  ? "w-full justify-start p-2"
+                  : "w-full h-10 p-0 justify-center"
+              } gap-2 border-slate-300`}
               onClick={() => {
                 if (url === "/dashboard") {
                   navigate("/");
@@ -375,19 +371,25 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               }}
             >
               <LogOut className="h-4 w-4" />
-              {navOpen && <span>Log Out</span>}
+              {delayedOpen && <span className="ml-1">Log Out</span>}
             </Button>
           ) : (
             <Button
-              className="w-full mt-2 gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]"
+              className={`${
+                delayedOpen
+                  ? "w-full justify-start p-2"
+                  : "justify-center w-full h-10 p-0"
+              } gap-2 bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] `}
               onClick={() => setShowLoginModal(true)}
             >
-              <LogIn className="h-4 w-4" />
-              {navOpen && <span>Sign in</span>}
+              <LogIn className="h-5 w-5" />
+              {delayedOpen && <span className="ml-1">Sign in</span>}
             </Button>
           )}
         </div>
       </div>
+
+      {/* Support Modal */}
       <SupportModal
         supportModalOpen={supportModalOpen}
         setSupportModalOpen={setSupportModalOpen}
