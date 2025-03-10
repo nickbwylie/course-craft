@@ -4,14 +4,10 @@ import { CourseWithFirstVideo, courseDifficultyMap } from "../types/CourseType";
 import {
   ChevronLeft,
   ChevronRight,
-  Eye,
   Flame,
   Grid2X2,
   Monitor,
-  Search,
-  Filter,
   Clock,
-  Star,
   TrendingUp,
   BookOpen,
   Plus,
@@ -26,18 +22,7 @@ import {
 import { Arrow } from "@radix-ui/react-hover-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { FilterOptions } from "@/myComponents/FilterOptions";
-import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
 import { Badge } from "@/components/ui/badge";
 
 const months = [
@@ -250,7 +235,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
 
           {/* Content */}
           <div className="p-3">
-            <h3 className="text-base font-semibold text-slate-800 line-clamp-1 mb-1">
+            <h3 className="text-base font-semibold text-slate-800 line-clamp-1 ">
               {course_title}
             </h3>
             <p className="text-sm text-slate-600 mb-3 line-clamp-2 h-10">
@@ -281,7 +266,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
         side="right"
         align="start"
       >
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-1">
           <h4 className="font-semibold text-lg text-slate-800">
             {course_title}
           </h4>
@@ -291,7 +276,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
             <span>Created {dateToMonthYear(created_at)}</span>
           </div>
 
-          <div className="flex flex-wrap gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-xs pb-3">
             <Badge variant="outline" className="font-normal bg-slate-50">
               {getShorthandTime(total_duration)}
             </Badge>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import SupportModal from "./SupportModal";
+import "./SideNav.css";
 
 interface MobileSideMenuProps {
   onClose: () => void;
@@ -84,99 +84,104 @@ export default function MobileSideMenu({
         {/* Removed duplicate close button */}
       </div>
 
-      <ScrollArea className="flex-1 px-4 py-2">
-        {/* My Courses Section */}
-        {courses && courses.length > 0 && (
-          <>
-            <div className="mb-2">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                My Courses
-              </h3>
-            </div>
-            <div className="space-y-1 mb-6">
-              {courses.map((course) => {
-                const isActive = course.course_id === id;
+      <div className="side-nav-content">
+        <div className=" w-full flex-1 py-2">
+          {/* My Courses Section */}
+          {courses && courses.length > 0 && (
+            <>
+              <div className="mb-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  My Courses
+                </h3>
+              </div>
+              <div className="space-y-1 mb-6">
+                {courses.map((course) => {
+                  const isActive = course.course_id === id;
 
-                return (
-                  <div
-                    key={course.course_id}
-                    className={`course-item p-2 ${isActive ? "active" : ""}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div
-                        className="flex items-center overflow-hidden flex-1 cursor-pointer"
-                        onClick={() =>
-                          onNavigate(`/course/${course.course_id}`)
-                        }
-                      >
-                        <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                        <span className="ml-2 text-sm truncate">
-                          {course.course_title}
-                        </span>
+                  return (
+                    <div
+                      key={course.course_id}
+                      className={`course-item p-2 ${isActive ? "active" : ""}`}
+                    >
+                      <div className="w-full flex items-center justify-between">
+                        <div
+                          className="flex items-center overflow-hidden flex-1 cursor-pointer"
+                          onClick={() =>
+                            onNavigate(`/course/${course.course_id}`)
+                          }
+                        >
+                          <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
+                          <span className="ml-2 text-sm truncate">
+                            {course.course_title}
+                          </span>
+                        </div>
+                        <div>
+                          {/* Delete button */}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-1 h-7 w-7 text-slate-500 hover:text-red-600 hover:bg-red-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCourseToDelete(course.course_id);
+                              setDeletingCourseTitle(course.course_title);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-
-                      {/* Delete button */}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="p-1 h-7 w-7 text-slate-500 hover:text-red-600 hover:bg-red-50"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCourseToDelete(course.course_id);
-                          setDeletingCourseTitle(course.course_title);
-                          setIsDeleteDialogOpen(true);
-                        }}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
-
-        {/* Support link */}
-        <div
-          className="p-2 rounded-lg flex items-center cursor-pointer hover:bg-slate-50"
-          onClick={() => setSupportModalOpen(true)}
-        >
-          <HelpCircle className="h-5 w-5 text-slate-600" />
-          <span className="ml-3 text-sm">Help</span>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Footer with auth buttons */}
-      <div className="px-4 py-3 border-t">
-        {user?.id ? (
+      <div className="side-nav-footer" style={{ backgroundColor: "white" }}>
+        <div className="flex flex-col space-y-2">
           <Button
-            variant="outline"
+            variant="ghost"
             className="w-full gap-2 justify-start border-slate-300"
-            onClick={() => {
-              signOut();
-              onClose();
-              toast({
-                title: "Success",
-                description: "You have been logged out",
-              });
-            }}
+            onClick={() => setSupportModalOpen(true)}
           >
-            <LogOut className="h-4 w-4" />
-            <span>Log Out</span>
+            <HelpCircle className="h-4 w-4 text-slate-600" />
+
+            <span className=" text-sm font-medium">Help</span>
           </Button>
-        ) : (
-          <Button
-            className="w-full gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]"
-            onClick={() => {
-              setShowLoginModal(true);
-              onClose();
-            }}
-          >
-            <LogIn className="h-4 w-4" />
-            <span>Sign in</span>
-          </Button>
-        )}
+          {user?.id ? (
+            <Button
+              variant="outline"
+              className="w-full gap-2 justify-start border-slate-300"
+              onClick={() => {
+                signOut();
+                onClose();
+                toast({
+                  title: "Success",
+                  description: "You have been logged out",
+                });
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Log Out</span>
+            </Button>
+          ) : (
+            <Button
+              className="w-full gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]"
+              onClick={() => {
+                setShowLoginModal(true);
+                onClose();
+              }}
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Sign in</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Delete Confirmation Dialog */}

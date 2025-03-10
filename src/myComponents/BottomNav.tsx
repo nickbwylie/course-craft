@@ -67,7 +67,13 @@ export default function BottomNav() {
             <Button
               variant="ghost"
               className={getButtonStyles(false)}
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                if (window.history.state && window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate("/explore");
+                }
+              }}
             >
               <ChevronLeft className="h-6 w-6" />
               <span className="text-sm font-medium mt-1">Back</span>
