@@ -272,64 +272,6 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                   </div>
                 );
               })}
-              {courses.map((course) => {
-                const isActive = course.course_id === id;
-
-                return (
-                  <div
-                    key={course.course_id}
-                    className={`course-item p-2 relative ${
-                      isActive ? "active" : ""
-                    }`}
-                    onMouseEnter={() => setHoveredCourse(course.course_id)}
-                    onMouseLeave={() => setHoveredCourse(null)}
-                    onClick={() => navigate(`/course/${course.course_id}`)}
-                  >
-                    <div className="flex items-center overflow-hidden">
-                      <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                      <span className="ml-2 text-sm truncate-text">
-                        {course.course_title}
-                      </span>
-                    </div>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`p-1 h-7 w-7 action-button transition-opacity ${
-                            hoveredCourse === course.course_id
-                              ? "opacity-100"
-                              : "opacity-0"
-                          }`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="p-0 w-32 shadow-md"
-                        align="end"
-                        side="right"
-                        sideOffset={5}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteCourse(course.course_id);
-                          }}
-                        >
-                          <Trash className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                );
-              })}
             </div>
           </div>
         )}

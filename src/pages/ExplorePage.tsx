@@ -11,6 +11,7 @@ import {
   TrendingUp,
   BookOpen,
   Plus,
+  Calendar,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -218,7 +219,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
         className="block w-full transition-all duration-200 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md"
         onClick={onViewCourse}
       >
-        <div className="relative group bg-white rounded-lg overflow-hidden">
+        <div className="relative group rounded-lg overflow-hidden course-card-gradient-color">
           {/* Thumbnail with overlay */}
           <div className="w-full relative pb-[56.25%] overflow-hidden">
             {" "}
@@ -241,15 +242,15 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
             <p className="text-sm text-slate-600 mb-3 line-clamp-2 h-10">
               {course_description}
             </p>
-            <div className="flex items-center justify-between text-xs text-slate-500">
+            <div className="flex flex-row items-center justify-start text-xs gap-2 text-slate-500">
               <div className="flex items-center gap-1">
                 <Monitor className="w-3 h-3" />
                 <span>{total_videos} videos</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center">
                 <Badge
                   variant="outline"
-                  className={`mb-2 font-normal ${getDifficultyColor(
+                  className={` font-normal ${getDifficultyColor(
                     course_difficulty
                   )}`}
                 >
@@ -411,6 +412,7 @@ export default function ExplorePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("popularity");
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   async function getCourses() {
     setIsLoading(true);
@@ -512,21 +514,44 @@ export default function ExplorePage() {
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="text-[rgb(64,126,139)] h-5 w-5" />
             <h2 className="text-xl font-semibold text-slate-800">
-              Featured Courses
+              Featured Course
             </h2>
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <SkeletonFeatureCard key={i} />
-              ))}
+            <div className="w-full">
+              {/* {[1, 2, 3, 4].map((i) => ( */}
+              <SkeletonFeatureCard />
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {featuredCourses.map((course, index) => (
-                <FeatureCard key={course.course_id || index} {...course} />
-              ))}
+            <div className="flex flex-col border border-slate-300 p-4 items-start">
+              <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
+                <div className="min-w-72">
+                  <img src={newestCourses[1].thumbnail_url} />
+                </div>
+                <div className="flex flex-col items-start">
+                  <h1 className="text-2xl text-[rgb(64,126,139)] font-semibold w-full mt-[-6px] ">
+                    {newestCourses[1].course_title}{" "}
+                  </h1>
+                  <p className="font-light text-xs text-nowrap pb-2 flex flex-row gap-1 items-center">
+                    <Calendar className="w-3 h-3" /> Created{" "}
+                    {dateToMonthYear(newestCourses[1].created_at)}
+                  </p>
+                  <p className="text-sm font-normal mb-4">
+                    {newestCourses[1].course_description}
+                  </p>
+
+                  <div>
+                    <Button
+                      onClick={() =>
+                        navigate(`/course/${newestCourses[1].course_id}`)
+                      }
+                    >
+                      Start Learning{" "}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </section>
