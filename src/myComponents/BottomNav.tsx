@@ -57,9 +57,9 @@ export default function BottomNav() {
         className="fixed left-0 right-0 bg-white border-t border-gray-200 shadow-md z-50 md:hidden"
         style={{
           bottom: 0,
-          paddingBottom: safeAreaBottom,
           position: "fixed",
           zIndex: 50,
+          padding: 0,
         }}
       >
         <div className="flex items-center justify-between px-3">
@@ -127,12 +127,6 @@ export default function BottomNav() {
         </div>
       </div>
       {/* Spacer to prevent content from being hidden behind the nav */}
-      <div
-        className="h-20 md:hidden"
-        style={{
-          marginBottom: safeAreaBottom,
-        }}
-      />
     </>
   );
 }
