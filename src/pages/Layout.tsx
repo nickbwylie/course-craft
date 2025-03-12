@@ -1,6 +1,6 @@
 // Layout.tsx
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SideNav from "../myComponents/SideNav"; // Import your SideNav component
 import BottomNav from "../myComponents/BottomNav"; // Import the new BottomNav component
 import "./Layout.css";
@@ -15,6 +15,11 @@ const Layout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { user } = useAuth();
   const { getUserCourses } = useCoursesActivity();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   // Check if screen is mobile
   useEffect(() => {

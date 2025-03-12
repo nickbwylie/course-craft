@@ -401,7 +401,33 @@ const FastSkeletonCard = React.memo(function SkeletonCard() {
 });
 
 function SkeletonFeatureCard() {
-  return <Skeleton className="h-64 rounded-lg w-full" />;
+  return (
+    <div className="flex flex-col border border-slate-300 p-4 items-start">
+      <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
+        {/* Thumbnail skeleton */}
+        <div className="min-w-72 h-40 sm:h-48">
+          <Skeleton className="w-full h-full rounded-md" />
+        </div>
+
+        {/* Content skeleton */}
+        <div className="flex flex-col items-start w-full mt-4 sm:mt-0">
+          {/* Title skeleton */}
+          <Skeleton className="h-7 w-4/5 mb-2" />
+
+          {/* Date skeleton */}
+          <Skeleton className="h-4 w-40 mb-3" />
+
+          {/* Description skeleton - multiple lines */}
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-3/4 mb-6" />
+
+          {/* Button skeleton */}
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // Main ExplorePage Component

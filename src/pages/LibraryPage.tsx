@@ -78,10 +78,10 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
   };
 
   return (
-    <div className="w-full border border-gray-200 rounded-lg p-3 mb-3 bg-white hover:shadow-md transition-all duration-200 flex items-center gap-3">
+    <div className="w-full border border-gray-200 rounded-lg p-3 mb-3 bg-white hover:shadow-md transition-all duration-200 flex items-start gap-3">
       {/* Thumbnail with overlay for quick access */}
       <div
-        className="w-24 h-16 md:w-28 md:h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer group relative"
+        className="w-24 h-16 md:w-28 md:h-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 cursor-pointer group relative "
         onClick={() => navigate(`/course/${course.course_id}`)}
       >
         <img
@@ -96,8 +96,8 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
 
       {/* Course Details */}
       <div className="flex-grow min-w-0 flex flex-col">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
+        <div className="flex items-start justify-between gap-2 flex-col sm:flex-row">
+          <div className="min-w-0 flex flex-col w-full">
             <h3
               className="text-base font-semibold text-gray-900 truncate cursor-pointer hover:text-cyan-700 transition-colors"
               onClick={() => navigate(`/course/${course.course_id}`)}
@@ -109,7 +109,8 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
             </p>
           </div>
 
-          <div className="flex-shrink-0 flex items-center gap-1">
+          <div className="flex-shrink-0 flex flex-wrap items-center gap-1">
+            {/* <div className="hidden md:block"> */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -131,6 +132,7 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
                 </p>
               </TooltipContent>
             </Tooltip>
+            {/* </div> */}
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -285,7 +287,7 @@ function LibraryPage() {
     "pb-2 text-lg cursor-pointer hover:border-b-2 font-light ";
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8">
+    <div className="max-w-4xl mx-auto px-8 py-8 pb-32">
       {/* Header */}
       <div className="mb-4 w-full flex flex-row space-x-2">
         <div>
