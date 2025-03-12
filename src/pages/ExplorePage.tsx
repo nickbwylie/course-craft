@@ -638,7 +638,7 @@ export default function ExplorePage() {
           </div>
 
           <Tabs defaultValue="all" className="w-full">
-            <div className="border-b border-slate-200 mb-4">
+            <div className="border-b border-slate-200 mb-4 w-full">
               <TabsList className="bg-transparent h-10 p-0 space-x-6">
                 <TabsTrigger
                   value="all"

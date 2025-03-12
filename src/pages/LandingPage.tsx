@@ -92,47 +92,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white overflow-hidden">
         {/* Background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <Parallax
-            speed={-5}
-            className="absolute top-[15%] left-[8%] rotate-[-8deg]"
-          >
-            <motion.img
-              src={image1}
-              alt="YouTube Preview"
-              className="w-48 md:w-64 rounded-lg shadow-xl"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-            />
-          </Parallax>
-          <Parallax
-            speed={15}
-            className="absolute top-[25%] right-[12%] rotate-[5deg]"
-          >
-            <motion.img
-              src={image3}
-              alt="YouTube Preview"
-              className="w-56 md:w-72 rounded-lg shadow-xl"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-            />
-          </Parallax>
-          <Parallax
-            speed={8}
-            className="absolute bottom-[20%] left-[15%] rotate-[10deg]"
-          >
-            <motion.img
-              src={image2}
-              alt="YouTube Preview"
-              className="w-64 md:w-80 rounded-lg shadow-xl"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              transition={{ delay: 0.9, duration: 0.8 }}
-            />
-          </Parallax>
-        </div>
+        <div className="absolute inset-0 overflow-hidden"></div>
 
         {/* Hero content */}
         <div className="relative z-10 px-6 text-center max-w-4xl mx-auto">
@@ -176,15 +136,6 @@ const LandingPage = () => {
             >
               Explore Courses
             </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-          >
-            <MousePointer className="h-6 w-6 text-slate-400 animate-bounce" />
           </motion.div>
         </div>
       </section>
