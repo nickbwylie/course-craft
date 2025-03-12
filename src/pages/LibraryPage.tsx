@@ -287,7 +287,7 @@ function LibraryPage() {
     "pb-2 text-lg cursor-pointer hover:border-b-2 font-light ";
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8 pb-32">
+    <div className="max-w-4xl mx-auto px-8 py-8">
       {/* Header */}
       <div className="mb-4 w-full flex flex-row space-x-2">
         <div>

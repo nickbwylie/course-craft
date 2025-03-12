@@ -72,7 +72,7 @@ const Layout = () => {
 
             {/* Main content area */}
             <div
-              className={`w-full rounded-2xl ${
+              className={`w-full rounded-2xl  pb-32 md:pb-8 ${
                 !isMobile && navOpen
                   ? "pageWithNavOpen"
                   : !isMobile && !navOpen
