@@ -46,8 +46,8 @@ export default function BottomNav() {
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-cyan-700 bg-cyan-50/50 hover:bg-cyan-50"
-        : "text-gray-600 hover:bg-gray-50"
+        ? "text-cyan-700  border-t-black border-t-4 hover:text-cyan-700 mt-[-4px]  "
+        : "text-gray-600 hover:bg-gray-100"
     }`;
 
   return (
