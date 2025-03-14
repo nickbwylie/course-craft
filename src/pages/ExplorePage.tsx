@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
 
 const months = [
   "January",
@@ -439,6 +440,13 @@ export default function ExplorePage() {
   const [sortBy, setSortBy] = useState("popularity");
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const sortOptions = [
+    { label: "Tech", value: "tech" },
+    { label: "Business", value: "business" },
+    { label: "Finance", value: "finance" },
+  ];
+
+  const [selectedSortOptions, setSelectedSortOptions] = useState([]);
 
   async function getCourses() {
     setIsLoading(true);
@@ -637,104 +645,15 @@ export default function ExplorePage() {
             )}
           </div>
 
-          <Tabs defaultValue="all" className="w-full">
-            <div className="border-b border-slate-200 mb-4 w-full">
-              <TabsList className="bg-transparent h-10 p-0 space-x-6">
-                <TabsTrigger
-                  value="all"
-                  className="
-                  data-[state=active]:bg-gray-100
-                  data-[state=active]:rounded-t-md
-                  data-[state=active]:border-b-2 data-[state=active]:border-b-[rgb(64,126,139)] data-[state=active]:text-[rgb(64,126,139)] data-[state=active]:shadow-none rounded-none bg-transparent px-2 py-3"
-                >
-                  All Categories
-                </TabsTrigger>
-                <TabsTrigger
-                  value="technology"
-                  className="
-                  data-[state=active]:bg-gray-100
-                  data-[state=active]:rounded-t-md
-                  data-[state=active]:border-b-2 data-[state=active]:border-b-[rgb(64,126,139)] data-[state=active]:text-[rgb(64,126,139)] data-[state=active]:shadow-none rounded-none bg-transparent px-2 py-3"
-                >
-                  Technology
-                </TabsTrigger>
-                <TabsTrigger
-                  value="business"
-                  className="data-[state=active]:bg-gray-100
-                  data-[state=active]:rounded-t-md
-                  data-[state=active]:border-b-2 data-[state=active]:border-b-[rgb(64,126,139)] data-[state=active]:text-[rgb(64,126,139)] data-[state=active]:shadow-none rounded-none bg-transparent px-2 py-3"
-                >
-                  Business
-                </TabsTrigger>
-                <TabsTrigger
-                  value="design"
-                  className="data-[state=active]:bg-gray-100
-                  data-[state=active]:rounded-t-md
-                  data-[state=active]:border-b-2 data-[state=active]:border-b-[rgb(64,126,139)] data-[state=active]:text-[rgb(64,126,139)] data-[state=active]:shadow-none rounded-none bg-transparent px-2 py-3"
-                >
-                  Design
-                </TabsTrigger>
-                <TabsTrigger
-                  value="personal"
-                  className="data-[state=active]:bg-gray-100
-                  data-[state=active]:rounded-t-md
-                  data-[state=active]:border-b-2 data-[state=active]:border-b-[rgb(64,126,139)] data-[state=active]:text-[rgb(64,126,139)] data-[state=active]:shadow-none rounded-none bg-transparent px-2 py-3"
-                >
-                  Personal Development
-                </TabsTrigger>
-              </TabsList>
-            </div>
+          <SearchableDropdown
+            className="w-full sm:w-1/2"
+            options={sortOptions}
+            value={selectedSortOptions}
+            onValueChange={setSelectedSortOptions}
+            placeholder="All Courses"
+          />
 
-            <TabsContent value="all" className="mt-0">
-              {isLoading ? (
-                <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <FastSkeletonCard key={i} />
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredCourses?.map((course, index) => (
-                    <CourseCard key={course.course_id || index} {...course} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Other tab contents would be similar */}
-            <TabsContent value="technology" className="mt-0">
-              <div className="flex flex-col items-center justify-center py-16 text-slate-500 bg-slate-50/50 rounded-lg">
-                <BookOpen className="h-10 w-10 mb-3 text-slate-300" />
-                <h3 className="text-lg font-medium mb-1">Technology Courses</h3>
-                <p className="text-sm">Coming soon...</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="business" className="mt-0">
-              <div className="flex flex-col items-center justify-center py-16 text-slate-500 bg-slate-50/50 rounded-lg">
-                <BookOpen className="h-10 w-10 mb-3 text-slate-300" />
-                <h3 className="text-lg font-medium mb-1">Business Courses</h3>
-                <p className="text-sm">Coming soon...</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="design" className="mt-0">
-              <div className="flex flex-col items-center justify-center py-16 text-slate-500 bg-slate-50/50 rounded-lg">
-                <BookOpen className="h-10 w-10 mb-3 text-slate-300" />
-                <h3 className="text-lg font-medium mb-1">Design Courses</h3>
-                <p className="text-sm">Coming soon...</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="personal" className="mt-0">
-              <div className="flex flex-col items-center justify-center py-16 text-slate-500 bg-slate-50/50 rounded-lg">
-                <BookOpen className="h-10 w-10 mb-3 text-slate-300" />
-                <h3 className="text-lg font-medium mb-1">
-                  Personal Development Courses
-                </h3>
-                <p className="text-sm">Coming soon...</p>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          {!isLoading && filteredCourses && filteredCourses.length > 12 && (
+          {/* {!isLoading && filteredCourses && filteredCourses.length > 12 && (
             <div className="mt-8 flex justify-center">
               <Button
                 variant="outline"
@@ -743,7 +662,7 @@ export default function ExplorePage() {
                 Load More Courses
               </Button>
             </div>
-          )}
+          )} */}
         </section>
       </div>
     </div>

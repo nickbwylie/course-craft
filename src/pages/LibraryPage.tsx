@@ -60,7 +60,7 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
     try {
       const { data, error } = await supabase
         .from("courses")
-        .update({ public: publicCourse })
+        .update({ public: newVal })
         .eq("id", course.course_id);
 
       if (error) {

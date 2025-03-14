@@ -26,7 +26,7 @@ import image1 from "../assets/youtubePreview.jpg";
 import image2 from "../assets/youtubePreview2.jpg";
 import image3 from "../assets/youtubePreview3.jpg";
 import createPageScreen from "../assets/createCoursePage.png";
-import exploreScreen from "../assets/explorePageScreen.png";
+import exploreScreen from "../assets/explorePageTest.png";
 import PricingBlock from "@/myComponents/PricingBlock";
 
 // Reusable animation component

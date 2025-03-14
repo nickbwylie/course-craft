@@ -65,7 +65,6 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
   const [supportModalOpen, setSupportModalOpen] = useState(false);
-
   const deleteCourse = async (courseId: string) => {
     try {
       const {

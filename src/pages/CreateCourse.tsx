@@ -95,7 +95,7 @@ export default function CreateCoursePage() {
       description: "",
       courseDifficulty: "Normal",
       courseDetail: "Normal",
-      isPublic: true,
+      isPublic: false,
     },
   });
 
