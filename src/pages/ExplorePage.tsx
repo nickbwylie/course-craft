@@ -9,7 +9,6 @@ import {
   Monitor,
   Clock,
   TrendingUp,
-  BookOpen,
   Plus,
   Calendar,
 } from "lucide-react";
@@ -23,7 +22,6 @@ import {
 import { Arrow } from "@radix-ui/react-hover-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
 
@@ -117,7 +115,7 @@ export const CustomCarousel: React.FC<{
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
             {icon}
             {title}
           </h3>
@@ -128,7 +126,7 @@ export const CustomCarousel: React.FC<{
               onClick={scrollLeft}
               variant="outline"
               size="icon"
-              className="rounded-full border-slate-200 hover:bg-slate-50 h-8 w-8"
+              className="rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -138,7 +136,7 @@ export const CustomCarousel: React.FC<{
               onClick={scrollRight}
               variant="outline"
               size="icon"
-              className="rounded-full border-slate-200 hover:bg-slate-50 h-8 w-8"
+              className="rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -191,15 +189,16 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
   const getDifficultyColor = useCallback((difficulty: number) => {
     const type = difficulty as keyof typeof courseDifficultyMap;
 
+    // Colors for both light and dark mode
     switch (type) {
       case 1:
-        return "bg-emerald-50 text-emerald-700";
+        return "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400";
       case 2:
-        return "bg-blue-50 text-blue-700";
+        return "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400";
       case 3:
-        return "bg-amber-50 text-amber-700";
+        return "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400";
       default:
-        return "bg-slate-50 text-slate-700";
+        return "bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
     }
   }, []);
 
@@ -217,10 +216,10 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
   return (
     <HoverCard>
       <HoverCardTrigger
-        className="block w-full transition-all duration-200 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md"
+        className="block w-full transition-all duration-200 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md dark:shadow-none dark:hover:shadow-md dark:hover:shadow-black/20"
         onClick={onViewCourse}
       >
-        <div className="relative group rounded-lg overflow-hidden course-card-gradient-color">
+        <div className="relative group rounded-lg overflow-hidden bg-white dark:bg-gray-800">
           {/* Thumbnail with overlay */}
           <div className="w-full relative pb-[56.25%] overflow-hidden">
             {" "}
@@ -237,13 +236,13 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
 
           {/* Content */}
           <div className="p-3">
-            <h3 className="text-base font-semibold text-slate-800 line-clamp-1 ">
+            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200 line-clamp-1">
               {course_title}
             </h3>
-            <p className="text-sm text-slate-600 mb-3 line-clamp-2 h-10">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2 h-10">
               {course_description}
             </p>
-            <div className="flex flex-row items-center justify-start text-xs gap-2 text-slate-500">
+            <div className="flex flex-row items-center justify-start text-xs gap-2 text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-1">
                 <Monitor className="w-3 h-3" />
                 <span>{total_videos} videos</span>
@@ -251,7 +250,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
               <div className="flex items-center">
                 <Badge
                   variant="outline"
-                  className={` font-normal ${getDifficultyColor(
+                  className={`font-normal ${getDifficultyColor(
                     course_difficulty
                   )}`}
                 >
@@ -264,25 +263,31 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-lg border-slate-200 hidden sm:block "
+        className="w-80 p-0 shadow-lg bg-white border-slate-200 dark:border-gray-700 dark:bg-gray-800 hidden sm:block"
         side="right"
         align="start"
       >
         <div className="p-4 space-y-1">
-          <h4 className="font-semibold text-lg text-slate-800">
+          <h4 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
             {course_title}
           </h4>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <Clock className="h-3 w-3 text-slate-400" />
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500" />
             <span>Created {dateToMonthYear(created_at)}</span>
           </div>
 
           <div className="flex flex-wrap gap-2 text-xs pb-3">
-            <Badge variant="outline" className="font-normal bg-slate-50">
+            <Badge
+              variant="outline"
+              className="font-normal bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600"
+            >
               {getShorthandTime(total_duration)}
             </Badge>
-            <Badge variant="outline" className="font-normal bg-slate-50">
+            <Badge
+              variant="outline"
+              className="font-normal bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600"
+            >
               {total_videos} videos
             </Badge>
             <Badge
@@ -293,18 +298,20 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
             </Badge>
           </div>
 
-          <p className="text-sm text-slate-600">{course_description}</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            {course_description}
+          </p>
         </div>
 
-        <div className="border-t border-slate-100 p-3">
+        <div className="border-t border-slate-100 dark:border-gray-700 p-3">
           <Button
-            className="w-full bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]"
+            className="w-full bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
             onClick={onViewCourse}
           >
             Start Learning
           </Button>
         </div>
-        <Arrow className="fill-white" />
+        <Arrow className="fill-white dark:fill-gray-800" />
       </HoverCardContent>
     </HoverCard>
   );
@@ -331,7 +338,7 @@ const FeatureCard: React.FC<CourseWithFirstVideo> = ({
 
   return (
     <div
-      className="relative h-64 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px]"
+      className="relative h-64 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] dark:shadow-black/20"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       onClick={() => navigate(`/course/${course_id}`)}
@@ -346,20 +353,20 @@ const FeatureCard: React.FC<CourseWithFirstVideo> = ({
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20 transition-opacity duration-300 "></div>
+      <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20 transition-opacity duration-300"></div>
 
       {/* Badge and duration */}
       <div className="absolute top-3 right-3 flex gap-2">
         <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-md backdrop-blur-sm">
           {getShorthandTime(total_duration)}
         </span>
-        <span className="px-2 py-1 bg-white/90 text-slate-800 text-xs font-medium rounded-md backdrop-blur-sm">
+        <span className="px-2 py-1 bg-white/90 dark:bg-gray-800/90 text-slate-800 dark:text-slate-200 text-xs font-medium rounded-md backdrop-blur-sm">
           {difficultyText}
         </span>
       </div>
 
       {/* Content overlay */}
-      <div className="absolute inset-0 p-5 flex flex-col justify-center ">
+      <div className="absolute inset-0 p-5 flex flex-col justify-center">
         <h3 className="text-xl font-semibold text-white mb-2">
           {course_title}
         </h3>
@@ -385,16 +392,16 @@ const FeatureCard: React.FC<CourseWithFirstVideo> = ({
 // Skeleton Loaders
 const FastSkeletonCard = React.memo(function SkeletonCard() {
   return (
-    <div className="flex flex-col space-y-3 bg-white rounded-lg shadow-sm p-0 overflow-hidden">
-      <Skeleton className="h-40 w-full rounded-none" />
+    <div className="flex flex-col space-y-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-none dark:border dark:border-gray-700 p-0 overflow-hidden">
+      <Skeleton className="h-40 w-full rounded-none dark:bg-gray-700" />
       <div className="p-3 space-y-2">
-        <Skeleton className="h-4 w-24 rounded-full" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-24 rounded-full dark:bg-gray-700" />
+        <Skeleton className="h-5 w-full dark:bg-gray-700" />
+        <Skeleton className="h-4 w-full dark:bg-gray-700" />
+        <Skeleton className="h-4 w-5/6 dark:bg-gray-700" />
         <div className="flex justify-between pt-1">
-          <Skeleton className="h-3 w-16 rounded-full" />
-          <Skeleton className="h-3 w-10 rounded-full" />
+          <Skeleton className="h-3 w-16 rounded-full dark:bg-gray-700" />
+          <Skeleton className="h-3 w-10 rounded-full dark:bg-gray-700" />
         </div>
       </div>
     </div>
@@ -403,28 +410,28 @@ const FastSkeletonCard = React.memo(function SkeletonCard() {
 
 function SkeletonFeatureCard() {
   return (
-    <div className="flex flex-col border border-slate-300 p-4 items-start">
+    <div className="flex flex-col border border-slate-300 dark:border-gray-700 p-4 items-start dark:bg-gray-800 rounded-lg">
       <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
         {/* Thumbnail skeleton */}
         <div className="min-w-72 h-40 sm:h-48">
-          <Skeleton className="w-full h-full rounded-md" />
+          <Skeleton className="w-full h-full rounded-md dark:bg-gray-700" />
         </div>
 
         {/* Content skeleton */}
         <div className="flex flex-col items-start w-full mt-4 sm:mt-0">
           {/* Title skeleton */}
-          <Skeleton className="h-7 w-4/5 mb-2" />
+          <Skeleton className="h-7 w-4/5 mb-2 dark:bg-gray-700" />
 
           {/* Date skeleton */}
-          <Skeleton className="h-4 w-40 mb-3" />
+          <Skeleton className="h-4 w-40 mb-3 dark:bg-gray-700" />
 
           {/* Description skeleton - multiple lines */}
-          <Skeleton className="h-4 w-full mb-2" />
-          <Skeleton className="h-4 w-full mb-2" />
-          <Skeleton className="h-4 w-3/4 mb-6" />
+          <Skeleton className="h-4 w-full mb-2 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-full mb-2 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-3/4 mb-6 dark:bg-gray-700" />
 
           {/* Button skeleton */}
-          <Skeleton className="h-10 w-32" />
+          <Skeleton className="h-10 w-32 dark:bg-gray-700" />
         </div>
       </div>
     </div>
@@ -540,38 +547,41 @@ export default function ExplorePage() {
     : [];
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8 ">
+    <div className="max-w-4xl mx-auto px-8 py-8">
       {/* Main content */}
       <div className="space-y-12">
         {/* Featured courses section */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="text-[rgb(64,126,139)] h-5 w-5" />
-            <h2 className="text-xl font-semibold text-slate-800">
+            <TrendingUp className="text-[rgb(64,126,139)] dark:text-[rgb(86,156,170)] h-5 w-5" />
+            <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
               Featured Course
             </h2>
           </div>
 
           {isLoading ? (
             <div className="w-full">
-              {/* {[1, 2, 3, 4].map((i) => ( */}
               <SkeletonFeatureCard />
             </div>
           ) : (
-            <div className="flex flex-col border border-slate-300 p-4 items-start">
+            <div className="flex flex-col border border-slate-300 dark:border-gray-700 p-4 items-start dark:bg-gray-800 rounded-lg">
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
                 <div className="min-w-72">
-                  <img src={newestCourses[1].thumbnail_url} />
+                  <img
+                    src={newestCourses[1].thumbnail_url}
+                    className="rounded-md"
+                    alt={newestCourses[1].course_title}
+                  />
                 </div>
                 <div className="flex flex-col items-start">
-                  <h1 className="text-2xl text-[rgb(64,126,139)] font-semibold w-full mt-[-6px] ">
+                  <h1 className="text-2xl text-[rgb(64,126,139)] dark:text-[rgb(86,156,170)] font-semibold w-full mt-[-6px]">
                     {newestCourses[1].course_title}{" "}
                   </h1>
-                  <p className="font-light text-xs text-nowrap pb-2 flex flex-row gap-1 items-center">
+                  <p className="font-light text-xs text-nowrap pb-2 flex flex-row gap-1 items-center text-slate-500 dark:text-slate-400">
                     <Calendar className="w-3 h-3" /> Created{" "}
                     {dateToMonthYear(newestCourses[1].created_at)}
                   </p>
-                  <p className="text-sm font-normal mb-4">
+                  <p className="text-sm font-normal mb-4 text-slate-700 dark:text-slate-300">
                     {newestCourses[1].course_description}
                   </p>
 
@@ -580,6 +590,7 @@ export default function ExplorePage() {
                       onClick={() =>
                         navigate(`/course/${newestCourses[1].course_id}`)
                       }
+                      className="bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
                     >
                       Start Learning{" "}
                     </Button>
@@ -596,7 +607,7 @@ export default function ExplorePage() {
             <>
               <div className="flex items-center gap-2 mb-4">
                 <Flame className="text-red-500 h-5 w-5" />
-                <h2 className="text-xl font-semibold text-slate-800">
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
                   Popular Courses
                 </h2>
               </div>
@@ -632,14 +643,17 @@ export default function ExplorePage() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Grid2X2 className="text-slate-700 h-5 w-5" />
-              <h2 className="text-xl font-semibold text-slate-800">
+              <Grid2X2 className="text-slate-700 dark:text-slate-300 h-5 w-5" />
+              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
                 Browse All Courses
               </h2>
             </div>
 
             {!isLoading && filteredCourses && (
-              <Badge variant="outline" className="text-slate-600 bg-slate-50">
+              <Badge
+                variant="outline"
+                className="text-slate-600 bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600"
+              >
                 {filteredCourses.length} courses
               </Badge>
             )}
@@ -652,17 +666,6 @@ export default function ExplorePage() {
             onValueChange={setSelectedSortOptions}
             placeholder="All Courses"
           />
-
-          {/* {!isLoading && filteredCourses && filteredCourses.length > 12 && (
-            <div className="mt-8 flex justify-center">
-              <Button
-                variant="outline"
-                className="border-slate-200 hover:bg-slate-50 hover:text-slate-800"
-              >
-                Load More Courses
-              </Button>
-            </div>
-          )} */}
         </section>
       </div>
     </div>

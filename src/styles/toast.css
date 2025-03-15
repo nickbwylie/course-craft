@@ -1,0 +1,43 @@
+/* src/styles/toast.css */
+.Toaster__container {
+  --toaster-background: #ffffff;
+  --toaster-text: #1f2937;
+  --toaster-border: #e5e7eb;
+  --toaster-success-background: #dcfce7;
+  --toaster-success-text: #166534;
+  --toaster-success-border: #86efac;
+  --toaster-error-background: #fee2e2;
+  --toaster-error-text: #b91c1c;
+  --toaster-error-border: #fca5a5;
+}
+
+.dark .Toaster__container {
+  --toaster-background: #1f2937;
+  --toaster-text: #f9fafb;
+  --toaster-border: #374151;
+  --toaster-success-background: #065f46;
+  --toaster-success-text: #d1fae5;
+  --toaster-success-border: #10b981;
+  --toaster-error-background: #7f1d1d;
+  --toaster-error-text: #fee2e2;
+  --toaster-error-border: #ef4444;
+}
+
+.Toaster__toast {
+  background-color: var(--toaster-background) !important;
+  color: var(--toaster-text) !important;
+  border: 1px solid var(--toaster-border) !important;
+}
+
+.Toaster__toast[data-variant="success"] {
+  background-color: var(--toaster-success-background) !important;
+  color: var(--toaster-success-text) !important;
+  border: 1px solid var(--toaster-success-border) !important;
+}
+
+.Toaster__toast[data-variant="error"],
+.Toaster__toast[data-variant="destructive"] {
+  background-color: var(--toaster-error-background) !important;
+  color: var(--toaster-error-text) !important;
+  border: 1px solid var(--toaster-error-border) !important;
+}

@@ -1,13 +1,19 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MobileSideMenu from "@/myComponents/MobileSideMenu";
 import { CirclePlus, Search, Menu, ChevronLeft, Library } from "lucide-react";
+import ThemeToggle from "./ThemeToggle"; // Import the theme toggle
 
 const navItems = [
-  { name: "library", href: "/library", icon: Library, requiresAuth: true },
+  {
+    name: "library",
+    href: "/library",
+    icon: Library,
+    requiresAuth: true,
+  },
   { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
 ] as const;
@@ -16,68 +22,63 @@ export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setShowLoginModal } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const isCoursePage = location.pathname.includes("/course/");
-  const navRef = useRef<HTMLDivElement>(null);
-  const [safeAreaBottom, setSafeAreaBottom] = useState("16px");
+  const [safeAreaBottom, setSafeAreaBottom] = useState(
+    "env(safe-area-inset-bottom, 0px)"
+  );
 
-  // Update safe area inset
+  // iOS detection and safe area handling
   useEffect(() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
-    const updateSafeArea = () => {
-      if (isIOS) {
-        setSafeAreaBottom(`max(env(safe-area-inset-bottom, 16px), 16px)`);
-      } else {
-        setSafeAreaBottom("16px");
-      }
-    };
+    if (isIOS) {
+      const updateSafeArea = () => {
+        // Small delay to ensure safe area values are updated after orientation change
+        setTimeout(() => {
+          setSafeAreaBottom("env(safe-area-inset-bottom, 16px)");
+        }, 100);
+      };
 
-    updateSafeArea();
-    window.addEventListener("resize", updateSafeArea);
-    window.addEventListener("orientationchange", updateSafeArea);
+      window.addEventListener("orientationchange", updateSafeArea);
+      updateSafeArea(); // Initial call
 
-    return () => {
-      window.removeEventListener("resize", updateSafeArea);
-      window.removeEventListener("orientationchange", updateSafeArea);
-    };
+      return () =>
+        window.removeEventListener("orientationchange", updateSafeArea);
+    }
   }, []);
 
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-cyan-700  border-t-black border-t-4 hover:text-cyan-700 mt-[-4px]  "
-        : "text-gray-600 hover:bg-gray-100"
+        ? "text-primary bg-primary/5 hover:bg-primary/10"
+        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
     }`;
 
   return (
     <>
       <div
-        ref={navRef}
-        className="fixed left-0 right-0 bg-white border-t border-gray-200 shadow-md z-50 md:hidden"
+        className="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 shadow-md z-50 md:hidden"
         style={{
-          bottom: 0,
-          position: "fixed",
-          zIndex: 50,
-          padding: 0,
+          paddingBottom: safeAreaBottom,
         }}
       >
         <div className="flex items-center justify-between px-3">
           {isCoursePage ? (
-            <Button
-              variant="ghost"
-              className={getButtonStyles(false)}
-              onClick={() => {
-                if (window.history.state && window.history.length > 1) {
-                  navigate(-1);
-                } else {
-                  navigate("/explore");
-                }
-              }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="text-sm font-medium mt-1">Back</span>
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                className={getButtonStyles(false)}
+                onClick={() => navigate(-1)}
+              >
+                <ChevronLeft className="h-6 w-6" />
+                <span className="text-sm font-medium mt-1">Back</span>
+              </Button>
+
+              {/* Add Theme Toggle for Course Page */}
+              <ThemeToggle variant="ghost" size="default" showTooltip={false} />
+            </>
           ) : (
             <>
               {navItems.map((item) => {
@@ -105,6 +106,9 @@ export default function BottomNav() {
                   </Button>
                 );
               })}
+
+              {/* Add Theme Toggle */}
+              <ThemeToggle variant="ghost" size="default" showTooltip={false} />
             </>
           )}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -126,7 +130,10 @@ export default function BottomNav() {
           </Sheet>
         </div>
       </div>
-      {/* Spacer to prevent content from being hidden behind the nav */}
+      <div
+        className="h-20 md:hidden"
+        style={{ marginBottom: safeAreaBottom }}
+      />
     </>
   );
 }
