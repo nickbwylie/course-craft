@@ -87,7 +87,7 @@ export default function MobileSideMenu({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900">
+    <div className="flex flex-col h-full bg-[#f3f3ef] dark:bg-slate-900">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div className="flex items-center">
@@ -158,16 +158,19 @@ export default function MobileSideMenu({
       {/* Footer with auth buttons */}
       <div className="side-nav-footer dark:bg-gray-900">
         <div className="flex flex-col space-y-2">
-          <Button
-            className="w-full gap-2 justify-start border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-            onClick={() => setSupportModalOpen(true)}
-          >
-            <HelpCircle className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+          <div className="flex justify-between items-center mb-2 px-2">
+            <div
+              className={`footer-button p-2 flex items-center cursor-pointer 
+           justify-start
+           dark:text-slate-300`}
+              onClick={() => setSupportModalOpen(true)}
+            >
+              <HelpCircle className="h-5 w-5 text-slate-600 dark:text-slate-400" />
 
-            <span className="text-sm font-medium">Help</span>
-
+              <span className="ml-3 text-sm font-medium">Help</span>
+            </div>
             <ThemeToggle variant="ghost" size="sm" />
-          </Button>
+          </div>
           {user?.id ? (
             <Button
               variant="outline"
@@ -186,7 +189,7 @@ export default function MobileSideMenu({
             </Button>
           ) : (
             <Button
-              className="w-full gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]"
+              className="w-full gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]  text-white"
               onClick={() => {
                 setShowLoginModal(true);
                 onClose();
