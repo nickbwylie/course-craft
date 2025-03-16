@@ -7,7 +7,15 @@ import { useParams } from "react-router-dom";
 import { FaFeatherAlt } from "react-icons/fa";
 import { SERVER } from "@/constants";
 import { supabase } from "@/supabaseconsant";
-import { Book, HelpCircle, LogOut, LogIn, Trash } from "lucide-react";
+import {
+  Book,
+  HelpCircle,
+  LogOut,
+  LogIn,
+  Trash,
+  Moon,
+  Sun,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +28,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import SupportModal from "./SupportModal";
 import "./SideNav.css";
+import { useTheme } from "@/styles/useTheme";
+import { lightTheme, darkTheme } from "@/styles/myTheme";
+import ThemeToggle from "./ThemeToggle";
 
 interface MobileSideMenuProps {
   onClose: () => void;
@@ -38,6 +49,8 @@ export default function MobileSideMenu({
   const { courses } = useCoursesActivity();
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
+  const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === darkTheme;
 
   const deleteCourse = async (courseId: string) => {
     try {
@@ -74,23 +87,24 @@ export default function MobileSideMenu({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900">
       {/* Header */}
-      <div className="px-4 py-3 border-b flex items-center">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <div className="flex items-center">
-          <FaFeatherAlt className="h-5 w-5 text-slate-800" />
-          <span className="ml-2 font-semibold text-slate-800">CourseCraft</span>
+          <FaFeatherAlt className="h-5 w-5 text-slate-800 dark:text-slate-200" />
+          <span className="ml-2 font-semibold text-slate-800 dark:text-slate-200">
+            CourseCraft
+          </span>
         </div>
-        {/* Removed duplicate close button */}
       </div>
 
-      <div className="side-nav-content">
-        <div className=" w-full flex-1 py-2">
+      <div className="side-nav-content dark:bg-slate-900">
+        <div className="w-full flex-1 py-2">
           {/* My Courses Section */}
           {courses && courses.length > 0 && (
             <>
-              <div className="mb-2">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <div className="mb-2 px-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   My Courses
                 </h3>
               </div>
@@ -110,8 +124,8 @@ export default function MobileSideMenu({
                             onNavigate(`/course/${course.course_id}`)
                           }
                         >
-                          <Book className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                          <span className="ml-2 text-sm truncate">
+                          <Book className="h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
+                          <span className="ml-2 text-sm truncate dark:text-slate-300">
                             {course.course_title}
                           </span>
                         </div>
@@ -120,7 +134,7 @@ export default function MobileSideMenu({
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="p-1 h-7 w-7 text-slate-500 hover:text-red-600 hover:bg-red-50"
+                            className="p-1 h-7 w-7 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                             onClick={(e) => {
                               e.stopPropagation();
                               setCourseToDelete(course.course_id);
@@ -142,21 +156,22 @@ export default function MobileSideMenu({
       </div>
 
       {/* Footer with auth buttons */}
-      <div className="side-nav-footer" style={{ backgroundColor: "white" }}>
+      <div className="side-nav-footer dark:bg-gray-900">
         <div className="flex flex-col space-y-2">
           <Button
-            variant="ghost"
-            className="w-full gap-2 justify-start border-slate-300"
+            className="w-full gap-2 justify-start border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             onClick={() => setSupportModalOpen(true)}
           >
-            <HelpCircle className="h-4 w-4 text-slate-600" />
+            <HelpCircle className="h-4 w-4 text-slate-600 dark:text-slate-400" />
 
-            <span className=" text-sm font-medium">Help</span>
+            <span className="text-sm font-medium">Help</span>
+
+            <ThemeToggle variant="ghost" size="sm" />
           </Button>
           {user?.id ? (
             <Button
               variant="outline"
-              className="w-full gap-2 justify-start border-slate-300"
+              className="w-full gap-2 justify-start border-slate-300 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
               onClick={() => {
                 signOut();
                 onClose();
@@ -189,16 +204,21 @@ export default function MobileSideMenu({
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="dark:bg-slate-800 dark:border-slate-700">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Course</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="dark:text-white">
+              Delete Course
+            </AlertDialogTitle>
+            <AlertDialogDescription className="dark:text-slate-400">
               Are you sure you want to delete "{deletingCourseTitle}"? This
               action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setCourseToDelete(null)}>
+            <AlertDialogCancel
+              onClick={() => setCourseToDelete(null)}
+              className="dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
@@ -211,7 +231,7 @@ export default function MobileSideMenu({
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Support Modal */}
       <SupportModal
         supportModalOpen={supportModalOpen}
         setSupportModalOpen={setSupportModalOpen}

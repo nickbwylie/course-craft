@@ -87,47 +87,68 @@ export function SearchableDropdown({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn("w-full justify-between", className)}
+            className={cn(
+              "w-full justify-between border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-gray-800 dark:hover:bg-gray-700/50 dark:text-slate-200",
+              className,
+              open &&
+                "border-slate-300 dark:border-slate-600 ring-1 ring-slate-200 dark:ring-slate-700"
+            )}
             disabled={disabled}
           >
-            {selectedCount > 0
-              ? `${selectedCount} option${
-                  selectedCount !== 1 ? "s" : ""
-                } selected`
-              : placeholder}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            {selectedCount > 0 ? (
+              <span className="flex items-center gap-1 truncate">
+                <Search className="mr-1 h-4 w-4 text-slate-500 dark:text-slate-400" />
+                <span>
+                  {selectedCount} option{selectedCount !== 1 ? "s" : ""}{" "}
+                  selected
+                </span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                <Search className="mr-1 h-4 w-4" />
+                <span>{placeholder}</span>
+              </span>
+            )}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 text-slate-500 dark:text-slate-400" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-          <Command>
-            <div className="flex items-center border-b px-3">
+        <PopoverContent
+          className="w-[--radix-popover-trigger-width] p-0 border-slate-200 dark:border-slate-700 dark:bg-gray-800 shadow-lg"
+          align="start"
+        >
+          <Command className="bg-transparent dark:bg-gray-800">
+            <div className="flex items-center border-b border-slate-200 dark:border-slate-700 px-3">
+              <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-slate-500 dark:text-slate-400" />
               <CommandInput
                 placeholder="Search options..."
-                className="h-9 border-0 focus:ring-0"
+                className="h-9 border-0 focus:ring-0 bg-transparent dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-400"
               />
             </div>
-            <CommandList>
-              <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandList className="max-h-[300px] overflow-auto py-1">
+              <CommandEmpty className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                {emptyMessage}
+              </CommandEmpty>
               <CommandGroup className="max-h-60 overflow-auto">
                 {options.map((option) => (
                   <CommandItem
                     key={option.value}
                     value={option.value}
                     onSelect={handleSelect}
+                    className="px-2 py-2 aria-selected:bg-slate-100 dark:aria-selected:bg-slate-700/50 text-slate-700 dark:text-slate-200 cursor-pointer"
                   >
                     <div
                       className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
                         selected.includes(option.value)
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50"
+                          ? "border-[rgb(64,126,139)] bg-[rgb(64,126,139)] text-white dark:border-[rgb(86,156,170)] dark:bg-[rgb(86,156,170)]"
+                          : "border-slate-300 dark:border-slate-600 opacity-50"
                       )}
                     >
                       {selected.includes(option.value) && (
                         <Check className="h-3 w-3" />
                       )}
                     </div>
-                    {option.label}
+                    <span>{option.label}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -137,21 +158,24 @@ export function SearchableDropdown({
       </Popover>
 
       {selected.length > 0 && (
-        <div className="flex flex-wrap gap-2" aria-label="Selected options">
+        <div
+          className="flex flex-wrap gap-2 pt-1"
+          aria-label="Selected options"
+        >
           {selected.slice(0, maxDisplayItems).map((value) => {
             const option = options.find((opt) => opt.value === value);
             return option ? (
               <Badge
                 key={value}
                 variant="secondary"
-                className="flex items-center gap-1 pr-1"
+                className="flex items-center gap-1 pr-1 bg-[rgb(64,126,139)]/10 hover:bg-[rgb(64,126,139)]/15 text-[rgb(64,126,139)] dark:bg-[rgb(86,156,170)]/20 dark:hover:bg-[rgb(86,156,170)]/25 dark:text-[rgb(86,156,170)] border-[rgb(64,126,139)]/20 dark:border-[rgb(86,156,170)]/30"
               >
-                <Tag className="w-4 h-4" />
+                <Tag className="w-3 h-3 mr-1" />
                 {option.label}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-5 w-5 p-0 hover:bg-secondary-foreground/20"
+                  className="h-5 w-5 p-0 hover:bg-[rgb(64,126,139)]/20 dark:hover:bg-[rgb(86,156,170)]/30 rounded-full ml-1"
                   onClick={(e) => removeItem(value, e)}
                   aria-label={`Remove ${option.label}`}
                 >
@@ -161,7 +185,12 @@ export function SearchableDropdown({
             ) : null;
           })}
           {remainingCount > 0 && (
-            <Badge variant="outline">+{remainingCount} more</Badge>
+            <Badge
+              variant="outline"
+              className="border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+            >
+              +{remainingCount} more
+            </Badge>
           )}
         </div>
       )}

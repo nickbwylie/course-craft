@@ -128,7 +128,7 @@ export default function Quiz({ quiz }: QuizProps) {
 
     return (
       <div className="w-full">
-        <Card className="p-0 border-0 overflow-hidden">
+        <Card className="p-0 border-0 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
           <div
             className="h-2 w-full"
             style={{
@@ -140,19 +140,21 @@ export default function Quiz({ quiz }: QuizProps) {
                   : "rgb(240, 128, 128)",
             }}
           />
-          <CardHeader className="text-center bg-gray-50 pt-8 pb-6">
+          <CardHeader className="text-center bg-gray-50 dark:bg-slate-800 pt-8 pb-6">
             <Award
               className="w-16 h-16 mx-auto mb-2"
               style={{ color: "rgb(64, 126, 139)" }}
             />
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-2xl font-bold dark:text-white">
               {getResultMessage()}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 space-y-6">
             <div className="flex justify-between items-center">
-              <div className="text-center p-4 bg-gray-50 rounded-lg flex-1 mr-2">
-                <p className="text-sm text-gray-500 mb-1">Score</p>
+              <div className="text-center p-4 bg-gray-50 dark:bg-slate-700 rounded-lg flex-1 mr-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  Score
+                </p>
                 <p
                   className="text-3xl font-bold"
                   style={{ color: "rgb(64, 126, 139)" }}
@@ -160,8 +162,10 @@ export default function Quiz({ quiz }: QuizProps) {
                   {score}/{quiz.length}
                 </p>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-lg flex-1 ml-2">
-                <p className="text-sm text-gray-500 mb-1">Time</p>
+              <div className="text-center p-4 bg-gray-50 dark:bg-slate-700 rounded-lg flex-1 ml-2">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  Time
+                </p>
                 <p
                   className="text-3xl font-bold"
                   style={{ color: "rgb(64, 126, 139)" }}
@@ -172,7 +176,9 @@ export default function Quiz({ quiz }: QuizProps) {
             </div>
 
             <div className="text-center pt-2">
-              <div className="mb-2 text-sm text-gray-500">Percentage</div>
+              <div className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                Percentage
+              </div>
               <div className="relative h-6 mb-1">
                 <Progress value={percentage} className="h-6" />
                 <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
@@ -183,7 +189,9 @@ export default function Quiz({ quiz }: QuizProps) {
 
             {/* Question breakdown */}
             <div className="pt-4">
-              <h3 className="text-md font-semibold mb-4">Question Breakdown</h3>
+              <h3 className="text-md font-semibold mb-4 dark:text-white">
+                Question Breakdown
+              </h3>
               {quiz.map((question, index) => {
                 const isCorrect =
                   answers[question.id] === question.correctAnswer;
@@ -205,13 +213,15 @@ export default function Quiz({ quiz }: QuizProps) {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{question.question}</p>
-                      <p className="text-xs mt-1">
+                      <p className="text-sm font-medium dark:text-white">
+                        {question.question}
+                      </p>
+                      <p className="text-xs mt-1 dark:text-gray-300">
                         <span className="font-medium">Your answer:</span>{" "}
                         {answers[question.id] || "Not answered"}
                       </p>
                       {!isCorrect && (
-                        <p className="text-xs mt-1 text-green-600">
+                        <p className="text-xs mt-1 text-green-600 dark:text-green-400">
                           <span className="font-medium">Correct answer:</span>{" "}
                           {question.correctAnswer}
                         </p>
@@ -222,7 +232,7 @@ export default function Quiz({ quiz }: QuizProps) {
               })}
             </div>
           </CardContent>
-          <CardFooter className="bg-gray-50 p-4 flex justify-center">
+          <CardFooter className="bg-gray-50 dark:bg-slate-800 p-4 flex justify-center">
             <Button
               onClick={handleRestart}
               className="flex items-center"
@@ -240,8 +250,8 @@ export default function Quiz({ quiz }: QuizProps) {
   // Render quiz question
   return (
     <div className="w-full">
-      <Card className="shadow-lg border-0">
-        <div className="h-1 w-full bg-gray-200">
+      <Card className="shadow-lg border-0 dark:bg-slate-800 dark:border-slate-700">
+        <div className="h-1 w-full bg-gray-200 dark:bg-gray-700">
           <div
             className="h-1 transition-all duration-300 ease-in-out"
             style={{
@@ -252,15 +262,15 @@ export default function Quiz({ quiz }: QuizProps) {
         </div>
         <CardHeader className="pb-3">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-500">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
               Question {currentQuestionIndex + 1} of {quiz.length}
             </span>
-            <div className="flex items-center text-sm text-gray-500">
+            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
               <Clock className="h-4 w-4 mr-1" />
               <span>Quiz in progress</span>
             </div>
           </div>
-          <CardTitle className="text-xl leading-tight">
+          <CardTitle className="text-xl leading-tight dark:text-white">
             {currentQuestion?.question}
           </CardTitle>
         </CardHeader>
@@ -275,15 +285,15 @@ export default function Quiz({ quiz }: QuizProps) {
             {currentQuestion?.choices.map((choice, i) => (
               <div
                 key={i}
-                className={`border rounded-lg transition-all hover:border-gray-400 ${
+                className={`border rounded-lg transition-all hover:border-gray-400 dark:hover:border-gray-500 ${
                   answers[currentQuestion?.id] === choice
-                    ? "border-2 border-cyan-600 bg-cyan-50"
-                    : "border-gray-200"
+                    ? "border-2 border-cyan-600 dark:border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30"
+                    : "border-gray-200 dark:border-gray-700"
                 }`}
               >
                 <Label
                   htmlFor={`choice-${i}`}
-                  className="flex items-center p-3 cursor-pointer w-full"
+                  className="flex items-center p-3 cursor-pointer w-full dark:text-gray-200"
                 >
                   <RadioGroupItem
                     value={choice}
@@ -296,12 +306,12 @@ export default function Quiz({ quiz }: QuizProps) {
             ))}
           </RadioGroup>
         </CardContent>
-        <CardFooter className="bg-gray-50 p-4 flex justify-between">
+        <CardFooter className="bg-gray-50 dark:bg-slate-800 p-4 flex justify-between">
           <Button
             onClick={handlePrevious}
             variant="outline"
             disabled={currentQuestionIndex === 0}
-            className="px-3"
+            className="px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Previous
           </Button>
@@ -333,8 +343,8 @@ export default function Quiz({ quiz }: QuizProps) {
       </Card>
 
       {currentQuestionIndex === quiz.length - 1 && (
-        <div className="mt-4 p-4 bg-yellow-50 rounded-md border border-yellow-200">
-          <p className="text-sm text-center text-yellow-800">
+        <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/30 rounded-md border border-yellow-200 dark:border-yellow-800">
+          <p className="text-sm text-center text-yellow-800 dark:text-yellow-200">
             {Object.keys(answers).length < quiz.length
               ? `Please answer all questions before submitting (${
                   Object.keys(answers).length

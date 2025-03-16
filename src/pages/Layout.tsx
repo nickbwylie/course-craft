@@ -1,6 +1,6 @@
 // Layout.tsx
 import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import SideNav from "../myComponents/SideNav"; // Import your SideNav component
 import BottomNav from "../myComponents/BottomNav"; // Import the new BottomNav component
 import "./Layout.css";
@@ -15,11 +15,6 @@ const Layout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { user } = useAuth();
   const { getUserCourses } = useCoursesActivity();
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
 
   // Check if screen is mobile
   useEffect(() => {
@@ -51,16 +46,7 @@ const Layout = () => {
     <div style={{ minHeight: "100vh", width: "100%" }}>
       <TooltipProvider>
         <ToastProvider>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              overflowX: "hidden",
-              minHeight: "100vh",
-              backgroundColor: "rgb(243, 243, 239)",
-            }}
-          >
+          <div className="flex flex-col w-full overflow-x-hidden min-h-screen bg-background-dark dark:bg-gray-900">
             {!user?.id && <LoginModal />}
 
             {/* Show side navigation on desktop */}
@@ -72,7 +58,7 @@ const Layout = () => {
 
             {/* Main content area */}
             <div
-              className={`w-full rounded-2xl  pb-32 md:pb-8 ${
+              className={`w-full rounded-2xl bg-background dark:bg-gray-800 flex-1 ${
                 !isMobile && navOpen
                   ? "pageWithNavOpen"
                   : !isMobile && !navOpen
@@ -81,8 +67,6 @@ const Layout = () => {
               }`}
               style={{
                 minHeight: "100vh",
-                backgroundColor: "rgb(252, 252, 249)",
-                flex: "1",
                 paddingLeft: isMobile ? "0" : "", // Remove padding on mobile
                 paddingRight: isMobile ? "0" : "", // Remove padding on mobile
                 marginLeft: isMobile ? "0" : "", // Remove margin on mobile

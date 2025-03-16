@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MobileSideMenu from "@/myComponents/MobileSideMenu";
 import { CirclePlus, Search, Menu, ChevronLeft, Library } from "lucide-react";
+import { useTheme } from "@/styles/useTheme";
+import { lightTheme, darkTheme } from "@/styles/myTheme";
 
 const navItems = [
   { name: "library", href: "/library", icon: Library, requiresAuth: true },
@@ -20,6 +22,8 @@ export default function BottomNav() {
   const isCoursePage = location.pathname.includes("/course/");
   const navRef = useRef<HTMLDivElement>(null);
   const [safeAreaBottom, setSafeAreaBottom] = useState("16px");
+  const { theme } = useTheme();
+  const isDarkMode = theme === darkTheme;
 
   // Update safe area inset
   useEffect(() => {
@@ -46,15 +50,15 @@ export default function BottomNav() {
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-cyan-700  border-t-black border-t-4 hover:text-cyan-700 mt-[-4px]  "
-        : "text-gray-600 hover:bg-gray-100"
+        ? "text-cyan-700 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
+        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
 
   return (
     <>
       <div
         ref={navRef}
-        className="fixed left-0 right-0 bg-white border-t border-gray-200 shadow-md z-50 md:hidden"
+        className="fixed left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-700 shadow-md z-50 md:hidden"
         style={{
           bottom: 0,
           position: "fixed",
@@ -114,7 +118,10 @@ export default function BottomNav() {
                 <span className="text-sm font-medium mt-1">More</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="p-0 w-[300px]">
+            <SheetContent
+              side="right"
+              className="p-0 w-[300px] dark:bg-slate-900 dark:border-slate-700"
+            >
               <MobileSideMenu
                 onClose={() => setIsMobileMenuOpen(false)}
                 onNavigate={(path) => {

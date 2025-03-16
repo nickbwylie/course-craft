@@ -276,8 +276,10 @@ export default function CreateCoursePage() {
     <div className="max-w-4xl mx-auto px-8 py-8">
       {/* Header */}
       <div className="mb-4 flex flex-row space-x-2 items-center">
-        <Sparkles className="text-[#407e8b] h-5 w-5" />
-        <h1 className="text-xl font-bold">Create a New Course</h1>
+        <Sparkles className="text-[#407e8b] dark:text-[#60a5fa] h-5 w-5" />
+        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          Create a New Course
+        </h1>
       </div>
 
       {/* Main form */}
@@ -287,8 +289,8 @@ export default function CreateCoursePage() {
             {/* Course form (left side) */}
             <div className="w-full space-y-6">
               {/* Course information section */}
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h2 className="text-xl font-semibold mb-4">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Course Information
                 </h2>
 
@@ -297,14 +299,17 @@ export default function CreateCoursePage() {
                   name="title"
                   render={({ field }) => (
                     <FormItem className="mb-4">
-                      <FormLabel>Course Title</FormLabel>
+                      <FormLabel className="text-gray-700 dark:text-gray-300">
+                        Course Title
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="e.g. Introduction to Machine Learning"
+                          className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -314,15 +319,17 @@ export default function CreateCoursePage() {
                   name="description"
                   render={({ field }) => (
                     <FormItem className="mb-4">
-                      <FormLabel>Course Description</FormLabel>
+                      <FormLabel className="text-gray-700 dark:text-gray-300">
+                        Course Description
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Describe what your course covers and what students will learn"
-                          className="min-h-[100px]"
+                          className="min-h-[100px] bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500 dark:text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -336,11 +343,14 @@ export default function CreateCoursePage() {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-cyan-600 dark:data-[state=checked]:bg-cyan-500"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>Make course public</FormLabel>
-                        <FormDescription>
+                        <FormLabel className="text-gray-700 dark:text-gray-300">
+                          Make course public
+                        </FormLabel>
+                        <FormDescription className="text-gray-500 dark:text-gray-400">
                           Public courses will appear in explore page and will be
                           accessible to all users. Private courses are only
                           visible to you.
@@ -352,14 +362,16 @@ export default function CreateCoursePage() {
               </div>
 
               {/* Add videos section */}
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h2 className="text-xl font-semibold mb-4">Add Videos</h2>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  Add Videos
+                </h2>
 
                 <div className="mb-6">
                   <div className="flex gap-2">
                     <div className="relative flex-grow">
                       <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <FaYoutube className="h-5 w-5 text-red-600" />
+                        <FaYoutube className="h-5 w-5 text-red-600 dark:text-red-500" />
                       </div>
                       <Input
                         placeholder="Paste YouTube video URL here"
@@ -368,7 +380,7 @@ export default function CreateCoursePage() {
                           setVideoUrl(e.target.value);
                           setAddVideoError("");
                         }}
-                        className="pl-10"
+                        className="pl-10 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -380,17 +392,19 @@ export default function CreateCoursePage() {
                     <Button
                       onClick={handleAddVideo}
                       disabled={isAddingVideo || !videoUrl.trim()}
-                      style={{ backgroundColor: "rgb(64,126,139)" }}
+                      className="bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
                     >
                       {isAddingVideo ? "Adding..." : "Add Video"}
                     </Button>
                   </div>
 
                   {addVideoError && (
-                    <p className="text-sm text-red-500 mt-1">{addVideoError}</p>
+                    <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                      {addVideoError}
+                    </p>
                   )}
 
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                     Add videos by pasting YouTube URLs (e.g.,
                     https://www.youtube.com/watch?v=dQw4w9WgXcQ)
                   </p>
@@ -400,14 +414,14 @@ export default function CreateCoursePage() {
                 {courseVideos.length > 0 ? (
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium">
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200">
                         Course Videos ({courseVideos.length})
                       </h3>
                       {courseVideos.length > 1 && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 text-xs"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs"
                           onClick={() => {
                             if (
                               confirm(
@@ -427,7 +441,7 @@ export default function CreateCoursePage() {
                       {courseVideos.map((video) => (
                         <div
                           key={video.videoId}
-                          className="flex items-center gap-3 border rounded-md p-3 bg-gray-50 hover:bg-gray-100 transition"
+                          className="flex items-center gap-3 border border-gray-200 dark:border-gray-700 rounded-md p-3 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                         >
                           <div className="w-24 h-16 relative flex-shrink-0">
                             <img
@@ -441,10 +455,10 @@ export default function CreateCoursePage() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm line-clamp-1">
+                            <h4 className="font-medium text-sm line-clamp-1 text-gray-800 dark:text-gray-200">
                               {video.title}
                             </h4>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {video.channel}
                             </p>
                           </div>
@@ -452,7 +466,7 @@ export default function CreateCoursePage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="flex-shrink-0 hover:bg-red-50 hover:text-red-500"
+                            className="flex-shrink-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
                             onClick={() => handleRemoveVideo(video.videoId)}
                           >
                             <Trash className="h-4 w-4" />
@@ -462,12 +476,12 @@ export default function CreateCoursePage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center bg-gray-50">
-                    <MonitorPlay className="h-8 w-8 text-gray-400 mx-auto mb-3" />
-                    <h3 className="font-medium text-gray-800 mb-1">
+                  <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center bg-gray-50 dark:bg-gray-900">
+                    <MonitorPlay className="h-8 w-8 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+                    <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-1">
                       No videos added yet
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       Add videos by pasting YouTube URLs above
                     </p>
                   </div>
@@ -475,8 +489,10 @@ export default function CreateCoursePage() {
               </div>
 
               {/* Settings section */}
-              <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  Course Settings
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
@@ -484,16 +500,18 @@ export default function CreateCoursePage() {
                     name="courseDifficulty"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Course Difficulty</FormLabel>
+                        <FormLabel className="text-gray-700 dark:text-gray-300">
+                          Course Difficulty
+                        </FormLabel>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <FormLabel className="font-normal flex items-center gap-1 cursor-help text-xs text-gray-500">
+                              <FormLabel className="font-normal flex items-center gap-1 cursor-help text-xs text-gray-500 dark:text-gray-400">
                                 <HelpCircle className="h-3 w-3" />
                                 What's this?
                               </FormLabel>
                             </TooltipTrigger>
-                            <TooltipContent>
+                            <TooltipContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <p className="max-w-xs">
                                 Difficulty setting affects the complexity of
                                 quiz questions generated for your course.
@@ -506,10 +524,10 @@ export default function CreateCoursePage() {
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <SelectValue placeholder="Select difficulty level" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <SelectItem value="Simple">Easy</SelectItem>
                               <SelectItem value="Normal">
                                 Normal (Recommended)
@@ -518,7 +536,7 @@ export default function CreateCoursePage() {
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500 dark:text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -528,16 +546,18 @@ export default function CreateCoursePage() {
                     name="courseDetail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Summary Detail Level</FormLabel>
+                        <FormLabel className="text-gray-700 dark:text-gray-300">
+                          Summary Detail Level
+                        </FormLabel>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <FormLabel className="font-normal flex items-center gap-1 cursor-help text-xs text-gray-500">
+                              <FormLabel className="font-normal flex items-center gap-1 cursor-help text-xs text-gray-500 dark:text-gray-400">
                                 <HelpCircle className="h-3 w-3" />
                                 What's this?
                               </FormLabel>
                             </TooltipTrigger>
-                            <TooltipContent>
+                            <TooltipContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <p className="max-w-xs">
                                 Detail level controls the length and depth of
                                 AI-generated summaries for each video.
@@ -550,10 +570,10 @@ export default function CreateCoursePage() {
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <SelectValue placeholder="Select level of detail" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                               <SelectItem value="Simple">Brief</SelectItem>
                               <SelectItem value="Normal">
                                 Standard (Recommended)
@@ -564,7 +584,7 @@ export default function CreateCoursePage() {
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-red-500 dark:text-red-400" />
                       </FormItem>
                     )}
                   />
@@ -574,20 +594,22 @@ export default function CreateCoursePage() {
 
             {/* Course summary sidebar (right side) */}
             <div className="w-full">
-              <div className="sticky top-6 bg-white p-6 rounded-lg border shadow-sm">
-                <h2 className="text-lg font-semibold mb-4">Course Summary</h2>
+              <div className="sticky top-6 bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  Course Summary
+                </h2>
 
                 <div className="space-y-4">
                   {/* Course stats */}
-                  <div className="flex items-center gap-3 bg-cyan-50 p-3 rounded-lg">
-                    <div className="h-10 w-10 rounded-full bg-cyan-100 flex items-center justify-center">
-                      <MonitorPlay className="h-5 w-5 text-cyan-700" />
+                  <div className="flex items-center gap-3 bg-cyan-50 dark:bg-cyan-900/20 p-3 rounded-lg">
+                    <div className="h-10 w-10 rounded-full bg-cyan-100 dark:bg-cyan-800 flex items-center justify-center">
+                      <MonitorPlay className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                         {totalVideos} {totalVideos === 1 ? "video" : "videos"}
                       </p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
                         {totalDuration === "00:00:00"
                           ? "No videos added"
                           : totalDuration}
@@ -597,20 +619,28 @@ export default function CreateCoursePage() {
 
                   {/* Selected settings */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">Selected Settings</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                      Selected Settings
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline" className="bg-gray-100">
+                      <Badge
+                        variant="outline"
+                        className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                      >
                         {form.watch("courseDifficulty") || "Normal"} Difficulty
                       </Badge>
-                      <Badge variant="outline" className="bg-gray-100">
+                      <Badge
+                        variant="outline"
+                        className="bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                      >
                         {form.watch("courseDetail") || "Normal"} Detail
                       </Badge>
                       <Badge
                         variant="outline"
                         className={
                           form.watch("isPublic")
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100"
+                            ? "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 dark:border-green-800"
+                            : "bg-gray-100 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
                         }
                       >
                         {form.watch("isPublic") ? "Public" : "Private"}
@@ -621,11 +651,19 @@ export default function CreateCoursePage() {
                   {/* Creation progress */}
                   {isSubmitting && (
                     <div className="mt-4 space-y-2">
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                         Creating your course...
                       </p>
-                      <Progress value={progress} className="h-2" />
-                      <p className="text-xs text-right text-gray-500">
+                      <Progress
+                        value={progress}
+                        className="h-2 bg-gray-200 dark:bg-gray-700"
+                      >
+                        <div
+                          className="h-full bg-cyan-600 dark:bg-cyan-500"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </Progress>
+                      <p className="text-xs text-right text-gray-500 dark:text-gray-400">
                         {progress}%
                       </p>
                     </div>
@@ -634,8 +672,7 @@ export default function CreateCoursePage() {
                   {/* Create button */}
                   <Button
                     type="submit"
-                    className="w-full mt-4"
-                    style={{ backgroundColor: "rgb(64,126,139)" }}
+                    className="w-full mt-4 bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
                     disabled={isSubmitting || courseVideos.length === 0}
                   >
                     {isSubmitting ? "Creating Course..." : "Create Course"}
@@ -643,7 +680,7 @@ export default function CreateCoursePage() {
 
                   {/* Validation notice */}
                   {courseVideos.length === 0 && (
-                    <p className="text-xs text-center text-amber-600 mt-2">
+                    <p className="text-xs text-center text-amber-600 dark:text-amber-500 mt-2">
                       Please add at least one video to create a course
                     </p>
                   )}
@@ -656,13 +693,13 @@ export default function CreateCoursePage() {
 
       {/* Success dialog */}
       <AlertDialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <CheckCircle className="h-6 w-6 text-green-500" />
+            <AlertDialogTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+              <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400" />
               Course Created Successfully!
             </AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-gray-500 dark:text-900">
               Your course has been created and is now available for learning.
               What would you like to do next?
             </AlertDialogDescription>
