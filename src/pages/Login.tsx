@@ -114,7 +114,7 @@ function SignupForm({
       >
         <X className="h-4 w-4" />
       </Button>
-      <Card>
+      <Card className="bg-white dark:bg-gray-800">
         <CardHeader>
           <CardTitle className="text-2xl">Create an account</CardTitle>
           <CardDescription>
@@ -194,7 +194,11 @@ function SignupForm({
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-black text-white dark:bg-white dark:text-black"
+                disabled={isLoading}
+              >
                 {isLoading ? "Creating account..." : "Sign up"}
               </Button>
             </form>
@@ -325,7 +329,7 @@ export default function LoginModal() {
         }}
       >
         {!showSignUpModal ? (
-          <div className="relative flex flex-col gap-6 w-[400px]">
+          <div className="relative flex flex-col gap-6 w-[400px">
             <Button
               className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
               variant="ghost"
@@ -335,7 +339,7 @@ export default function LoginModal() {
             >
               <X className="h-4 w-4" />
             </Button>
-            <Card>
+            <Card className="bg-white dark:bg-gray-800">
               <CardHeader>
                 <CardTitle className="text-2xl">Login</CardTitle>
                 <CardDescription>
@@ -377,7 +381,7 @@ export default function LoginModal() {
                       />
                     </div>
                     <Button
-                      className="w-full"
+                      className="w-full bg-black text-white dark:bg-white dark:text-black"
                       onClick={(e) => loginWithEmail(e)}
                     >
                       Login

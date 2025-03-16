@@ -59,7 +59,7 @@
   padding: 12px 8px;
   border-top: 1px solid #eaeaea;
   flex-shrink: 0;
-  background-color: rgb(243, 243, 239);
+  background-color: #f3f3ef;
 }
 
 /* Nav item styling */
@@ -128,9 +128,9 @@
   border-radius: 8px;
 }
 
-.footer-button:hover {
+/* .footer-button:hover {
   background-color: rgba(0, 0, 0, 0.04);
-}
+} */
 
 /* Title text truncation */
 .truncate-text {

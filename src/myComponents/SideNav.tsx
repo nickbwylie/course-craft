@@ -287,7 +287,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           <div
             className={`footer-button p-2 flex items-center cursor-pointer ${
               !delayedOpen ? "justify-center w-10" : "justify-start"
-            } dark:hover:bg-gray-800 dark:text-slate-300`}
+            } bg-whit dark:text-slate-300`}
             onClick={() => setSupportModalOpen(true)}
           >
             <HelpCircle className="h-5 w-5 text-slate-600 dark:text-slate-400" />
@@ -326,11 +326,11 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               delayedOpen
                 ? "w-full justify-start p-2"
                 : "justify-center w-full h-10 p-0"
-            } gap-2 bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)]`}
+            } gap-2 bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white`}
             onClick={() => setShowLoginModal(true)}
           >
             <LogIn className="h-5 w-5" />
-            {delayedOpen && <span className="ml-1">Sign in</span>}
+            {delayedOpen && <span className="ml-1 text-white">Sign in</span>}
           </Button>
         )}
 
