@@ -10,6 +10,8 @@ import {
   Clock,
   Menu,
   Play,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,8 @@ import { Tv } from "lucide-react";
 import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
 import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
 import { Json } from "supabase-types.ts";
+import { useTheme } from "@/styles/useTheme";
+import { lightTheme, darkTheme } from "@/styles/myTheme";
 
 export interface CourseVideo {
   course_description: string;
@@ -55,10 +59,10 @@ const parseSummary = (text: string) => {
 
     return (
       <div key={index} className="mb-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-2">
+        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
           {cleanedHeading}
         </h3>
-        <p className="text-slate-600 leading-relaxed">
+        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
           {content.join(" ").trim()}
         </p>
       </div>
@@ -73,6 +77,8 @@ export default function ViewCourse() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
+  const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === darkTheme;
 
   async function getCourseContent(courseId: string) {
     setIsLoading(true);
@@ -124,26 +130,42 @@ export default function ViewCourse() {
   return (
     <div className="flex flex-col max-w-4xl mx-auto min-h-screen">
       {/* Mobile Nav Toggle */}
+      <div className="lg:hidden fixed top-4 right-24 z-50">
+        {/* Theme toggle button */}
+        {/* <Button
+          variant="outline"
+          size="icon"
+          className="bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700 mr-4"
+          onClick={toggleTheme}
+        >
+          {isDarkMode ? (
+            <Sun className="h-5 w-5 text-yellow-500" />
+          ) : (
+            <Moon className="h-5 w-5 text-slate-700" />
+          )}
+        </Button> */}
+      </div>
+
       <div className="lg:hidden fixed top-4 right-8 z-50">
         <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
           <SheetTrigger asChild>
             <Button
               variant="outline"
               size="icon"
-              className="bg-white shadow-md border-slate-200"
+              className="bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700"
             >
-              <Menu className="h-5 w-5 text-slate-700" />
+              <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />
             </Button>
           </SheetTrigger>
           <SheetContent
             side="right"
-            className="w-80 sm:w-96 p-0 bg-white border-l border-slate-200"
+            className="w-80 sm:w-96 p-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700"
           >
-            <div className="p-4 border-b border-slate-200">
-              <h2 className="font-semibold text-lg text-slate-800">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+              <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
                 Course Content
               </h2>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 {courseVideos ? `${courseVideos.length} videos` : "Loading..."}
               </p>
             </div>
@@ -154,7 +176,7 @@ export default function ViewCourse() {
                     .fill(0)
                     .map((_, i) => (
                       <div key={i} className="mb-4">
-                        <Skeleton className="h-16 w-full mb-2" />
+                        <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
                       </div>
                     ))
                 : courseVideos?.map((courseVideo, index) => (
@@ -166,8 +188,8 @@ export default function ViewCourse() {
                       }}
                       className={`flex items-start p-3 mb-2 rounded-lg cursor-pointer ${
                         index === selectedCourse
-                          ? "bg-cyan-50 border border-cyan-200"
-                          : "hover:bg-slate-50"
+                          ? "bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-800"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
                       <div className="flex-shrink-0 mr-3 relative">
@@ -180,7 +202,7 @@ export default function ViewCourse() {
                             />
                           </div>
                         )}
-                        <div className="w-20 h-12 bg-slate-200 rounded overflow-hidden flex items-center justify-center">
+                        <div className="w-20 h-12 bg-slate-200 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
                           <img
                             src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
                             alt="Video Thumbnail"
@@ -192,15 +214,15 @@ export default function ViewCourse() {
                         <h4
                           className={`text-sm ${
                             index === selectedCourse
-                              ? "font-medium text-slate-800"
-                              : "text-slate-700"
+                              ? "font-medium text-slate-800 dark:text-slate-200"
+                              : "text-slate-700 dark:text-slate-300"
                           }`}
                         >
                           {courseVideo.video_title}
                         </h4>
                         <div className="flex items-center mt-1">
-                          <Clock className="h-3 w-3 text-slate-400 mr-1" />
-                          <span className="text-xs text-slate-500">
+                          <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
                             {parseYouTubeDuration(courseVideo.video_duration)}
                           </span>
                         </div>
@@ -213,19 +235,37 @@ export default function ViewCourse() {
       </div>
       {/* Course Header - Only visible on larger screens and when not in theater mode */}
 
-      <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200">
-        <h1 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">
-          {isLoading ? (
-            <Skeleton className="h-8 w-3/4" />
-          ) : (
-            courseVideos && courseVideos[0]?.course_title
-          )}
-        </h1>
+      <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200 dark:border-slate-700">
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-2">
+            {isLoading ? (
+              <Skeleton className="h-8 w-3/4 dark:bg-slate-700" />
+            ) : (
+              courseVideos && courseVideos[0]?.course_title
+            )}
+          </h1>
+
+          {/* Desktop theme toggle */}
+          <div className="hidden lg:flex">
+            {/* <Button
+              variant="outline"
+              size="icon"
+              className="bg-white dark:bg-slate-800 shadow-sm border-slate-200 dark:border-slate-700"
+              onClick={toggleTheme}
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-slate-700" />
+              )}
+            </Button> */}
+          </div>
+        </div>
 
         {isLoading ? (
-          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-4 w-1/2 dark:bg-slate-700" />
         ) : (
-          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500"></div>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400"></div>
         )}
       </div>
 
@@ -243,7 +283,7 @@ export default function ViewCourse() {
             `}
           >
             {isLoading || !currentVideo ? (
-              <Skeleton className="w-full h-full bg-slate-800" />
+              <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
             ) : (
               <>
                 <iframe
@@ -262,15 +302,15 @@ export default function ViewCourse() {
             <div className="mb-4 sm:mb-0">
               {isLoading || !currentVideo ? (
                 <>
-                  <Skeleton className="h-6 w-64 mb-2" />
-                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
+                  <Skeleton className="h-4 w-40 dark:bg-slate-700" />
                 </>
               ) : (
                 <>
-                  <h2 className="text-lg font-semibold text-slate-800">
+                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     {currentVideo.video_title}
                   </h2>
-                  <p className="text-sm text-slate-500 flex items-center mt-1">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center mt-1">
                     <Clock className="h-4 w-4 mr-1" />
                     {parseYouTubeDuration(currentVideo.video_duration)}
                   </p>
@@ -284,7 +324,7 @@ export default function ViewCourse() {
                 size="sm"
                 onClick={goToPreviousVideo}
                 disabled={isLoading || !courseVideos}
-                className="text-slate-700 border-slate-300 hover:bg-slate-50"
+                className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
@@ -304,17 +344,17 @@ export default function ViewCourse() {
 
           <div className="mb-8">
             <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100">
+              <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-800">
                 <TabsTrigger
                   value="summary"
-                  className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
                   onClick={() => setShowSummary(true)}
                 >
                   Summary
                 </TabsTrigger>
                 <TabsTrigger
                   value="quiz"
-                  className="text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
                   onClick={() => setShowSummary(false)}
                 >
                   Quiz
@@ -327,14 +367,14 @@ export default function ViewCourse() {
                     .fill(0)
                     .map((_, i) => (
                       <div key={i} className="mb-6">
-                        <Skeleton className="h-6 w-48 mb-2" />
-                        <Skeleton className="h-4 w-full mb-1" />
-                        <Skeleton className="h-4 w-full mb-1" />
-                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
+                        <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                        <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                        <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
                       </div>
                     ))
                 ) : (
-                  <div className="prose prose-sm max-w-none p-4 border border-slate-100 rounded-lg bg-white">
+                  <div className="prose prose-sm max-w-none p-4 border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
                     {parseSummary(currentVideo.video_summary)}
                   </div>
                 )}
@@ -343,12 +383,12 @@ export default function ViewCourse() {
               <TabsContent value="quiz" className="mt-0">
                 {isLoading || !currentVideo ? (
                   <div className="space-y-4">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-24 w-full" />
-                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-8 w-full dark:bg-slate-700" />
+                    <Skeleton className="h-24 w-full dark:bg-slate-700" />
+                    <Skeleton className="h-24 w-full dark:bg-slate-700" />
                   </div>
                 ) : (
-                  <div className="border border-slate-100 rounded-lg bg-white">
+                  <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
                     <Quiz
                       key={selectedCourse}
                       quiz={currentVideo.quiz as QuizQuestion[]}
@@ -363,13 +403,13 @@ export default function ViewCourse() {
         {/* Right Sidebar - Course Modules (hidden in theater mode and on mobile) */}
         <div
           className={`
-            lg:w-1/3 lg:border-l lg:border-slate-200 hidden lg:block`}
+            lg:w-1/3 lg:border-l lg:border-slate-200 lg:dark:border-slate-700 hidden lg:block`}
         >
-          <div className="p-4 border-b border-slate-200">
-            <h2 className="font-semibold text-lg text-slate-800">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+            <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
               Course Content
             </h2>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               {courseVideos ? `${courseVideos.length} videos` : "Loading..."}
             </p>
           </div>
@@ -381,7 +421,7 @@ export default function ViewCourse() {
                   .fill(0)
                   .map((_, i) => (
                     <div key={i} className="mb-4">
-                      <Skeleton className="h-16 w-full mb-2" />
+                      <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
                     </div>
                   ))
               ) : (
@@ -392,21 +432,21 @@ export default function ViewCourse() {
                       onClick={() => setSelectedCourse(index)}
                       className={`p-3 rounded-lg cursor-pointer transition-colors ${
                         index === selectedCourse
-                          ? "bg-[#407e8b14] "
-                          : "hover:bg-slate-50"
+                          ? "bg-[#407e8b14] dark:bg-[#407e8b40]"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800"
                       }`}
                     >
                       <div className="flex items-start">
                         <div className="flex-shrink-0 mr-3">
                           <div className="w-8 h-8 rounded-full flex items-center justify-center">
                             {index < selectedCourse ? (
-                              <CheckCircle className="h-5 w-5 text-emerald-700" />
+                              <CheckCircle className="h-5 w-5 text-emerald-700 dark:text-emerald-500" />
                             ) : index === selectedCourse ? (
-                              <div className="bg-cyan-100 rounded-full p-1.5">
-                                <Play className="h-4 w-4 text-cyan-600 fill-cyan-600" />
+                              <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-1.5">
+                                <Play className="h-4 w-4 text-cyan-600 dark:text-cyan-400 fill-cyan-600 dark:fill-cyan-400" />
                               </div>
                             ) : (
-                              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 text-xs font-medium text-slate-700">
+                              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
                                 {index + 1}
                               </span>
                             )}
@@ -416,15 +456,15 @@ export default function ViewCourse() {
                           <h4
                             className={`text-sm ${
                               index === selectedCourse
-                                ? "font-medium text-slate-800"
-                                : "text-slate-700"
+                                ? "font-medium text-slate-800 dark:text-slate-200"
+                                : "text-slate-700 dark:text-slate-300"
                             } line-clamp-2`}
                           >
                             {courseVideo.video_title}
                           </h4>
                           <div className="flex items-center mt-1">
-                            <Tv className="h-3 w-3 text-slate-400 mr-1" />
-                            <span className="text-xs text-slate-500">
+                            <Tv className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {parseYouTubeDuration(courseVideo.video_duration)}
                             </span>
                           </div>
@@ -439,7 +479,7 @@ export default function ViewCourse() {
                               className={`text-xs ${
                                 showSummary
                                   ? "bg-cyan-600 hover:bg-cyan-500"
-                                  : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                                  : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                               }`}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -453,7 +493,7 @@ export default function ViewCourse() {
                               className={`text-xs ${
                                 !showSummary
                                   ? "bg-cyan-600 hover:bg-cyan-500"
-                                  : "border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                                  : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                               }`}
                               onClick={(e) => {
                                 e.stopPropagation();

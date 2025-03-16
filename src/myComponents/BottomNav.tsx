@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MobileSideMenu from "@/myComponents/MobileSideMenu";
 import { CirclePlus, Search, Menu, ChevronLeft, Library } from "lucide-react";
-import ThemeToggle from "./ThemeToggle"; // Import the theme toggle
+import { useTheme } from "@/styles/useTheme";
+import { lightTheme, darkTheme } from "@/styles/myTheme";
 
 const navItems = [
-  {
-    name: "library",
-    href: "/library",
-    icon: Library,
-    requiresAuth: true,
-  },
+  { name: "library", href: "/library", icon: Library, requiresAuth: true },
   { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
 ] as const;
@@ -22,63 +18,70 @@ export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setShowLoginModal } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isCoursePage = location.pathname.includes("/course/");
-  const [safeAreaBottom, setSafeAreaBottom] = useState(
-    "env(safe-area-inset-bottom, 0px)"
-  );
+  const navRef = useRef<HTMLDivElement>(null);
+  const [safeAreaBottom, setSafeAreaBottom] = useState("16px");
+  const { theme } = useTheme();
+  const isDarkMode = theme === darkTheme;
 
-  // iOS detection and safe area handling
+  // Update safe area inset
   useEffect(() => {
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-    if (isIOS) {
-      const updateSafeArea = () => {
-        // Small delay to ensure safe area values are updated after orientation change
-        setTimeout(() => {
-          setSafeAreaBottom("env(safe-area-inset-bottom, 16px)");
-        }, 100);
-      };
+    const updateSafeArea = () => {
+      if (isIOS) {
+        setSafeAreaBottom(`max(env(safe-area-inset-bottom, 16px), 16px)`);
+      } else {
+        setSafeAreaBottom("16px");
+      }
+    };
 
-      window.addEventListener("orientationchange", updateSafeArea);
-      updateSafeArea(); // Initial call
+    updateSafeArea();
+    window.addEventListener("resize", updateSafeArea);
+    window.addEventListener("orientationchange", updateSafeArea);
 
-      return () =>
-        window.removeEventListener("orientationchange", updateSafeArea);
-    }
+    return () => {
+      window.removeEventListener("resize", updateSafeArea);
+      window.removeEventListener("orientationchange", updateSafeArea);
+    };
   }, []);
 
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-primary bg-primary/5 hover:bg-primary/10"
-        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+        ? "text-cyan-700 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
+        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
 
   return (
     <>
       <div
-        className="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 shadow-md z-50 md:hidden"
+        ref={navRef}
+        className="fixed left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-700 shadow-md z-50 md:hidden"
         style={{
-          paddingBottom: safeAreaBottom,
+          bottom: 0,
+          position: "fixed",
+          zIndex: 50,
+          padding: 0,
         }}
       >
         <div className="flex items-center justify-between px-3">
           {isCoursePage ? (
-            <>
-              <Button
-                variant="ghost"
-                className={getButtonStyles(false)}
-                onClick={() => navigate(-1)}
-              >
-                <ChevronLeft className="h-6 w-6" />
-                <span className="text-sm font-medium mt-1">Back</span>
-              </Button>
-
-              {/* Add Theme Toggle for Course Page */}
-              <ThemeToggle variant="ghost" size="default" showTooltip={false} />
-            </>
+            <Button
+              variant="ghost"
+              className={getButtonStyles(false)}
+              onClick={() => {
+                if (window.history.state && window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate("/explore");
+                }
+              }}
+            >
+              <ChevronLeft className="h-6 w-6" />
+              <span className="text-sm font-medium mt-1">Back</span>
+            </Button>
           ) : (
             <>
               {navItems.map((item) => {
@@ -106,9 +109,6 @@ export default function BottomNav() {
                   </Button>
                 );
               })}
-
-              {/* Add Theme Toggle */}
-              <ThemeToggle variant="ghost" size="default" showTooltip={false} />
             </>
           )}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -118,7 +118,10 @@ export default function BottomNav() {
                 <span className="text-sm font-medium mt-1">More</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="p-0 w-[300px]">
+            <SheetContent
+              side="right"
+              className="p-0 w-[300px] dark:bg-slate-900 dark:border-slate-700"
+            >
               <MobileSideMenu
                 onClose={() => setIsMobileMenuOpen(false)}
                 onNavigate={(path) => {
@@ -130,10 +133,7 @@ export default function BottomNav() {
           </Sheet>
         </div>
       </div>
-      <div
-        className="h-20 md:hidden"
-        style={{ marginBottom: safeAreaBottom }}
-      />
+      {/* Spacer to prevent content from being hidden behind the nav */}
     </>
   );
 }

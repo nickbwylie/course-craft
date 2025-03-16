@@ -27,7 +27,7 @@ function SupportModal({
 }) {
   return (
     <Dialog open={supportModalOpen} onOpenChange={setSupportModalOpen}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-auto">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-auto bg-white dark:bg-gray-800">
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <FaFeatherAlt className="h-5 w-5 text-[#407f8b] mr-2" />
@@ -44,7 +44,7 @@ function SupportModal({
               <PlusCircle className="h-5 w-5 text-[#407f8b] mr-2" />
               Create Custom Courses
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-gray-400">
               Transform educational YouTube videos into structured learning
               experiences. Select videos, and our AI will organize them into a
               coherent course with summaries and quizzes.
@@ -56,7 +56,7 @@ function SupportModal({
               <BookOpen className="h-5 w-5 text-[#407f8b] mr-2" />
               Learn Your Way
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-gray-400">
               Follow your custom courses at your own pace. Each video comes with
               AI-generated summaries highlighting key points and quizzes to test
               your knowledge.
@@ -71,14 +71,14 @@ function SupportModal({
             <div className="text-sm text-slate-600 space-y-2">
               <p className="flex items-start">
                 <PlusCircle className="h-4 w-4 text-[#407f8b] mr-2 mt-0.5 flex-shrink-0" />
-                <span>
+                <span className="dark:text-gray-400">
                   <strong>Creating courses</strong>: You need to sign up or log
                   in to create courses. Account creation is completely free.
                 </span>
               </p>
               <p className="flex items-start">
                 <Eye className="h-4 w-4 text-[#407f8b] mr-2 mt-0.5 flex-shrink-0" />
-                <span>
+                <span className="dark:text-gray-400">
                   <strong>Exploring courses</strong>: Browse and view public
                   courses without creating an account.
                 </span>
@@ -91,7 +91,7 @@ function SupportModal({
               <Lightbulb className="h-5 w-5 text-[#407f8b] mr-2" />
               Tips for Getting Started
             </h3>
-            <ul className="text-sm text-slate-600 space-y-2 pl-7 list-disc">
+            <ul className="text-sm text-slate-600 dark:text-gray-400 space-y-2 pl-7 list-disc">
               <li>
                 Visit the{" "}
                 <Badge variant="outline" className="font-normal">
@@ -125,7 +125,7 @@ function SupportModal({
               <CheckCircle className="h-5 w-5 text-[#407f8b] mr-2" />
               Free Access
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-gray-400">
               CourseCraft is completely free to use. Create an unlimited number
               of courses, learn at your own pace, and share your knowledge with
               others.
