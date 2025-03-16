@@ -126,7 +126,7 @@ export const CustomCarousel: React.FC<{
               onClick={scrollLeft}
               variant="outline"
               size="icon"
-              className="rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
+              className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -136,7 +136,7 @@ export const CustomCarousel: React.FC<{
               onClick={scrollRight}
               variant="outline"
               size="icon"
-              className="rounded-full border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
+              className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-8 w-8"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -660,7 +660,7 @@ export default function ExplorePage() {
           </div>
 
           <SearchableDropdown
-            className="w-full sm:w-1/2"
+            className="w-full sm:w-1/2 bg-white"
             options={sortOptions}
             value={selectedSortOptions}
             onValueChange={setSelectedSortOptions}

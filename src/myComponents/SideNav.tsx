@@ -254,7 +254,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent
-                        className="p-0 w-32 shadow-md dark:bg-gray-800 dark:border-gray-700"
+                        className="p-0 w-32 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700"
                         align="end"
                         side="right"
                         sideOffset={5}
@@ -262,7 +262,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2"
+                          className="w-full justify-start  text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2"
                           onClick={(e) => {
                             e.stopPropagation();
                             deleteCourse(course.course_id);
@@ -287,7 +287,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           <div
             className={`footer-button p-2 flex items-center cursor-pointer ${
               !delayedOpen ? "justify-center w-10" : "justify-start"
-            } bg-whit dark:text-slate-300`}
+            }  dark:text-slate-300`}
             onClick={() => setSupportModalOpen(true)}
           >
             <HelpCircle className="h-5 w-5 text-slate-600 dark:text-slate-400" />
@@ -303,7 +303,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
             variant="outline"
             className={`${
               delayedOpen
-                ? "w-full justify-start p-2"
+                ? "w-full justify-start px-4"
                 : "w-full h-10 p-0 justify-center"
             } gap-2 border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-gray-800`}
             onClick={() => {

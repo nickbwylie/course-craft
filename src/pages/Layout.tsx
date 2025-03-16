@@ -1,6 +1,6 @@
 // Layout.tsx
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SideNav from "../myComponents/SideNav"; // Import your SideNav component
 import BottomNav from "../myComponents/BottomNav"; // Import the new BottomNav component
 import "./Layout.css";
@@ -15,6 +15,7 @@ const Layout = () => {
   const [isMobile, setIsMobile] = useState(false);
   const { user } = useAuth();
   const { getUserCourses } = useCoursesActivity();
+  const { pathname } = useLocation();
 
   // Check if screen is mobile
   useEffect(() => {
@@ -34,6 +35,13 @@ const Layout = () => {
     // Cleanup
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [pathname]);
 
   // When the user changes, fetch user courses
   useEffect(() => {
@@ -70,6 +78,7 @@ const Layout = () => {
                 paddingLeft: isMobile ? "0" : "", // Remove padding on mobile
                 paddingRight: isMobile ? "0" : "", // Remove padding on mobile
                 marginLeft: isMobile ? "0" : "", // Remove margin on mobile
+                paddingBottom: isMobile ? "200px" : "20px",
               }}
             >
               <Outlet /> {/* This renders the matched child route */}

@@ -237,7 +237,7 @@ export default function ViewCourse() {
 
       <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200 dark:border-slate-700">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-2">
+          <h1 className="text-xl md:text-2xl font-semi-bold text-slate-800 dark:text-slate-200">
             {isLoading ? (
               <Skeleton className="h-8 w-3/4 dark:bg-slate-700" />
             ) : (
@@ -440,7 +440,7 @@ export default function ViewCourse() {
                         <div className="flex-shrink-0 mr-3">
                           <div className="w-8 h-8 rounded-full flex items-center justify-center">
                             {index < selectedCourse ? (
-                              <CheckCircle className="h-5 w-5 text-emerald-700 dark:text-emerald-500" />
+                              <CheckCircle className="h-5 w-5 text-cyan-700 dark:text--500" />
                             ) : index === selectedCourse ? (
                               <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-1.5">
                                 <Play className="h-4 w-4 text-cyan-600 dark:text-cyan-400 fill-cyan-600 dark:fill-cyan-400" />

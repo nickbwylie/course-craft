@@ -277,7 +277,7 @@ export default function CreateCoursePage() {
       {/* Header */}
       <div className="mb-4 flex flex-row space-x-2 items-center">
         <Sparkles className="text-[#407e8b] dark:text-[#60a5fa] h-5 w-5" />
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
           Create a New Course
         </h1>
       </div>

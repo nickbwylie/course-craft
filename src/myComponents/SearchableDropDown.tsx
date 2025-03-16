@@ -80,7 +80,7 @@ export function SearchableDropdown({
   const remainingCount = selectedCount - displayCount;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 ">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -88,7 +88,7 @@ export function SearchableDropdown({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-700 dark:bg-gray-800 dark:hover:bg-gray-700/50 dark:text-slate-200",
+              "w-full justify-between border-slate-200  hover:bg-slate-50 dark:border-slate-700 dark:bg-gray-800 dark:hover:bg-gray-700/50 dark:text-slate-200",
               className,
               open &&
                 "border-slate-300 dark:border-slate-600 ring-1 ring-slate-200 dark:ring-slate-700"
@@ -113,12 +113,11 @@ export function SearchableDropdown({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[--radix-popover-trigger-width] p-0 border-slate-200 dark:border-slate-700 dark:bg-gray-800 shadow-lg"
+          className="w-[--radix-popover-trigger-width] p-0 border-slate-200 bg-white dark:border-slate-700 dark:bg-gray-800 shadow-lg"
           align="start"
         >
           <Command className="bg-transparent dark:bg-gray-800">
             <div className="flex items-center border-b border-slate-200 dark:border-slate-700 px-3">
-              <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 text-slate-500 dark:text-slate-400" />
               <CommandInput
                 placeholder="Search options..."
                 className="h-9 border-0 focus:ring-0 bg-transparent dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-400"

@@ -64,9 +64,9 @@ const FeatureCard = ({ icon: Icon, title, description, delay, gradient }) => (
       <div className={`h-2 w-full ${gradient}`}></div>
       <CardHeader>
         <div className="w-12 h-12 rounded-full flex items-center justify-center bg-slate-100">
-          <Icon className="text-primary" size={24} />
+          <Icon className="text-black" size={24} />
         </div>
-        <CardTitle className="text-xl mt-4">{title}</CardTitle>
+        <CardTitle className="text-xl mt-4 text-black">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-slate-600">{description}</p>
@@ -78,7 +78,7 @@ const FeatureCard = ({ icon: Icon, title, description, delay, gradient }) => (
 // Benefit item component
 const BenefitItem = ({ children }) => (
   <div className="flex items-start space-x-3 mb-6">
-    <CheckCircle className="text-primary mt-1 flex-shrink-0" size={20} />
+    <CheckCircle className="text-slate-700 mt-1 flex-shrink-0" size={20} />
     <p className="text-slate-700">{children}</p>
   </div>
 );
@@ -102,7 +102,7 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <span className="inline-block py-1 px-3 text-sm font-medium bg-slate-900/10 text-primary rounded-full mb-4">
+            <span className="inline-block py-1 px-3 text-sm font-medium bg-slate-900/10 text-black rounded-full mb-4">
               Learning Reimagined
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-slate-500 to-blue-600 bg-clip-text text-transparent">
@@ -131,7 +131,7 @@ const LandingPage = () => {
             <Button
               variant="outline"
               size="lg"
-              className="text-lg px-8 py-6 rounded-full border-2 border-slate-300 hover:border-primary/70 hover:bg-primary/5 transition-all"
+              className="text-lg text-black px-8 py-6 rounded-full border-2 border-slate-300 hover:border-primary/70 hover:bg-gray-300/5 transition-all"
               onClick={() => navigate("/explore")}
             >
               Explore Courses
@@ -147,7 +147,7 @@ const LandingPage = () => {
               <span className="inline-block py-1 px-3 text-sm font-medium bg-violet-100 text-violet-800 rounded-full mb-4">
                 Simple Process
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
                 How It Works
               </h2>
               <div className="w-24 h-1 bg-primary mx-auto"></div>
@@ -187,7 +187,7 @@ const LandingPage = () => {
               <span className="inline-block py-1 px-3 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mb-4">
                 Your Learning, Your Rules
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
                 Take Control of Your Learning Journey
               </h2>
               <div className="w-24 h-1 bg-primary mb-6"></div>
@@ -253,7 +253,7 @@ const LandingPage = () => {
               <span className="inline-block py-1 px-3 text-sm font-medium bg-indigo-100 text-indigo-800 rounded-full mb-4">
                 Community Learning
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
                 Explore User-Generated Courses for Free
               </h2>
               <div className="w-24 h-1 bg-primary mb-6"></div>
@@ -295,7 +295,7 @@ const LandingPage = () => {
               <span className="inline-block py-1 px-3 text-sm font-medium bg-green-100 text-green-800 rounded-full mb-4">
                 Success Stories
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
                 What Our Users Say
               </h2>
               <div className="w-24 h-1 bg-primary mx-auto"></div>
@@ -326,14 +326,16 @@ const LandingPage = () => {
               <FadeInWhenVisible key={index} delay={0.2 * index}>
                 <Card className="h-full border-none shadow-lg bg-white">
                   <CardHeader className="pb-0">
-                    <Quote className="text-primary/30 h-12 w-12" />
+                    <Quote className="text-black/30 h-12 w-12" />
                   </CardHeader>
                   <CardContent className="pt-0">
                     <p className="italic text-slate-700">{testimonial.quote}</p>
                   </CardContent>
                   <CardFooter className="border-t pt-4">
                     <div>
-                      <p className="font-medium">{testimonial.name}</p>
+                      <p className="font-medium text-black">
+                        {testimonial.name}
+                      </p>
                       <p className="text-sm text-slate-500">
                         {testimonial.role}
                       </p>
@@ -346,7 +348,7 @@ const LandingPage = () => {
         </div>
       </section>
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-primary to-blue-600 text-white">
+      {/* <section className="py-20 bg-gradient-to-r from-primary to-blue-600 text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <FadeInWhenVisible>
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -367,7 +369,7 @@ const LandingPage = () => {
             </Button>
           </FadeInWhenVisible>
         </div>
-      </section>
+      </section> */}
       {/* Footer */}
       <footer className="py-12 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
