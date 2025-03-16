@@ -102,10 +102,10 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <span className="inline-block py-1 px-3 text-sm font-medium bg-primary/10 text-primary rounded-full mb-4">
+            <span className="inline-block py-1 px-3 text-sm font-medium bg-slate-900/10 text-primary rounded-full mb-4">
               Learning Reimagined
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-slate-500 to-blue-600 bg-clip-text text-transparent">
               Create Custom Courses from YouTube in Seconds
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
@@ -122,7 +122,7 @@ const LandingPage = () => {
           >
             <Button
               size="lg"
-              className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-primary/40 transition-all"
+              className="text-lg px-8 py-6 rounded-full bg-gray-900 hover:bg-primary/90 text-white shadow-lg hover:shadow-primary/40 transition-all"
               onClick={() => navigate("/create")}
             >
               Create a Course
