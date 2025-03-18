@@ -128,24 +128,7 @@ export default function ViewCourse() {
       : null;
 
   return (
-    <div className="flex flex-col max-w-4xl mx-auto min-h-screen">
-      {/* Mobile Nav Toggle */}
-      <div className="lg:hidden fixed top-4 right-24 z-50">
-        {/* Theme toggle button */}
-        {/* <Button
-          variant="outline"
-          size="icon"
-          className="bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700 mr-4"
-          onClick={toggleTheme}
-        >
-          {isDarkMode ? (
-            <Sun className="h-5 w-5 text-yellow-500" />
-          ) : (
-            <Moon className="h-5 w-5 text-slate-700" />
-          )}
-        </Button> */}
-      </div>
-
+    <div className="flex flex-col max-w-5xl mx-auto min-h-screen">
       <div className="lg:hidden fixed top-4 right-8 z-50">
         <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
           <SheetTrigger asChild>

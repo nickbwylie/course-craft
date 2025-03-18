@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import { useMemo } from "react";
 import LibraryPage from "./pages/LibraryPage";
 import { ThemeProvider } from "./styles/useTheme"; // Import ThemeProvider
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 export default function App() {
   return useMemo(
@@ -17,6 +19,8 @@ export default function App() {
           <Routes>
             {/* Home Page Route */}
             <Route path="/" element={<LandingPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
 
             {/* Routes that require the side navigation */}
             <Route element={<Layout />}>

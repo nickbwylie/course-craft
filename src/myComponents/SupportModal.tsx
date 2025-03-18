@@ -94,14 +94,20 @@ function SupportModal({
             <ul className="text-sm text-slate-600 dark:text-gray-400 space-y-2 pl-7 list-disc">
               <li>
                 Visit the{" "}
-                <Badge variant="outline" className="font-normal">
+                <Badge
+                  variant="outline"
+                  className="font-normal dark:text-gray-300 "
+                >
                   Explore
                 </Badge>{" "}
                 tab to discover courses created by other users
               </li>
               <li>
                 Use the{" "}
-                <Badge variant="outline" className="font-normal">
+                <Badge
+                  variant="outline"
+                  className="font-normal dark:text-gray-300 "
+                >
                   Create
                 </Badge>{" "}
                 tab to build your own course from YouTube videos (login
@@ -109,7 +115,10 @@ function SupportModal({
               </li>
               <li>
                 View the{" "}
-                <Badge variant="outline" className="font-normal">
+                <Badge
+                  variant="outline"
+                  className="font-normal dark:text-gray-300 "
+                >
                   Library
                 </Badge>{" "}
                 tab to track and access your courses (login required)
@@ -136,7 +145,7 @@ function SupportModal({
         <DialogFooter>
           <Button
             onClick={() => setSupportModalOpen(false)}
-            className="bg-[#407f8b] opacity-100 hover:bg-[#407f8b] hover:opacity-75"
+            className="bg-[#407f8b] opacity-100 hover:bg-[#407f8b] hover:opacity-75 text-white"
           >
             Got it!
           </Button>

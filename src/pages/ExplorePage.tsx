@@ -547,7 +547,7 @@ export default function ExplorePage() {
     : [];
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-8 py-8">
       {/* Main content */}
       <div className="space-y-12">
         {/* Featured courses section */}

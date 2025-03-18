@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Parallax, useParallax } from "react-scroll-parallax";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router";
@@ -28,6 +28,7 @@ import image3 from "../assets/youtubePreview3.jpg";
 import createPageScreen from "../assets/createCoursePage.png";
 import exploreScreen from "../assets/explorePageTest.png";
 import PricingBlock from "@/myComponents/PricingBlock";
+import AboutUsModal from "@/myComponents/AboutUsModal";
 
 // Reusable animation component
 const FadeInWhenVisible = ({ children, delay = 0, className = "" }) => {
@@ -86,6 +87,7 @@ const BenefitItem = ({ children }) => (
 const LandingPage = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef(null);
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
 
   return (
     <div className="overflow-hidden bg-white">
@@ -373,81 +375,83 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="py-12 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
+          <div className="flex flex-col md:flex-row justify-between">
+            <div className="mb-6 md:mb-0">
               <h3 className="text-xl font-bold mb-4">CourseCreator</h3>
-              <p className="text-slate-400">
+              <p className="text-slate-400 max-w-xs">
                 Transform YouTube videos into personalized learning experiences.
               </p>
             </div>
-            <div>
-              <h4 className="font-medium mb-4">Product</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    FAQ
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Resources</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Community
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Support
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Legal</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Terms
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-white transition-colors">
-                    Security
-                  </a>
-                </li>
-              </ul>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+              <div>
+                <h4 className="font-medium mb-4">Company</h4>
+                <ul className="space-y-2 text-slate-400">
+                  <li>
+                    <button
+                      onClick={() => setIsAboutModalOpen(true)}
+                      className="hover:text-white transition-colors text-left"
+                    >
+                      About Us
+                    </button>
+                  </li>
+                  <li>
+                    <a
+                      href="mailto:coursecreatortech@gmail.com"
+                      className="hover:text-white transition-colors"
+                    >
+                      Support
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-4">Legal</h4>
+                <ul className="space-y-2 text-slate-400">
+                  <li>
+                    <a
+                      href="/privacy"
+                      className="hover:text-white transition-colors"
+                    >
+                      Privacy Policy
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="/terms"
+                      className="hover:text-white transition-colors"
+                    >
+                      Terms of Service
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
+
           <div className="border-t border-slate-800 mt-12 pt-8 text-center text-slate-400">
             <p>
               © {new Date().getFullYear()} CourseCreator. All rights reserved.
             </p>
+            <p className="text-sm">
+              Created by{" "}
+              <a
+                href="https://www.linkedin.com/in/nick-wylie-developer/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                Nick Wylie
+              </a>
+            </p>
           </div>
         </div>
       </footer>
+      <AboutUsModal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+      />
     </div>
   );
 };
