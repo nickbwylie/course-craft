@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -314,6 +314,10 @@ function LibraryPage() {
     "pb-2 text-lg cursor-pointer border-b-2 font-normal border-gray-800 dark:border-cyan-500 text-gray-900 dark:text-white";
   const notSelectedStyle =
     "pb-2 text-lg cursor-pointer hover:border-b-2 hover:border-gray-400 dark:hover:border-gray-600 font-light text-gray-700 dark:text-gray-300";
+
+  useEffect(() => {
+    getUserCourses();
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto px-8 py-8">
