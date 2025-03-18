@@ -8,6 +8,7 @@ import { Toaster } from "./components/ui/toaster.tsx";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { CoursesActivityProvider } from "./contexts/CoursesActivityContext.tsx";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById("root")!).render(
         <AuthProvider>
           <CoursesActivityProvider>
             <App />
+            <Analytics />
           </CoursesActivityProvider>
           <Toaster />
           <SonnerToaster />
