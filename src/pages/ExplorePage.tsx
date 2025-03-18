@@ -216,7 +216,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
   return (
     <HoverCard>
       <HoverCardTrigger
-        className="block w-full transition-all duration-200 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md dark:shadow-none dark:hover:shadow-md dark:hover:shadow-black/20"
+        className="block w-full transition-all duration-200 border border-slate-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md dark:shadow-none dark:hover:shadow-md dark:hover:shadow-black/20"
         onClick={onViewCourse}
       >
         <div className="relative group rounded-lg overflow-hidden bg-white dark:bg-gray-800">
@@ -564,7 +564,7 @@ export default function ExplorePage() {
               <SkeletonFeatureCard />
             </div>
           ) : (
-            <div className="flex flex-col border border-slate-300 dark:border-gray-700 p-4 items-start dark:bg-gray-800 rounded-lg">
+            <div className="flex flex-col border border-slate-300 dark:border-gray-600 p-4 items-start dark:bg-gray-800 rounded-lg">
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
                 <div className="min-w-72">
                   <img
@@ -666,6 +666,11 @@ export default function ExplorePage() {
             onValueChange={setSelectedSortOptions}
             placeholder="All Courses"
           />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
+            {filteredCourses?.map((course, index) => (
+              <CourseCard key={course.course_id || index} {...course} />
+            ))}
+          </div>
         </section>
       </div>
     </div>
