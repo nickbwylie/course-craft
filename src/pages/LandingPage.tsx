@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Parallax, useParallax } from "react-scroll-parallax";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import { useNavigate } from "react-router";
 import {
@@ -9,7 +8,7 @@ import {
   Sun,
   Tv,
   ArrowRight,
-  MousePointer,
+  BookOpen,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,14 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Helmet } from "react-helmet";
 
-// Import images
-import image1 from "../assets/youtubePreview.jpg";
-import image2 from "../assets/youtubePreview2.jpg";
-import image3 from "../assets/youtubePreview3.jpg";
 import createPageScreen from "../assets/createCoursePage.png";
 import exploreScreen from "../assets/explorePageTest.png";
-import PricingBlock from "@/myComponents/PricingBlock";
 import AboutUsModal from "@/myComponents/AboutUsModal";
 
 // Reusable animation component
@@ -91,6 +86,36 @@ const LandingPage = () => {
 
   return (
     <div className="overflow-hidden bg-white">
+      <Helmet>
+        <title>CourseCraft - Create Custom Courses from YouTube Videos</title>
+        <meta
+          name="description"
+          content="Transform YouTube videos into personalized learning experiences with AI-generated summaries and quizzes. Learn smarter with CourseCraft."
+        />
+        <meta
+          name="keywords"
+          content="online learning, YouTube courses, AI education, custom courses, educational platform"
+        />
+        <meta
+          property="og:title"
+          content="CourseCraft - Create Custom Courses from YouTube"
+        />
+        <meta
+          property="og:description"
+          content="Transform educational content into personalized learning experiences with AI-generated summaries and quizzes."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://course-craft.tech" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="CourseCraft - Create Custom Courses from YouTube"
+        />
+        <meta
+          name="twitter:description"
+          content="Transform YouTube videos into interactive learning experiences."
+        />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white overflow-hidden">
         {/* Background elements */}
@@ -377,9 +402,13 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-xl font-bold mb-4">CourseCreator</h3>
+              <div className="flex items-center mb-4">
+                <BookOpen className="h-6 w-6 text-blue-400 mr-2" />
+                <h3 className="text-xl font-bold">CourseCraft</h3>
+              </div>
               <p className="text-slate-400 max-w-xs">
-                Transform YouTube videos into personalized learning experiences.
+                Transform YouTube videos into personalized learning experiences
+                with AI-generated summaries and quizzes.
               </p>
             </div>
 
@@ -432,7 +461,7 @@ const LandingPage = () => {
 
           <div className="border-t border-slate-800 mt-12 pt-8 text-center text-slate-400">
             <p>
-              © {new Date().getFullYear()} CourseCreator. All rights reserved.
+              © {new Date().getFullYear()} CourseCraft. All rights reserved.
             </p>
             <p className="text-sm">
               Created by{" "}
