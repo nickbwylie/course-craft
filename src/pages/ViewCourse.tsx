@@ -9,9 +9,10 @@ import {
   ChevronRight,
   Clock,
   Menu,
+  Newspaper,
+  Pencil,
   Play,
-  Moon,
-  Sun,
+  Tv,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,13 +21,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tv } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
 import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
 import { Json } from "supabase-types.ts";
 import { useTheme } from "@/styles/useTheme";
-import { lightTheme, darkTheme } from "@/styles/myTheme";
+import { darkTheme } from "@/styles/myTheme";
+import { CourseWithFirstVideo } from "@/types/CourseType";
+import { useCourseProgress } from "@/hooks/useCourseProgress.ts";
 
 export interface CourseVideo {
   course_description: string;
@@ -39,6 +42,8 @@ export interface CourseVideo {
   video_title: string;
   video_duration: string;
   youtube_id: string;
+  course_difficulty: number;
+  detaillevel: string;
 }
 
 // Parse summary text into formatted sections
@@ -76,9 +81,24 @@ export default function ViewCourse() {
   const [showSummary, setShowSummary] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [completedVideos, setCompletedVideos] = useState<number[]>([]);
+  const [watchedVideos, setWatchedVideos] = useState<number[]>([]);
+  const [videoWatchTime, setVideoWatchTime] = useState<{
+    [key: number]: number;
+  }>({});
+  const [showCompletionButton, setShowCompletionButton] = useState(false);
+
   const { id } = useParams();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const isDarkMode = theme === darkTheme;
+
+  // Get course progress functions
+  const {
+    saveCourseProgress,
+    getCourseProgress,
+    markVideoCompleted: markVideoCompletedInStorage,
+    markVideoWatched: markVideoWatchedInStorage,
+  } = useCourseProgress();
 
   async function getCourseContent(courseId: string) {
     setIsLoading(true);
@@ -104,9 +124,189 @@ export default function ViewCourse() {
   useEffect(() => {
     if (id) {
       getCourseContent(id);
-      setSelectedCourse(0);
+
+      // Load saved progress if available
+      const savedProgress = getCourseProgress(id);
+      if (savedProgress) {
+        // Restore video position and completion status
+        setSelectedCourse(savedProgress.lastVideoIndex || 0);
+        // Make sure we have default empty arrays if these properties don't exist
+        setCompletedVideos(savedProgress.completedVideos || []);
+        setWatchedVideos(savedProgress.watchedVideos || []);
+
+        console.log("Loaded progress:", {
+          lastVideoIndex: savedProgress.lastVideoIndex,
+          watchedVideos: savedProgress.watchedVideos || [],
+          completedVideos: savedProgress.completedVideos || [],
+        });
+      } else {
+        // Reset to defaults if no saved progress
+        setSelectedCourse(0);
+        setCompletedVideos([]);
+        setWatchedVideos([]);
+      }
     }
   }, [id]);
+
+  // Load watch times from localStorage on component mount
+  useEffect(() => {
+    const savedWatchTimes = localStorage.getItem("videoWatchTimes");
+    if (savedWatchTimes) {
+      try {
+        setVideoWatchTime(JSON.parse(savedWatchTimes));
+      } catch (e) {
+        console.error("Error parsing watch times:", e);
+      }
+    }
+  }, []);
+
+  // Save watch time to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("videoWatchTimes", JSON.stringify(videoWatchTime));
+  }, [videoWatchTime]);
+
+  // Timer effect for tracking watch time and showing completion button
+  useEffect(() => {
+    // Reset the completion button visibility when changing videos
+    setShowCompletionButton(false);
+
+    let watchTimer: NodeJS.Timeout | null = null;
+
+    // If video is already watched or completed, show completion button immediately
+    if (
+      watchedVideos.includes(selectedCourse) ||
+      completedVideos.includes(selectedCourse)
+    ) {
+      setShowCompletionButton(true);
+      return () => {}; // Return empty cleanup since we don't need timers
+    }
+
+    // Only start timer if video isn't already watched or completed
+    if (courseVideos) {
+      // Check if we've already accumulated some watch time for this video
+      const currentWatchTime = videoWatchTime[selectedCourse] || 0;
+
+      if (currentWatchTime < 30) {
+        // Start timer to mark as watched after 30 seconds
+        const timeToWatch = 30 - currentWatchTime;
+
+        watchTimer = setTimeout(() => {
+          // Mark as watched
+          const newWatchedVideos = [...watchedVideos, selectedCourse];
+          setWatchedVideos(newWatchedVideos);
+
+          // Show completion button
+          setShowCompletionButton(true);
+
+          // Update localStorage
+          if (id) {
+            console.log("Marking video as watched in storage:", selectedCourse);
+            markVideoWatchedInStorage(id, selectedCourse);
+            markVideoCompletedInStorage(id, selectedCourse);
+          }
+
+          toast({
+            title: "Video Watched",
+            description: "This video has been marked as watched",
+            variant: "default",
+          });
+
+          // Immediately save watch time to localStorage
+          const updatedWatchTime = { ...videoWatchTime, [selectedCourse]: 30 };
+          setVideoWatchTime(updatedWatchTime);
+          localStorage.setItem(
+            "videoWatchTimes",
+            JSON.stringify(updatedWatchTime)
+          );
+        }, timeToWatch * 1000);
+      }
+    }
+
+    // Track video watch time using an interval
+    const watchTimeInterval = setInterval(() => {
+      setVideoWatchTime((prev) => {
+        const updated = {
+          ...prev,
+          [selectedCourse]: (prev[selectedCourse] || 0) + 1,
+        };
+        // Save to localStorage on each update to ensure persistence
+        localStorage.setItem("videoWatchTimes", JSON.stringify(updated));
+        return updated;
+      });
+    }, 1000);
+
+    // Clean up timers
+    return () => {
+      if (watchTimer) clearTimeout(watchTimer);
+      clearInterval(watchTimeInterval);
+    };
+  }, [selectedCourse, watchedVideos, completedVideos, id, courseVideos]);
+
+  const safeGetLocalStorage = <T,>(key: string, defaultValue: T): T => {
+    try {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error(`Error loading from localStorage for key ${key}:`, e);
+    }
+    return defaultValue;
+  };
+
+  // Then replace the localStorage initialization code with:
+  useEffect(() => {
+    setVideoWatchTime(safeGetLocalStorage("videoWatchTimes", {}));
+  }, []);
+
+  // Save course progress to localStorage whenever tracked states change
+  useEffect(() => {
+    if (id && courseVideos && courseVideos.length > 0) {
+      // Create course metadata for localStorage
+      const courseData: CourseWithFirstVideo = {
+        course_id: id,
+        course_title: courseVideos[0]?.course_title || "",
+        course_description: courseVideos[0]?.course_description || "",
+        thumbnail_url: `https://img.youtube.com/vi/${courseVideos[0]?.youtube_id}/hqdefault.jpg`,
+        created_at: new Date().toISOString(),
+        total_duration: calculateTotalDuration(courseVideos),
+        total_videos: courseVideos.length,
+        public: true, // Default value
+        course_difficulty: courseVideos[0].course_difficulty,
+        detaillevel: courseVideos[0].detaillevel,
+        video_id: courseVideos[0].video_id,
+        video_title: courseVideos[0].video_title,
+      };
+
+      // Save/update progress
+      saveCourseProgress(
+        courseData,
+        selectedCourse,
+        completedVideos,
+        watchedVideos,
+        courseVideos
+      );
+    }
+  }, [id, selectedCourse, completedVideos, watchedVideos, courseVideos]);
+
+  // Calculate total duration for all videos
+  const calculateTotalDuration = (videos: CourseVideo[]): string => {
+    let totalSeconds = 0;
+
+    videos.forEach((video) => {
+      const duration = video.video_duration;
+      const [hours, minutes, seconds] = duration.split(":").map(Number);
+      totalSeconds += hours * 3600 + minutes * 60 + seconds;
+    });
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   // Handle navigation between videos
   const goToNextVideo = () => {
@@ -126,6 +326,41 @@ export default function ViewCourse() {
     courseVideos && courseVideos.length > selectedCourse
       ? courseVideos[selectedCourse]
       : null;
+
+  useEffect(() => {
+    // Function to save all current progress data
+    const saveAllProgress = () => {
+      if (id && courseVideos && courseVideos.length > 0) {
+        // ... save progress logic ...
+      }
+    };
+
+    // Save on beforeunload event
+    const handleBeforeUnload = () => {
+      saveAllProgress();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Save every 30 seconds as backup
+    const autoSaveInterval = setInterval(saveAllProgress, 30000);
+
+    // Clean up listeners
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearInterval(autoSaveInterval);
+
+      // Also save on component unmount
+      saveAllProgress();
+    };
+  }, [
+    id,
+    courseVideos,
+    selectedCourse,
+    completedVideos,
+    watchedVideos,
+    videoWatchTime,
+  ]);
 
   return (
     <div className="flex flex-col max-w-5xl mx-auto min-h-screen">
@@ -333,6 +568,7 @@ export default function ViewCourse() {
                   className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
                   onClick={() => setShowSummary(true)}
                 >
+                  <Newspaper className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
                   Summary
                 </TabsTrigger>
                 <TabsTrigger
@@ -340,6 +576,7 @@ export default function ViewCourse() {
                   className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
                   onClick={() => setShowSummary(false)}
                 >
+                  <Pencil className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
                   Quiz
                 </TabsTrigger>
               </TabsList>
@@ -461,7 +698,7 @@ export default function ViewCourse() {
                               variant={showSummary ? "default" : "outline"}
                               className={`text-xs ${
                                 showSummary
-                                  ? "bg-cyan-600 hover:bg-cyan-500"
+                                  ? "bg-cyan-600 text-white hover:bg-cyan-500"
                                   : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                               }`}
                               onClick={(e) => {
@@ -475,7 +712,7 @@ export default function ViewCourse() {
                               variant={!showSummary ? "default" : "outline"}
                               className={`text-xs ${
                                 !showSummary
-                                  ? "bg-cyan-600 hover:bg-cyan-500"
+                                  ? "bg-cyan-600 text-white hover:bg-cyan-500"
                                   : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
                               }`}
                               onClick={(e) => {

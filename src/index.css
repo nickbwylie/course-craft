@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Roboto Mono";
-  src: local("Roboto Mono"),
-    url(./assets/Roboto_Mono/RobotoMono-VariableFont_wght.ttf) format("tff");
-  /* other formats include: 'woff2', 'truetype, 'opentype',
-                            'embedded-opentype', and 'svg' */
-}
-
 body {
   margin: 0;
   width: 100%;

@@ -273,7 +273,7 @@ export default function CreateCoursePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
       {/* Header */}
       <div className="mb-4 flex flex-row space-x-2 items-center">
         <Sparkles className="text-[#407e8b] dark:text-[#60a5fa] h-5 w-5" />

@@ -235,7 +235,7 @@ export default function Quiz({ quiz }: QuizProps) {
           <CardFooter className="bg-gray-50 dark:bg-slate-800 p-4 flex justify-center">
             <Button
               onClick={handleRestart}
-              className="flex items-center"
+              className="flex items-center text-white"
               style={{ backgroundColor: "rgb(64, 126, 139)" }}
             >
               <RotateCcw className="h-4 w-4 mr-2" />
@@ -323,6 +323,7 @@ export default function Quiz({ quiz }: QuizProps) {
                   !Object.keys(answers).length ||
                   Object.keys(answers).length < quiz.length
                 }
+                className="text-white"
                 style={{ backgroundColor: "rgb(64, 126, 139)" }}
               >
                 Finish Quiz
@@ -331,7 +332,7 @@ export default function Quiz({ quiz }: QuizProps) {
               <Button
                 onClick={handleNext}
                 disabled={!isCurrentQuestionAnswered}
-                className="flex items-center"
+                className="flex items-center text-white"
                 style={{ backgroundColor: "rgb(64, 126, 139)" }}
               >
                 Next

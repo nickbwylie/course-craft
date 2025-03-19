@@ -28,13 +28,24 @@ import { SERVER } from "@/constants";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import "@/styles/toast.css"; // Import the toast styles
+import { useCourseProgress } from "@/hooks/useCourseProgress";
+import { Progress } from "@/components/ui/progress";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
   onDelete?: (courseId: string) => void;
+  showProgress?: boolean;
+  completionPercentage?: number;
+  lastViewed?: string;
 }
 
-export function CourseListItem({ course, onDelete }: CourseListItemProps) {
+export function CourseListItem({
+  course,
+  onDelete,
+  showProgress = false,
+  completionPercentage = 0,
+  lastViewed,
+}: CourseListItemProps) {
   const navigate = useNavigate();
   const [publicCourse, setPublicCourse] = useState(course.public);
 
@@ -46,6 +57,29 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
       day: "numeric",
       year: "numeric",
     });
+  };
+
+  // Format last viewed date (relative time)
+  const formatLastViewed = (dateStr?: string) => {
+    if (!dateStr) return "";
+
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    if (diffDay > 0) {
+      return diffDay === 1 ? "Yesterday" : `${diffDay} days ago`;
+    } else if (diffHour > 0) {
+      return `${diffHour} ${diffHour === 1 ? "hour" : "hours"} ago`;
+    } else if (diffMin > 0) {
+      return `${diffMin} ${diffMin === 1 ? "minute" : "minutes"} ago`;
+    } else {
+      return "Just now";
+    }
   };
 
   // Format duration for display
@@ -121,57 +155,79 @@ export function CourseListItem({ course, onDelete }: CourseListItemProps) {
           </div>
 
           <div className="flex-shrink-0 flex flex-wrap items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="h-7 text-gray-600 dark:text-gray-300 text-xs flex items-center gap-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"
+            {!showProgress && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="h-7 text-gray-600 dark:text-gray-300 text-xs flex items-center gap-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"
+                  >
+                    <span className="text-xs">Public</span>
+                    <Switch
+                      id={`public-${course.course_id}`}
+                      checked={publicCourse}
+                      onCheckedChange={() => updateCoursePrivacy(!publicCourse)}
+                      className="scale-75 data-[state=checked]:bg-cyan-600 dark:data-[state=checked]:bg-cyan-500"
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <span className="text-xs">Public</span>
-                  <Switch
-                    id={`public-${course.course_id}`}
-                    checked={publicCourse}
-                    onCheckedChange={() => updateCoursePrivacy(!publicCourse)}
-                    className="scale-75 data-[state=checked]:bg-cyan-600 dark:data-[state=checked]:bg-cyan-500"
-                  />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                className="dark:bg-gray-800 dark:border-gray-700"
-              >
-                <p className="text-xs dark:text-gray-200">
-                  Make course {publicCourse ? "private" : "public"}
-                </p>
-              </TooltipContent>
-            </Tooltip>
+                  <p className="text-xs dark:text-gray-200">
+                    Make course {publicCourse ? "private" : "public"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            )}
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                  onClick={() => {
-                    if (
-                      confirm("Are you sure you want to delete this course?")
-                    ) {
-                      onDelete && onDelete(course.course_id);
-                    }
-                  }}
+            {!showProgress && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    onClick={() => {
+                      if (
+                        confirm("Are you sure you want to delete this course?")
+                      ) {
+                        onDelete && onDelete(course.course_id);
+                      }
+                    }}
+                  >
+                    <Trash className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="dark:bg-gray-800 dark:border-gray-700"
                 >
-                  <Trash className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                className="dark:bg-gray-800 dark:border-gray-700"
-              >
-                <p className="text-xs dark:text-gray-200">Delete course</p>
-              </TooltipContent>
-            </Tooltip>
+                  <p className="text-xs dark:text-gray-200">Delete course</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </div>
+
+        {/* Progress bar for in-progress courses */}
+        {showProgress && (
+          <div className="mt-1">
+            <div className="flex justify-between items-center text-xs mb-1">
+              <span className="text-gray-600 dark:text-gray-400">
+                {completionPercentage}% complete
+              </span>
+              {lastViewed && (
+                <span className="text-gray-500 dark:text-gray-400 flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {formatLastViewed(lastViewed)}
+                </span>
+              )}
+            </div>
+            <Progress value={completionPercentage} className="h-1.5 " />
+          </div>
+        )}
 
         {/* Course Meta Info */}
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
@@ -309,6 +365,8 @@ function LibraryPage() {
     }
   };
   const navigate = useNavigate();
+  const { inProgressCourses, removeCourseProgress, getCompletionPercentage } =
+    useCourseProgress();
 
   const selectedStyle =
     "pb-2 text-lg cursor-pointer border-b-2 font-normal border-gray-800 dark:border-cyan-500 text-gray-900 dark:text-white";
@@ -319,8 +377,21 @@ function LibraryPage() {
     getUserCourses();
   }, []);
 
+  // Add this inside your LibraryPage component when rendering the In Progress tab:
+  // console.log(
+  //   "Course progress:",
+  //   inProgressCourses.map((course) => ({
+  //     id: course.course_id,
+  //     title: course.course_title,
+  //     totalVideos: course.total_videos,
+  //     watched: course.watchedVideos?.length || 0,
+  //     completed: course.completedVideos?.length || 0,
+  //     percentage: getCompletionPercentage(course.course_id),
+  //   }))
+  // );
+
   return (
-    <div className="max-w-4xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
       {/* Header */}
       <div className="mb-6 w-full flex items-center gap-3">
         <Library className="h-6 w-6 text-cyan-600 dark:text-cyan-500" />
@@ -344,15 +415,27 @@ function LibraryPage() {
 
       {/* Content */}
       <div className="w-full">
-        {courses?.map((course) => (
-          <CourseListItem
-            key={course.course_id}
-            course={course}
-            onDelete={() => {
-              deleteCourse(course.course_id);
-            }}
-          />
-        ))}
+        {selected === 0
+          ? courses?.map((course) => (
+              <CourseListItem
+                key={course.course_id}
+                course={course}
+                onDelete={() => {
+                  deleteCourse(course.course_id);
+                }}
+              />
+            ))
+          : inProgressCourses.map((course) => (
+              <CourseListItem
+                key={course.course_id}
+                showProgress={true}
+                completionPercentage={getCompletionPercentage(course.course_id)}
+                course={course}
+                onDelete={() => {
+                  deleteCourse(course.course_id);
+                }}
+              />
+            ))}
 
         {/* Empty states */}
         {courses.length === 0 && selected === 0 && (

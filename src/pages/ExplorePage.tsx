@@ -393,15 +393,15 @@ const FeatureCard: React.FC<CourseWithFirstVideo> = ({
 const FastSkeletonCard = React.memo(function SkeletonCard() {
   return (
     <div className="flex flex-col space-y-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm dark:shadow-none dark:border dark:border-gray-700 p-0 overflow-hidden">
-      <Skeleton className="h-40 w-full rounded-none dark:bg-gray-700" />
+      <Skeleton className="h-40 w-full rounded-none bg-gray-100 dark:bg-gray-700" />
       <div className="p-3 space-y-2">
-        <Skeleton className="h-4 w-24 rounded-full dark:bg-gray-700" />
-        <Skeleton className="h-5 w-full dark:bg-gray-700" />
-        <Skeleton className="h-4 w-full dark:bg-gray-700" />
-        <Skeleton className="h-4 w-5/6 dark:bg-gray-700" />
+        <Skeleton className="h-4 w-24 rounded-full bg-gray-100 dark:bg-gray-700" />
+        <Skeleton className="h-5 w-full bg-gray-100 dark:bg-gray-700" />
+        <Skeleton className="h-4 w-full bg-gray-100 dark:bg-gray-700" />
+        <Skeleton className="h-4 w-5/6 bg-gray-100 dark:bg-gray-700" />
         <div className="flex justify-between pt-1">
-          <Skeleton className="h-3 w-16 rounded-full dark:bg-gray-700" />
-          <Skeleton className="h-3 w-10 rounded-full dark:bg-gray-700" />
+          <Skeleton className="h-3 w-16 bg-gray-100 rounded-full dark:bg-gray-700" />
+          <Skeleton className="h-3 w-10 bg-gray-100 rounded-full dark:bg-gray-700" />
         </div>
       </div>
     </div>
@@ -414,24 +414,24 @@ function SkeletonFeatureCard() {
       <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
         {/* Thumbnail skeleton */}
         <div className="min-w-72 h-40 sm:h-48">
-          <Skeleton className="w-full h-full rounded-md dark:bg-gray-700" />
+          <Skeleton className="w-full h-full rounded-md bg-gray-100 dark:bg-gray-700" />
         </div>
 
         {/* Content skeleton */}
         <div className="flex flex-col items-start w-full mt-4 sm:mt-0">
           {/* Title skeleton */}
-          <Skeleton className="h-7 w-4/5 mb-2 dark:bg-gray-700" />
+          <Skeleton className="h-7 w-4/5 mb-2 bg-gray-100 dark:bg-gray-700" />
 
           {/* Date skeleton */}
-          <Skeleton className="h-4 w-40 mb-3 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-40 mb-3 bg-gray-100 dark:bg-gray-700" />
 
           {/* Description skeleton - multiple lines */}
-          <Skeleton className="h-4 w-full mb-2 dark:bg-gray-700" />
-          <Skeleton className="h-4 w-full mb-2 dark:bg-gray-700" />
-          <Skeleton className="h-4 w-3/4 mb-6 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-full mb-2 bg-gray-100 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-full mb-2 bg-gray-100 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-3/4 mb-6 bg-gray-100 dark:bg-gray-700" />
 
           {/* Button skeleton */}
-          <Skeleton className="h-10 w-32 dark:bg-gray-700" />
+          <Skeleton className="h-10 w-32 bg-gray-100 dark:bg-gray-700" />
         </div>
       </div>
     </div>
@@ -547,7 +547,7 @@ export default function ExplorePage() {
     : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
       {/* Main content */}
       <div className="space-y-12">
         {/* Featured courses section */}
@@ -566,7 +566,7 @@ export default function ExplorePage() {
           ) : (
             <div className="flex flex-col border border-slate-300 dark:border-gray-600 p-4 items-start dark:bg-gray-800 rounded-lg">
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
-                <div className="min-w-72">
+                <div className="min-w-60">
                   <img
                     src={newestCourses[1].thumbnail_url}
                     className="rounded-md"
