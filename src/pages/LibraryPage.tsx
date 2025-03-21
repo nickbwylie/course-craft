@@ -30,6 +30,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import "@/styles/toast.css"; // Import the toast styles
 import { useCourseProgress } from "@/hooks/useCourseProgress";
 import { Progress } from "@/components/ui/progress";
+import {
+  useDeleteCourse,
+  useUpdateCoursePrivacy,
+  useUserCourses,
+} from "@/hooks/useUserCourses";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
@@ -48,6 +53,7 @@ export function CourseListItem({
 }: CourseListItemProps) {
   const navigate = useNavigate();
   const [publicCourse, setPublicCourse] = useState(course.public);
+  const updatePrivacy = useUpdateCoursePrivacy();
 
   // Format date for display
   const formatDate = (dateStr: string) => {
@@ -93,33 +99,10 @@ export function CourseListItem({
   };
 
   const updateCoursePrivacy = async (newVal: boolean) => {
-    try {
-      const { data, error } = await supabase
-        .from("courses")
-        .update({ public: newVal })
-        .eq("id", course.course_id);
-
-      if (error) {
-        console.error("Error updating course privacy:", error);
-        toast({
-          title: "Error",
-          description: "Failed to update course privacy",
-          variant: "destructive",
-        });
-        return { success: false, error };
-      }
-
-      setPublicCourse(newVal);
-      toast({
-        title: "Success",
-        description: `Course is now ${newVal ? "public" : "private"}`,
-        variant: "default",
-      });
-      return { success: true, data };
-    } catch (e) {
-      console.error("Unexpected error updating course privacy:", e);
-      return { success: false, error: e };
-    }
+    updatePrivacy.mutate({
+      courseId: course.course_id,
+      isPublic: newVal,
+    });
   };
 
   return (
@@ -165,8 +148,10 @@ export function CourseListItem({
                     <span className="text-xs">Public</span>
                     <Switch
                       id={`public-${course.course_id}`}
-                      checked={publicCourse}
-                      onCheckedChange={() => updateCoursePrivacy(!publicCourse)}
+                      checked={course.public}
+                      onCheckedChange={() =>
+                        updateCoursePrivacy(!course.public)
+                      }
                       className="scale-75 data-[state=checked]:bg-cyan-600 dark:data-[state=checked]:bg-cyan-500"
                     />
                   </Button>
@@ -323,38 +308,14 @@ function EmptyInProgress() {
 function LibraryPage() {
   const [selected, setSelected] = useState(0);
   const tabs = ["My Courses", "In Progress"];
-  const { courses, getUserCourses } = useCoursesActivity();
+
+  const { data: courses } = useUserCourses();
+
+  const deleteUserCourse = useDeleteCourse();
+
   const deleteCourse = async (courseId: string) => {
     try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      const res = await fetch(`${SERVER}/delete_course`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ course_id: courseId }),
-      });
-
-      if (res.ok) {
-        toast({
-          title: "Success",
-          description: "Course deleted successfully",
-          variant: "default",
-        });
-        // Refresh the course list
-        getUserCourses();
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to delete course",
-          variant: "destructive",
-        });
-      }
+      deleteUserCourse.mutate(courseId);
     } catch (error) {
       console.error("Error deleting course:", error);
       toast({
@@ -365,17 +326,12 @@ function LibraryPage() {
     }
   };
   const navigate = useNavigate();
-  const { inProgressCourses, removeCourseProgress, getCompletionPercentage } =
-    useCourseProgress();
+  const { inProgressCourses, getCompletionPercentage } = useCourseProgress();
 
   const selectedStyle =
     "pb-2 text-lg cursor-pointer border-b-2 font-normal border-gray-800 dark:border-cyan-500 text-gray-900 dark:text-white";
   const notSelectedStyle =
     "pb-2 text-lg cursor-pointer hover:border-b-2 hover:border-gray-400 dark:hover:border-gray-600 font-light text-gray-700 dark:text-gray-300";
-
-  useEffect(() => {
-    getUserCourses();
-  }, []);
 
   // Add this inside your LibraryPage component when rendering the In Progress tab:
   // console.log(
@@ -438,10 +394,12 @@ function LibraryPage() {
             ))}
 
         {/* Empty states */}
-        {courses.length === 0 && selected === 0 && (
+        {courses?.length === 0 && selected === 0 && (
           <EmptyLibrary onCreateClick={() => navigate("/create")} />
         )}
-        {courses.length === 0 && selected === 1 && <EmptyInProgress />}
+        {inProgressCourses?.length === 0 && selected === 1 && (
+          <EmptyInProgress />
+        )}
       </div>
     </div>
   );

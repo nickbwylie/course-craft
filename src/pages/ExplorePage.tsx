@@ -24,6 +24,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
+import { useQuery } from "@tanstack/react-query";
+import { useAdminCourses } from "@/hooks/useAdminCourses";
 
 const months = [
   "January",
@@ -440,12 +442,11 @@ function SkeletonFeatureCard() {
 
 // Main ExplorePage Component
 export default function ExplorePage() {
-  const [courses, setCourses] = useState<CourseWithFirstVideo[]>();
-  const [filteredCourses, setFilteredCourses] =
-    useState<CourseWithFirstVideo[]>();
+  // const [courses, setCourses] = useState<CourseWithFirstVideo[]>();
+  // const [filteredCourses, setFilteredCourses] =
+  //   useState<CourseWithFirstVideo[]>();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("popularity");
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const sortOptions = [
     { label: "Tech", value: "tech" },
@@ -455,76 +456,19 @@ export default function ExplorePage() {
 
   const [selectedSortOptions, setSelectedSortOptions] = useState([]);
 
-  async function getCourses() {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.rpc(
-        "get_courses_with_first_video_and_duration"
-      );
+  const { data: courses, isLoading, error } = useAdminCourses();
 
-      if (data) {
-        setCourses(data);
-        setFilteredCourses(data);
-      }
+  const filteredCourses = useMemo(() => {
+    if (!courses) return [];
 
-      if (error) {
-        console.error(error);
-      }
-    } catch (err) {
-      console.error("Error fetching courses:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    getCourses();
-  }, []);
-
-  // Handle search
-  useEffect(() => {
-    if (!courses) return;
-
-    const filtered = courses.filter(
+    return courses.filter(
       (course) =>
         course.course_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.course_description
           .toLowerCase()
           .includes(searchTerm.toLowerCase())
     );
-
-    setFilteredCourses(filtered);
   }, [searchTerm, courses]);
-
-  // Handle sorting
-  useEffect(() => {
-    if (!filteredCourses) return;
-
-    let sorted = [...filteredCourses];
-
-    switch (sortBy) {
-      case "newest":
-        sorted = sorted.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        break;
-      case "popular":
-        // In real app, you would sort by ratings or views
-        break;
-      case "longest":
-        sorted = sorted.sort((a, b) => {
-          const [aHours, aMin] = a.total_duration.split(":").map(Number);
-          const [bHours, bMin] = b.total_duration.split(":").map(Number);
-          return bHours * 60 + bMin - (aHours * 60 + aMin);
-        });
-        break;
-      default:
-        break;
-    }
-
-    setFilteredCourses(sorted);
-  }, [sortBy, courses]);
 
   // Featured courses (first 4)
   const featuredCourses = useMemo(() => {
@@ -629,7 +573,7 @@ export default function ExplorePage() {
         </section>
 
         {/* New courses carousel */}
-        {!isLoading && newestCourses.length > 0 && (
+        {!isLoading && newestCourses.length > 0 ? (
           <section>
             <CustomCarousel
               videos={newestCourses}
@@ -637,6 +581,22 @@ export default function ExplorePage() {
               icon={<Plus className="text-emerald-500 h-5 w-5" />}
             />
           </section>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mb-4">
+              <Plus className="text-emerald-500 h-5 w-5" />
+              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                New Courses
+              </h2>
+            </div>
+            <div className="flex space-x-4 overflow-x-scroll pb-4 scrollbar-hide">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div className="flex-shrink-0 w-72" key={i}>
+                  <FastSkeletonCard />
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* All courses grid with tabs */}

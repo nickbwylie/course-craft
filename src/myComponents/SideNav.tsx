@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import SupportModal from "./SupportModal.tsx";
 import ThemeToggle from "./ThemeToggle.tsx";
+import { useDeleteCourse, useUserCourses } from "@/hooks/useUserCourses.ts";
 
 const navItems = [
   {
@@ -62,32 +63,15 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const [delayedOpen, setDelayedOpen] = useState(navOpen);
   const [width, setWidth] = useState(window.innerWidth);
 
-  const { courses } = useCoursesActivity();
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
   const [supportModalOpen, setSupportModalOpen] = useState(false);
+  const { data: courses, isLoading, isError } = useUserCourses();
+  const deleteUserCourse = useDeleteCourse();
+
   const deleteCourse = async (courseId: string) => {
     try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      const res = await fetch(`${SERVER}/delete_course`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ course_id: courseId }),
-      });
-
-      if (res.ok) {
-        toast({
-          title: "Success",
-          description: "Course deleted successfully",
-        });
-      }
+      deleteUserCourse.mutate(courseId);
     } catch (error) {
       console.error("Error deleting course:", error);
       toast({
