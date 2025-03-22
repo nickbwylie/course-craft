@@ -262,12 +262,6 @@ export default function ViewCourse() {
             markVideoCompletedInStorage(id, selectedCourse);
           }
 
-          toast({
-            title: "Video Watched",
-            description: "This video has been marked as watched",
-            variant: "default",
-          });
-
           // Immediately save watch time to localStorage
           const updatedWatchTime = { ...videoWatchTime, [selectedCourse]: 30 };
           setVideoWatchTime(updatedWatchTime);
@@ -574,20 +568,22 @@ export default function ViewCourse() {
               )}
             </div>
 
-            <div className="flex flex-row w-full items-center justify-between gap-2 mb-6">
-              <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1">
-                <Avatar className="w-8 h-8 rounded-full overflow-clip mr-3 border dark:border-white">
+            <div className="flex flex-row w-full items-center justify-between gap-4 mb-6">
+              <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1 truncate">
+                <Avatar className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-clip mr-3 border dark:border-white  bg-gray-700">
                   <AvatarImage src={currentVideo?.channel_thumbnail} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>
+                    <div className="bg-gray-400 w-full"></div>
+                  </AvatarFallback>
                 </Avatar>{" "}
                 <div className="flex flex-col">
                   <div className="font-normal dark:text-slate-300 text-slate-800">
                     {currentVideo?.channel_title}
                   </div>
-                  <div>
+                  <div className="text-xs">
                     {currentVideo?.view_count &&
-                      formatViewCount(currentVideo.view_count)}{" "}
-                    -{" "}
+                      `${formatViewCount(currentVideo.view_count)} - `}
+
                     {currentVideo?.published_at &&
                       formatTimeAgo(currentVideo.published_at)}
                   </div>
@@ -651,7 +647,7 @@ export default function ViewCourse() {
                       </div>
                     ))
                 ) : (
-                  <div className="prose prose-sm max-w-none p-4 ">
+                  <div className="prose prose-sm w-full ">
                     {parseSummary(currentVideo.video_summary)}
                   </div>
                 )}

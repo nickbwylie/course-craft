@@ -295,7 +295,7 @@ export default function CreateCoursePage() {
             {/* Course form (left side) */}
             <div className="w-full space-y-6">
               {/* Course information section */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Course Information
                 </h2>
@@ -368,7 +368,7 @@ export default function CreateCoursePage() {
               </div>
 
               {/* Add videos section */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Add Videos
                 </h2>
@@ -495,7 +495,7 @@ export default function CreateCoursePage() {
               </div>
 
               {/* Settings section */}
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Course Settings
                 </h2>
@@ -600,7 +600,7 @@ export default function CreateCoursePage() {
 
             {/* Course summary sidebar (right side) */}
             <div className="w-full">
-              <div className="sticky top-6 bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+              <div className="sticky top-6 bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
                 <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   Course Summary
                 </h2>

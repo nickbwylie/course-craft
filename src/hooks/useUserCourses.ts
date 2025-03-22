@@ -28,7 +28,7 @@ export function useUserCourses() {
       return data || [];
     },
     enabled: !!user?.id,
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    staleTime: 24 * 60 * 60 * 10, // 24 hours
   });
 }
 
