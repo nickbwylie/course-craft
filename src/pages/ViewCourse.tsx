@@ -618,7 +618,7 @@ export default function ViewCourse() {
           </div>
 
           <div className="mb-8">
-            <Tabs defaultValue="summary" className="w-full">
+            <Tabs defaultValue="summary" className="w-full ">
               <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-600">
                 <TabsTrigger
                   value="summary"
@@ -651,7 +651,7 @@ export default function ViewCourse() {
                       </div>
                     ))
                 ) : (
-                  <div className="prose prose-sm max-w-none p-4 border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
+                  <div className="prose prose-sm max-w-none p-4 ">
                     {parseSummary(currentVideo.video_summary)}
                   </div>
                 )}
