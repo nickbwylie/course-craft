@@ -12,26 +12,20 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   variant = "outline",
   size = "icon",
 }) => {
-  const [isDark, setIsDark] = useState<boolean>(false);
-
+  const [isDark, setIsDark] = useState<boolean>(true);
   // Initialize theme based on localStorage or system preference
   useEffect(() => {
     // Check localStorage first
     const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "dark") {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-    } else if (storedTheme === "light") {
+    if (storedTheme === "light") {
       setIsDark(false);
       document.documentElement.classList.remove("dark");
     } else {
-      // Check system preference
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setIsDark(prefersDark);
-      if (prefersDark) {
-        document.documentElement.classList.add("dark");
+      // Default to dark mode if no preference is stored or dark is stored
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+      if (!storedTheme) {
+        localStorage.setItem("theme", "dark");
       }
     }
   }, []);
@@ -39,7 +33,6 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   const toggleTheme = () => {
     const newDarkMode = !isDark;
     setIsDark(newDarkMode);
-
     if (newDarkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");

@@ -4,13 +4,42 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      // Keep all your existing theme configuration here
-      // No changes needed to your existing theme settings
-      // fontFamily: {
-      //   sans: ["Roboto Mono", "monospace"], // As your default font
-      //   // OR you can add it as a specific font class
-      //   mono: ["Roboto Mono", "monospace"],
-      // },
+      // Define your custom theme colors for Tailwind
+      colors: {
+        primary: {
+          DEFAULT: "rgb(var(--color-primary))",
+          light: "rgb(var(--color-primary-light))",
+          dark: "rgb(var(--color-primary-dark))",
+        },
+        secondary: {
+          DEFAULT: "rgb(var(--color-secondary))",
+          light: "rgb(var(--color-secondary-light))",
+          dark: "rgb(var(--color-secondary-dark))",
+        },
+        accent: {
+          DEFAULT: "rgb(var(--color-accent))",
+          light: "rgb(var(--color-accent-light))",
+          dark: "rgb(var(--color-accent-dark))",
+        },
+        notification: {
+          DEFAULT: "rgb(var(--color-notification, 30 41 59))",
+          hover: "rgb(var(--color-notification-hover, 41 55 74))",
+          border: "rgb(var(--color-notification-border, 51 65 85))",
+          text: "rgb(var(--color-notification-text, 226 232 240))",
+        },
+      },
+      backgroundColor: {
+        card: "rgb(var(--color-card))",
+        popover: "rgb(var(--color-popover))",
+      },
+      textColor: {
+        card: "rgb(var(--color-card-foreground))",
+        popover: "rgb(var(--color-popover-foreground))",
+      },
+      borderColor: {
+        DEFAULT: "rgb(var(--color-border))",
+        input: "rgb(var(--color-input))",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

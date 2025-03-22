@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/supabaseconsant";
 import { CourseWithFirstVideo, courseDifficultyMap } from "../types/CourseType";
 import {
   ChevronLeft,
@@ -24,8 +23,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
-import { useQuery } from "@tanstack/react-query";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
+import { useTheme } from "next-themes";
 
 const months = [
   "January",
@@ -215,10 +214,11 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
     () => getShorthandTime(total_duration),
     [total_duration]
   );
+  const theme = useTheme();
   return (
     <HoverCard>
       <HoverCardTrigger
-        className="block w-full transition-all duration-200 border border-slate-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md dark:shadow-none dark:hover:shadow-md dark:hover:shadow-black/20"
+        className={`block w-full transition-all duration-200 border border-slate-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm cursor-pointer hover:shadow-md dark:shadow-none dark:hover:shadow-md dark:hover:shadow-black/20`}
         onClick={onViewCourse}
       >
         <div className="relative group rounded-lg overflow-hidden bg-white dark:bg-gray-800">
@@ -265,7 +265,7 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-lg bg-white border-slate-200 dark:border-gray-700 dark:bg-gray-800 hidden sm:block"
+        className="w-80 p-0 shadow-lg bg-white border-slate-200 dark:border-gray-700 dark:bg-gray-900 hidden sm:block"
         side="right"
         align="start"
       >
@@ -316,78 +316,6 @@ const CourseCard: React.FC<CourseWithFirstVideo> = ({
         <Arrow className="fill-white dark:fill-gray-800" />
       </HoverCardContent>
     </HoverCard>
-  );
-};
-
-// Feature Card Component
-const FeatureCard: React.FC<CourseWithFirstVideo> = ({
-  course_description,
-  course_id,
-  course_title,
-  thumbnail_url,
-  total_duration,
-  course_difficulty,
-}) => {
-  const navigate = useNavigate();
-  const [hovering, setHovering] = useState(false);
-
-  const difficultyText =
-    course_difficulty in courseDifficultyMap
-      ? courseDifficultyMap[
-          course_difficulty as keyof typeof courseDifficultyMap
-        ]
-      : "Simple";
-
-  return (
-    <div
-      className="relative h-64 rounded-lg overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] dark:shadow-black/20"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      onClick={() => navigate(`/course/${course_id}`)}
-      style={{ cursor: "pointer" }}
-    >
-      <img
-        src={thumbnail_url}
-        alt={course_title}
-        className={`w-full h-full object-cover transition-all duration-500 ${
-          hovering ? "scale-105" : "scale-100"
-        }`}
-      />
-
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/20 transition-opacity duration-300"></div>
-
-      {/* Badge and duration */}
-      <div className="absolute top-3 right-3 flex gap-2">
-        <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded-md backdrop-blur-sm">
-          {getShorthandTime(total_duration)}
-        </span>
-        <span className="px-2 py-1 bg-white/90 dark:bg-gray-800/90 text-slate-800 dark:text-slate-200 text-xs font-medium rounded-md backdrop-blur-sm">
-          {difficultyText}
-        </span>
-      </div>
-
-      {/* Content overlay */}
-      <div className="absolute inset-0 p-5 flex flex-col justify-center">
-        <h3 className="text-xl font-semibold text-white mb-2">
-          {course_title}
-        </h3>
-
-        <div
-          className={`text-white/90 text-sm transition-all duration-300 ${
-            hovering ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-          }`}
-        >
-          <p className="line-clamp-2 mb-3">{course_description}</p>
-          <Button
-            className="bg-white/20 text-white hover:bg-white/30 border-0"
-            size="sm"
-          >
-            View Course
-          </Button>
-        </div>
-      </div>
-    </div>
   );
 };
 

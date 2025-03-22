@@ -29,8 +29,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 
-import { toast as SonnerToast } from "sonner";
-
 // Form validation schema
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -70,10 +68,11 @@ function SignupForm({
       });
 
       if (error) {
-        SonnerToast.error("Error", {
+        toast({
+          title: "Error",
           description: error.message,
+          variant: "destructive",
         });
-
         return;
       }
 
@@ -86,8 +85,10 @@ function SignupForm({
           name: "",
         });
 
-        SonnerToast("Success", {
-          description: "Your account has been created.",
+        toast({
+          title: "Account Created",
+          description: "Your account has been successfully created.",
+          variant: "success",
         });
 
         // Switch back to login view
@@ -95,8 +96,10 @@ function SignupForm({
       }
     } catch (error) {
       console.error("Signup error:", error);
-      SonnerToast.error("Error", {
+      toast({
+        title: "Error",
         description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -196,7 +199,7 @@ function SignupForm({
               />
               <Button
                 type="submit"
-                className="w-full bg-black text-white dark:bg-white dark:text-black"
+                className="w-full bg-primary-light text-white"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating account..." : "Sign up"}
@@ -381,12 +384,15 @@ export default function LoginModal() {
                       />
                     </div>
                     <Button
-                      className="w-full bg-black text-white dark:bg-white dark:text-black"
+                      className="w-full bg-primary-light text-white "
                       onClick={(e) => loginWithEmail(e)}
                     >
                       Login
                     </Button>
-                    <Button variant="outline" className="w-full">
+                    <Button
+                      variant="outline"
+                      className="w-full bg-transparent hover:bg-white/10"
+                    >
                       Login with Google
                     </Button>
                   </div>

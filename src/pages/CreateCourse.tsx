@@ -343,7 +343,7 @@ export default function CreateCoursePage() {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-cyan-600 dark:data-[state=checked]:bg-cyan-500"
+                          className="border-gray-300 dark:border-gray-600 data-[state=checked]:bg-cyan-600 data-[state=checked]:text-white dark:data-[state=checked]:bg-cyan-500"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">

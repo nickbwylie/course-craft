@@ -1,6 +1,6 @@
 /* src/styles/toast.css */
 .Toaster__container {
-  --toaster-background: #ffffff;
+  --toaster-background: hsl(0, 0%, 98%);
   --toaster-text: #1f2937;
   --toaster-border: #e5e7eb;
   --toaster-success-background: #dcfce7;
@@ -12,7 +12,7 @@
 }
 
 .dark .Toaster__container {
-  --toaster-background: #1f2937;
+  --toaster-background: hsl(215, 28%, 25%);
   --toaster-text: #f9fafb;
   --toaster-border: #374151;
   --toaster-success-background: #065f46;

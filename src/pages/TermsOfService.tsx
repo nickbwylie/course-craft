@@ -9,7 +9,7 @@ export default function TermsOfService() {
     <div className="max-w-3xl mx-auto px-8 py-8">
       <div className="flex items-center mb-6">
         <Button
-          variant="ghost"
+          variant="link"
           size="sm"
           className="mr-2"
           onClick={() => navigate(-1)}
