@@ -115,7 +115,7 @@ export function CourseListItem({
         <img
           src={course.thumbnail_url}
           alt={course.course_title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-1">
           <PlayCircle className="h-6 w-6 text-white" />
@@ -234,7 +234,7 @@ export function CourseListItem({
           >
             Normal
           </Badge>
-          {publicCourse && (
+          {publicCourse && !showProgress && (
             <Badge
               variant="outline"
               className="h-5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs font-normal border-emerald-100 dark:border-emerald-800/30 px-1.5 flex items-center gap-1"
