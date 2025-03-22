@@ -50,7 +50,7 @@ export default function BottomNav() {
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-cyan-700 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
+        ? "text-cyan-700 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
         : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
 

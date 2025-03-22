@@ -24,6 +24,7 @@ import { Helmet } from "react-helmet";
 import createPageScreen from "../assets/createCoursePage.png";
 import exploreScreen from "../assets/explorePageTest.png";
 import AboutUsModal from "@/myComponents/AboutUsModal";
+import { useTheme } from "@/styles/useTheme";
 
 // Reusable animation component
 const FadeInWhenVisible = ({ children, delay = 0, className = "" }) => {
@@ -54,28 +55,37 @@ const FadeInWhenVisible = ({ children, delay = 0, className = "" }) => {
 };
 
 // Feature card component
-const FeatureCard = ({ icon: Icon, title, description, delay, gradient }) => (
-  <FadeInWhenVisible delay={delay}>
-    <Card className="w-full h-full border-none shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-      <div className={`h-2 w-full ${gradient}`}></div>
-      <CardHeader>
-        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-slate-100">
-          <Icon className="text-black" size={24} />
-        </div>
-        <CardTitle className="text-xl mt-4 text-black">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-slate-600">{description}</p>
-      </CardContent>
-    </Card>
-  </FadeInWhenVisible>
-);
+const FeatureCard = ({ icon: Icon, title, description, delay, gradient }) => {
+  const { isDark } = useTheme();
+
+  return (
+    <FadeInWhenVisible delay={delay}>
+      <Card className="w-full h-full border-none shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden dark:bg-gray-800 dark:shadow-gray-900/30">
+        <div className={`h-2 w-full ${gradient}`}></div>
+        <CardHeader>
+          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-slate-100 dark:bg-gray-700">
+            <Icon className="text-black dark:text-white" size={24} />
+          </div>
+          <CardTitle className="text-xl mt-4 text-black dark:text-white">
+            {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-slate-600 dark:text-slate-300">{description}</p>
+        </CardContent>
+      </Card>
+    </FadeInWhenVisible>
+  );
+};
 
 // Benefit item component
 const BenefitItem = ({ children }) => (
   <div className="flex items-start space-x-3 mb-6">
-    <CheckCircle className="text-slate-700 mt-1 flex-shrink-0" size={20} />
-    <p className="text-slate-700">{children}</p>
+    <CheckCircle
+      className="text-slate-700 dark:text-slate-300 mt-1 flex-shrink-0"
+      size={20}
+    />
+    <p className="text-slate-700 dark:text-slate-300">{children}</p>
   </div>
 );
 
@@ -83,9 +93,10 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const parallaxRef = useRef(null);
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
+  const { isDark } = useTheme();
 
   return (
-    <div className="overflow-hidden bg-white">
+    <div className="overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
       <Helmet>
         <title>CourseCraft - Create Custom Courses from YouTube Videos</title>
         <meta
@@ -117,7 +128,7 @@ const LandingPage = () => {
         />
       </Helmet>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden transition-colors duration-300">
         {/* Background elements */}
         <div className="absolute inset-0 overflow-hidden"></div>
 
@@ -129,13 +140,13 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="mb-6"
           >
-            <span className="inline-block py-1 px-3 text-sm font-medium bg-slate-900/10 text-black rounded-full mb-4">
+            <span className="inline-block py-1 px-3 text-sm font-medium bg-slate-900/10 dark:bg-white/10 text-black dark:text-white rounded-full mb-4 transition-colors duration-300">
               Learning Reimagined
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-slate-500 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-slate-500 to-blue-600 dark:from-slate-400 dark:to-blue-500 bg-clip-text text-transparent">
               Create Custom Courses from YouTube in Seconds
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8">
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8 transition-colors duration-300">
               Transform educational content into personalized learning
               experiences. Learn what you want, when you want, how you want.
             </p>
@@ -149,7 +160,7 @@ const LandingPage = () => {
           >
             <Button
               size="lg"
-              className="text-lg px-8 py-6 rounded-full bg-gray-900 hover:bg-primary/90 text-white shadow-lg hover:shadow-primary/40 transition-all"
+              className="text-lg px-8 py-6 rounded-full bg-gray-900 hover:bg-black text-white dark:bg-blue-600 dark:hover:bg-blue-700 shadow-lg hover:shadow-primary/40 dark:hover:shadow-blue-600/30 transition-all"
               onClick={() => navigate("/create")}
             >
               Create a Course
@@ -158,7 +169,7 @@ const LandingPage = () => {
             <Button
               variant="outline"
               size="lg"
-              className="text-lg text-black px-8 py-6 rounded-full border-2 border-slate-300 hover:border-primary/70 hover:bg-gray-300/5 transition-all"
+              className="text-lg text-black dark:text-white px-8 py-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:border-primary/70 dark:hover:border-blue-600/70 hover:bg-gray-300/5 dark:hover:bg-white/5 transition-all"
               onClick={() => navigate("/explore")}
             >
               Explore Courses
@@ -167,17 +178,17 @@ const LandingPage = () => {
         </div>
       </section>
       {/* How it Works Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-white to-slate-50">
+      <section className="py-24 px-6 bg-gradient-to-b from-white to-slate-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <FadeInWhenVisible>
             <div className="text-center mb-16">
-              <span className="inline-block py-1 px-3 text-sm font-medium bg-violet-100 text-violet-800 rounded-full mb-4">
+              <span className="inline-block py-1 px-3 text-sm font-medium bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300 rounded-full mb-4 transition-colors duration-300">
                 Simple Process
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black dark:text-white transition-colors duration-300">
                 How It Works
               </h2>
-              <div className="w-24 h-1 bg-primary mx-auto"></div>
+              <div className="w-24 h-1 bg-primary dark:bg-blue-600 mx-auto transition-colors duration-300"></div>
             </div>
           </FadeInWhenVisible>
 
@@ -207,18 +218,18 @@ const LandingPage = () => {
         </div>
       </section>
       {/* Take Control Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <FadeInWhenVisible className="order-2 lg:order-1">
-              <span className="inline-block py-1 px-3 text-sm font-medium bg-blue-100 text-blue-800 rounded-full mb-4">
+              <span className="inline-block py-1 px-3 text-sm font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full mb-4 transition-colors duration-300">
                 Your Learning, Your Rules
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black dark:text-white transition-colors duration-300">
                 Take Control of Your Learning Journey
               </h2>
-              <div className="w-24 h-1 bg-primary mb-6"></div>
-              <p className="text-lg text-slate-600 mb-8">
+              <div className="w-24 h-1 bg-primary dark:bg-blue-600 mb-6 transition-colors duration-300"></div>
+              <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 transition-colors duration-300">
                 Stop wasting time on courses that don't meet your needs. Our
                 platform puts you in charge of what, how, and when you learn.
               </p>
@@ -238,7 +249,7 @@ const LandingPage = () => {
 
               <Button
                 size="lg"
-                className="mt-8 rounded-full px-8 py-6 bg-primary hover:bg-primary/90 text-white"
+                className="mt-8 rounded-full px-8 py-6 bg-primary dark:bg-blue-600 hover:bg-primary/90 dark:hover:bg-blue-700 text-white transition-colors duration-300"
                 onClick={() => navigate("/create")}
               >
                 Create My Course
@@ -248,7 +259,7 @@ const LandingPage = () => {
 
             <div className="order-1 lg:order-2">
               <FadeInWhenVisible>
-                <div className="bg-gradient-to-br from-yellow-100 to-yellow-300 p-10 rounded-3xl shadow-xl">
+                <div className="bg-gradient-to-br from-yellow-100 to-yellow-300 dark:from-yellow-900/30 dark:to-yellow-700/30 p-10 rounded-3xl shadow-xl transition-colors duration-300">
                   <img
                     src={createPageScreen}
                     alt="Course Creation Screen"
@@ -261,12 +272,12 @@ const LandingPage = () => {
         </div>
       </section>
       {/* Explore Section */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-slate-50 dark:bg-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <FadeInWhenVisible>
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-10 rounded-3xl shadow-xl">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-indigo-900 dark:to-purple-900 p-10 rounded-3xl shadow-xl transition-colors duration-300">
                   <img
                     src={exploreScreen}
                     alt="Explore Screen"
@@ -277,14 +288,14 @@ const LandingPage = () => {
             </div>
 
             <FadeInWhenVisible>
-              <span className="inline-block py-1 px-3 text-sm font-medium bg-indigo-100 text-indigo-800 rounded-full mb-4">
+              <span className="inline-block py-1 px-3 text-sm font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 rounded-full mb-4 transition-colors duration-300">
                 Community Learning
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black dark:text-white transition-colors duration-300">
                 Explore User-Generated Courses for Free
               </h2>
-              <div className="w-24 h-1 bg-primary mb-6"></div>
-              <p className="text-lg text-slate-600 mb-8">
+              <div className="w-24 h-1 bg-primary dark:bg-blue-600 mb-6 transition-colors duration-300"></div>
+              <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 transition-colors duration-300">
                 Curious about what's possible? Discover a library of courses
                 created by other learners, all available for free.
               </p>
@@ -304,7 +315,7 @@ const LandingPage = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="mt-8 rounded-full px-8 py-6 border-2 border-indigo-400 text-indigo-700 hover:bg-indigo-50"
+                className="mt-8 rounded-full px-8 py-6 border-2 border-indigo-400 dark:border-indigo-600 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors duration-300"
                 onClick={() => navigate("/explore")}
               >
                 Explore Now
@@ -315,17 +326,17 @@ const LandingPage = () => {
         </div>
       </section>
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-b from-white to-blue-50">
+      <section className="py-20 bg-gradient-to-b from-white to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInWhenVisible>
             <div className="text-center mb-16">
-              <span className="inline-block py-1 px-3 text-sm font-medium bg-green-100 text-green-800 rounded-full mb-4">
+              <span className="inline-block py-1 px-3 text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full mb-4 transition-colors duration-300">
                 Success Stories
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black dark:text-white transition-colors duration-300">
                 What Our Users Say
               </h2>
-              <div className="w-24 h-1 bg-primary mx-auto"></div>
+              <div className="w-24 h-1 bg-primary dark:bg-blue-600 mx-auto transition-colors duration-300"></div>
             </div>
           </FadeInWhenVisible>
 
@@ -351,19 +362,21 @@ const LandingPage = () => {
               },
             ].map((testimonial, index) => (
               <FadeInWhenVisible key={index} delay={0.2 * index}>
-                <Card className="h-full border-none shadow-lg bg-white">
+                <Card className="h-full border-none shadow-lg bg-white dark:bg-gray-800 dark:border-gray-700 transition-colors duration-300">
                   <CardHeader className="pb-0">
-                    <Quote className="text-black/30 h-12 w-12" />
+                    <Quote className="text-black/30 dark:text-white/30 h-12 w-12 transition-colors duration-300" />
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="italic text-slate-700">{testimonial.quote}</p>
+                    <p className="italic text-slate-700 dark:text-slate-300 transition-colors duration-300">
+                      {testimonial.quote}
+                    </p>
                   </CardContent>
-                  <CardFooter className="border-t pt-4">
+                  <CardFooter className="border-t dark:border-gray-700 pt-4 transition-colors duration-300">
                     <div>
-                      <p className="font-medium text-black">
+                      <p className="font-medium text-black dark:text-white transition-colors duration-300">
                         {testimonial.name}
                       </p>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-300">
                         {testimonial.role}
                       </p>
                     </div>
@@ -374,31 +387,8 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-      {/* CTA Section */}
-      {/* <section className="py-20 bg-gradient-to-r from-primary to-blue-600 text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <FadeInWhenVisible>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Transform Your Learning Experience?
-            </h2>
-            <p className="text-lg text-white/80 mb-8">
-              Create your first custom course today and discover a new way to
-              learn.
-            </p>
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-10 py-6 rounded-full bg-white text-primary hover:bg-white/90 shadow-lg"
-              onClick={() => navigate("/create")}
-            >
-              Get Started For Free
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </FadeInWhenVisible>
-        </div>
-      </section> */}
       {/* Footer */}
-      <footer className="py-12 bg-slate-900 text-white">
+      <footer className="py-12 bg-slate-900 text-white transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-6 md:mb-0">

@@ -61,6 +61,7 @@ import {
   parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -108,6 +109,7 @@ export default function CreateCoursePage() {
   const [progress, setProgress] = useState(0);
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [createdCourseId, setCreatedCourseId] = useState("");
+  const queryClient = useQueryClient();
 
   // Calculate course stats
   const totalDuration = calculateTotalDuration(
@@ -249,6 +251,10 @@ export default function CreateCoursePage() {
       };
 
       const response = await createCourse(courseRequest);
+      // update user courses cache
+      queryClient.invalidateQueries({ queryKey: ["userCourses"] });
+      // queryClient.invalidateQueries({ queryKey: [""] });
+
       setCreatedCourseId(response.body.course_id || "");
 
       clearInterval(timer);

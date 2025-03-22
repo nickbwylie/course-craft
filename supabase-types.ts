@@ -204,6 +204,7 @@ export type Database = {
       }
       videos: {
         Row: {
+          channel_thumbnail: string | null
           channel_title: string | null
           created_at: string
           description: string | null
@@ -213,9 +214,11 @@ export type Database = {
           thumbnail_url: string | null
           title: string | null
           video_id: string
+          view_count: string | null
           youtube_id: string
         }
         Insert: {
+          channel_thumbnail?: string | null
           channel_title?: string | null
           created_at?: string
           description?: string | null
@@ -225,9 +228,11 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string | null
           video_id: string
+          view_count?: string | null
           youtube_id?: string
         }
         Update: {
+          channel_thumbnail?: string | null
           channel_title?: string | null
           created_at?: string
           description?: string | null
@@ -237,6 +242,7 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string | null
           video_id?: string
+          view_count?: string | null
           youtube_id?: string
         }
         Relationships: []
@@ -263,6 +269,10 @@ export type Database = {
           youtube_id: string
           course_difficulty: number
           detaillevel: string
+          channel_thumbnail: string
+          channel_title: string
+          view_count: string
+          published_at: string
         }[]
       }
       get_course_data: {
@@ -298,6 +308,10 @@ export type Database = {
           youtube_id: string
           course_difficulty: number
           detaillevel: string
+          channel_thumbnail: string
+          channel_title: string
+          view_count: string
+          published_at: string
         }[]
       }
       get_course_info: {

@@ -30,6 +30,7 @@ import { useTheme } from "@/styles/useTheme";
 import { darkTheme } from "@/styles/myTheme";
 import { CourseWithFirstVideo } from "@/types/CourseType";
 import { useCourseProgress } from "@/hooks/useCourseProgress.ts";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 export interface CourseVideo {
   course_description: string;
@@ -44,6 +45,10 @@ export interface CourseVideo {
   youtube_id: string;
   course_difficulty: number;
   detaillevel: string;
+  channel_thumbnail: string;
+  channel_title: string;
+  view_count: string;
+  published_at: string;
 }
 
 // Parse summary text into formatted sections
@@ -73,6 +78,56 @@ const parseSummary = (text: string) => {
       </div>
     );
   });
+};
+
+const formatViewCount = (views: string) => {
+  const numViews = Number(views); // Ensure it's a number
+
+  if (numViews >= 1_000_000_000) {
+    return (numViews / 1_000_000_000).toFixed(1).replace(".0", "") + "B";
+  } else if (numViews >= 1_000_000) {
+    return (numViews / 1_000_000).toFixed(1).replace(".0", "") + "M";
+  } else if (numViews >= 1_000) {
+    return (numViews / 1_000).toFixed(1).replace(".0", "") + "K";
+  } else {
+    return numViews.toString(); // Return as is for < 1,000
+  }
+};
+
+const formatTimeAgo = (dateString: string) => {
+  const now = new Date().getTime();
+  const past = new Date(dateString).getTime();
+  const diffInMilliseconds = now - past; // Difference in milliseconds
+  const diffInSeconds = Math.floor(diffInMilliseconds / 1000); // Convert to seconds
+
+  const secondsInMinute = 60;
+  const secondsInHour = 60 * secondsInMinute;
+  const secondsInDay = 24 * secondsInHour;
+  const secondsInWeek = 7 * secondsInDay;
+  const secondsInMonth = 30 * secondsInDay; // Approximation
+  const secondsInYear = 365 * secondsInDay; // Approximation
+
+  if (diffInSeconds >= secondsInYear) {
+    const years = Math.floor(diffInSeconds / secondsInYear);
+    return `${years} year${years !== 1 ? "s" : ""} ago`;
+  } else if (diffInSeconds >= secondsInMonth) {
+    const months = Math.floor(diffInSeconds / secondsInMonth);
+    return `${months} month${months !== 1 ? "s" : ""} ago`;
+  } else if (diffInSeconds >= secondsInWeek) {
+    const weeks = Math.floor(diffInSeconds / secondsInWeek);
+    return `${weeks} week${weeks !== 1 ? "s" : ""} ago`;
+  } else if (diffInSeconds >= secondsInDay) {
+    const days = Math.floor(diffInSeconds / secondsInDay);
+    return `${days} day${days !== 1 ? "s" : ""} ago`;
+  } else if (diffInSeconds >= secondsInHour) {
+    const hours = Math.floor(diffInSeconds / secondsInHour);
+    return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+  } else if (diffInSeconds >= secondsInMinute) {
+    const minutes = Math.floor(diffInSeconds / secondsInMinute);
+    return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+  } else {
+    return `${diffInSeconds} second${diffInSeconds !== 1 ? "s" : ""} ago`;
+  }
 };
 
 export default function ViewCourse() {
@@ -106,6 +161,8 @@ export default function ViewCourse() {
       const { data, error } = await supabase.rpc("filtered_course_details", {
         course_id: courseId,
       });
+
+      console.log("Fetched course content:", data);
 
       if (data) {
         setCourseVideos(data);
@@ -464,20 +521,7 @@ export default function ViewCourse() {
           </h1>
 
           {/* Desktop theme toggle */}
-          <div className="hidden lg:flex">
-            {/* <Button
-              variant="outline"
-              size="icon"
-              className="bg-white dark:bg-slate-800 shadow-sm border-slate-200 dark:border-slate-700"
-              onClick={toggleTheme}
-            >
-              {isDarkMode ? (
-                <Sun className="h-5 w-5 text-yellow-500" />
-              ) : (
-                <Moon className="h-5 w-5 text-slate-700" />
-              )}
-            </Button> */}
-          </div>
+          <div className="hidden lg:flex"></div>
         </div>
 
         {isLoading ? (
@@ -516,56 +560,69 @@ export default function ViewCourse() {
           </div>
 
           {/* Video Title and Navigation */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
-            <div className="mb-4 sm:mb-0">
+          <div className="flex flex-col sm:flex-col sm:items-center justify-start mb-6 text-start">
+            <div className="w-full mb-4 sm:mb-4">
               {isLoading || !currentVideo ? (
                 <>
                   <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
                   <Skeleton className="h-4 w-40 dark:bg-slate-700" />
                 </>
               ) : (
-                <>
-                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                    {currentVideo.video_title}
-                  </h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center mt-1">
-                    <Clock className="h-4 w-4 mr-1" />
-                    {parseYouTubeDuration(currentVideo.video_duration)}
-                  </p>
-                </>
+                <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                  {currentVideo.video_title}
+                </h2>
               )}
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToPreviousVideo}
-                disabled={isLoading || !courseVideos}
-                className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Previous
-              </Button>
-
-              <Button
-                size="sm"
-                onClick={goToNextVideo}
-                disabled={isLoading || !courseVideos}
-                className="bg-cyan-600 hover:bg-cyan-500 text-white"
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+            <div className="flex flex-row w-full items-center justify-between gap-2 mb-6">
+              <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1">
+                <Avatar className="w-8 h-8 rounded-full overflow-clip mr-3 border dark:border-white">
+                  <AvatarImage src={currentVideo?.channel_thumbnail} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>{" "}
+                <div className="flex flex-col">
+                  <div className="font-normal dark:text-slate-300 text-slate-800">
+                    {currentVideo?.channel_title}
+                  </div>
+                  <div>
+                    {currentVideo?.view_count &&
+                      formatViewCount(currentVideo.view_count)}{" "}
+                    -{" "}
+                    {currentVideo?.published_at &&
+                      formatTimeAgo(currentVideo.published_at)}
+                  </div>
+                </div>
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPreviousVideo}
+                  disabled={isLoading || !courseVideos}
+                  className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={goToNextVideo}
+                  disabled={isLoading || !courseVideos}
+                  className="bg-cyan-600 hover:bg-cyan-500 text-white"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
           </div>
 
           <div className="mb-8">
             <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-800">
+              <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-600">
                 <TabsTrigger
                   value="summary"
-                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
+                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
                   onClick={() => setShowSummary(true)}
                 >
                   <Newspaper className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
@@ -573,7 +630,7 @@ export default function ViewCourse() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="quiz"
-                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm"
+                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
                   onClick={() => setShowSummary(false)}
                 >
                   <Pencil className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
