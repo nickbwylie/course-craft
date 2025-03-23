@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/supabaseconsant";
-import { CourseWithFirstVideo } from "@/types/CourseType";
+import { CourseWithFirstVideo } from "../types/CourseType.ts";
+import { supabase } from "../supabaseconsant.ts";
 
-export function useAdminCourses() {
+export function useGeneratedCourses() {
   return useQuery<CourseWithFirstVideo[]>({
-    queryKey: ["adminCourses"],
+    queryKey: ["userGeneratedCourses"],
     queryFn: async () => {
       const { data, error } = await supabase.rpc(
-        "get_admin_courses_with_first_video_and_duration"
+        "get_courses_with_first_video_and_duration"
       );
 
       if (error) {
@@ -16,6 +16,6 @@ export function useAdminCourses() {
 
       return data || [];
     },
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    staleTime: 24 * 60 * 60 * 1, // 24 hours
   });
 }

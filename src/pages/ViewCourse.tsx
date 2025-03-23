@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { supabase } from "../supabaseconsant";
 import "./CoursePage.css";
@@ -538,8 +538,8 @@ export default function ViewCourse() {
           className="min-h-[calc(100vh-145px)]"
         >
           {/* Left Content Area - Video and Tabs */}
-          <ResizablePanel defaultSize={65} minSize={40}>
-            <div className="px-8 pt-4 md:px-8 pb-8">
+          <ResizablePanel defaultSize={65} minSize={40} className="relative">
+            <div className="px-8 pt-4 md:px-8 pb-8 relative">
               {/* Video Container */}
               <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
                 {isLoading || !currentVideo ? (

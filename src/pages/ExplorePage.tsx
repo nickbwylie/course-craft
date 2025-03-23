@@ -25,6 +25,8 @@ import { Badge } from "@/components/ui/badge";
 import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useTheme } from "next-themes";
+import { useUserCourses } from "../hooks/useUserCourses.ts";
+import { useGeneratedCourses } from "@/hooks/useGeneratedCourses.ts";
 
 const months = [
   "January",
@@ -386,6 +388,8 @@ export default function ExplorePage() {
 
   const { data: courses, isLoading, error } = useAdminCourses();
 
+  const { data: userGeneratedCourses } = useGeneratedCourses();
+
   const filteredCourses = useMemo(() => {
     if (!courses) return [];
 
@@ -418,6 +422,14 @@ export default function ExplorePage() {
         .slice(0, 8)
     : [];
 
+  const featuredCourse = {
+    course_description:
+      "Want to understand AI but don’t know where to start? This beginner-friendly course will teach you the basics of AI, how ChatGPT works, and how to use AI in everyday life. No tech skills needed—just curiosity! By the end, you'll have a solid foundation in AI and be able to use AI tools with confidence.",
+    course_id: "c91a6877-8a56-4135-9c87-bb198f34ae06",
+    thumbnail_url: "https://i.ytimg.com/vi/aircAruvnKk/maxresdefault.jpg",
+    course_title: "AI for Beginners",
+    created_at: "2025-03-08T19:11:34.66",
+  };
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
       {/* Main content */}
@@ -440,27 +452,27 @@ export default function ExplorePage() {
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
                 <div className="min-w-60">
                   <img
-                    src={newestCourses[1].thumbnail_url}
+                    src={featuredCourse.thumbnail_url}
                     className="rounded-md"
-                    alt={newestCourses[1].course_title}
+                    alt={featuredCourse.course_title}
                   />
                 </div>
                 <div className="flex flex-col items-start">
                   <h1 className="text-2xl text-[rgb(64,126,139)] dark:text-[rgb(86,156,170)] font-semibold w-full mt-[-6px]">
-                    {newestCourses[1].course_title}{" "}
+                    {featuredCourse.course_title}{" "}
                   </h1>
                   <p className="font-light text-xs text-nowrap pb-2 flex flex-row gap-1 items-center text-slate-500 dark:text-slate-400">
                     <Calendar className="w-3 h-3" /> Created{" "}
-                    {dateToMonthYear(newestCourses[1].created_at)}
+                    {dateToMonthYear(featuredCourse.created_at)}
                   </p>
                   <p className="text-sm font-normal mb-4 text-slate-700 dark:text-slate-300">
-                    {newestCourses[1].course_description}
+                    {featuredCourse.course_description}
                   </p>
 
                   <div>
                     <Button
                       onClick={() =>
-                        navigate(`/course/${newestCourses[1].course_id}`)
+                        navigate(`/course/${featuredCourse.course_id}`)
                       }
                       className="bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
                     >
@@ -546,16 +558,8 @@ export default function ExplorePage() {
               </Badge>
             )}
           </div>
-
-          <SearchableDropdown
-            className="w-full sm:w-1/2 bg-white"
-            options={sortOptions}
-            value={selectedSortOptions}
-            onValueChange={setSelectedSortOptions}
-            placeholder="All Courses"
-          />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
-            {filteredCourses?.map((course, index) => (
+            {userGeneratedCourses?.map((course, index) => (
               <CourseCard key={course.course_id || index} {...course} />
             ))}
           </div>
