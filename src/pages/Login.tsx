@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useTracking } from "@/hooks/useTracking";
 
 // Form validation schema
 const formSchema = z.object({
@@ -48,6 +49,7 @@ function SignupForm({
   setShowSignUpModal: (state: boolean) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const { trackEvent } = useTracking();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,6 +75,11 @@ function SignupForm({
           description: error.message,
           variant: "destructive",
         });
+
+        trackEvent("signup_error", undefined, {
+          email: values.email,
+          error: error.message,
+        });
         return;
       }
 
@@ -93,6 +100,10 @@ function SignupForm({
 
         // Switch back to login view
         setShowLoginModal(false);
+
+        trackEvent("signup", data.user.id, {
+          email: values.email,
+        });
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -107,7 +118,7 @@ function SignupForm({
   }
 
   return (
-    <div className="relative flex flex-col gap-6 w-[400px]">
+    <div className="relative flex flex-col gap-6  w-[340px] sm:w-[400px]">
       <Button
         className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
         variant="ghost"
@@ -228,6 +239,7 @@ export default function LoginModal() {
   const [password, setPassword] = useState("");
   const { showLoginModal, setShowLoginModal } = useAuth();
   const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const { trackEvent } = useTracking();
   if (!showLoginModal) {
     return <></>;
   }
@@ -265,6 +277,10 @@ export default function LoginModal() {
     if (data?.user) {
       setShowLoginModal(false);
       alert("Successfully signed in!");
+
+      trackEvent("login", data.user.id, {
+        email: email,
+      });
       return;
     }
 
@@ -296,7 +312,7 @@ export default function LoginModal() {
       email: email,
       password: password,
       options: {
-        emailRedirectTo: "https://example.com/welcome",
+        emailRedirectTo: "http://localhost:5173/confirmed",
       },
     });
 
@@ -332,7 +348,7 @@ export default function LoginModal() {
         }}
       >
         {!showSignUpModal ? (
-          <div className="relative flex flex-col gap-6 w-[400px">
+          <div className="relative flex flex-col gap-6 w-[340px] sm:w-[400px]">
             <Button
               className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
               variant="ghost"

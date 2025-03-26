@@ -427,7 +427,7 @@ export default function ViewCourse() {
             <Button
               variant="outline"
               size="icon"
-              className="bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700"
+              className="bg-white hover:bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700"
             >
               <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />
             </Button>
@@ -512,7 +512,7 @@ export default function ViewCourse() {
       {/* Course Header */}
       <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200 dark:border-slate-700">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl md:text-2xl font-semi-bold text-slate-800 dark:text-slate-200">
+          <h1 className="text-2xl font-semi-bold text-slate-800 dark:text-slate-200">
             {isLoading ? (
               <Skeleton className="h-8 w-3/4 dark:bg-slate-700" />
             ) : (

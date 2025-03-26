@@ -4,7 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import MobileSideMenu from "@/myComponents/MobileSideMenu";
-import { CirclePlus, Search, Menu, ChevronLeft, Library } from "lucide-react";
+import {
+  CirclePlus,
+  Search,
+  Menu,
+  ChevronLeft,
+  Library,
+  Settings,
+} from "lucide-react";
 import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
 
@@ -12,6 +19,7 @@ const navItems = [
   { name: "library", href: "/library", icon: Library, requiresAuth: true },
   { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
+  { name: "settings", href: "/settings", icon: Settings, requiresAuth: true },
 ] as const;
 
 export default function BottomNav() {

@@ -5,7 +5,7 @@ import ViewCourse from "./pages/ViewCourse";
 import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import LibraryPage from "./pages/LibraryPage";
 import { ThemeProvider } from "./styles/useTheme"; // Import ThemeProvider
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -13,6 +13,12 @@ import TermsOfService from "./pages/TermsOfService";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+
+// Import our animation components
+import { AnimatedLayout } from "./animations/page-transitions";
+import SettingsPage from "./pages/SettingsPage";
+import { useTracking } from "./hooks/useTracking";
+import { useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,11 +47,32 @@ persistQueryClient({
 });
 
 export default function App() {
+  const { trackEvent } = useTracking();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    trackEvent("website visit", user?.id, {
+      page_url: window.location.href,
+      page_path: window.location.pathname,
+      page_title: document.title,
+    });
+  }, [user?.id]);
+
+  useEffect(() => {
+    trackEvent("page_view", user?.id, {
+      page_url: window.location.href,
+      page_path: window.location.pathname,
+      page_title: document.title,
+    });
+  }, [window.location.pathname, trackEvent, user?.id]);
+
   return useMemo(
     () => (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <BrowserRouter>
+            {/* Wrap Routes with AnimatedLayout for page transitions */}
+
             <Routes>
               {/* Home Page Route */}
               <Route path="/" element={<LandingPage />} />
@@ -67,6 +94,7 @@ export default function App() {
 
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/library" element={<LibraryPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Routes>
           </BrowserRouter>

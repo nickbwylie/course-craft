@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: number
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name?: string
+          id?: number
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: number
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       course_videos: {
         Row: {
           course_id: string | null
@@ -50,6 +74,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          admin: boolean
           author_id: string | null
           course_difficulty: number
           created_at: string
@@ -60,6 +85,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
+          admin?: boolean
           author_id?: string | null
           course_difficulty?: number
           created_at?: string
@@ -70,6 +96,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
+          admin?: boolean
           author_id?: string | null
           course_difficulty?: number
           created_at?: string
@@ -273,6 +300,23 @@ export type Database = {
           channel_title: string
           view_count: string
           published_at: string
+        }[]
+      }
+      get_admin_courses_with_first_video_and_duration: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          course_id: string
+          course_title: string
+          course_description: string
+          video_id: string
+          video_title: string
+          thumbnail_url: string
+          total_duration: string
+          total_videos: number
+          created_at: string
+          course_difficulty: number
+          detaillevel: string
+          public: boolean
         }[]
       }
       get_course_data: {

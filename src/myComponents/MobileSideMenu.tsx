@@ -31,6 +31,7 @@ import "./SideNav.css";
 import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
 import ThemeToggle from "./ThemeToggle";
+import { useUserCourses } from "@/hooks/useUserCourses";
 
 interface MobileSideMenuProps {
   onClose: () => void;
@@ -46,7 +47,7 @@ export default function MobileSideMenu({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const [deletingCourseTitle, setDeletingCourseTitle] = useState("");
-  const { courses } = useCoursesActivity();
+  const { data: courses } = useUserCourses();
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
   const { theme, toggleTheme } = useTheme();
@@ -207,7 +208,7 @@ export default function MobileSideMenu({
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       >
-        <AlertDialogContent className="dark:bg-slate-800 dark:border-slate-700">
+        <AlertDialogContent className="bg-white dark:bg-slate-800 dark:border-slate-700">
           <AlertDialogHeader>
             <AlertDialogTitle className="dark:text-white">
               Delete Course
@@ -220,7 +221,7 @@ export default function MobileSideMenu({
           <AlertDialogFooter>
             <AlertDialogCancel
               onClick={() => setCourseToDelete(null)}
-              className="dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
+              className="hover:bg-slate-100 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
             >
               Cancel
             </AlertDialogCancel>

@@ -351,7 +351,7 @@ function LibraryPage() {
       {/* Header */}
       <div className="mb-6 w-full flex items-center gap-3">
         <Library className="h-6 w-6 text-cyan-600 dark:text-cyan-500" />
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+        <h1 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">
           Library
         </h1>
       </div>

@@ -62,6 +62,7 @@ import {
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTracking } from "@/hooks/useTracking";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -110,6 +111,7 @@ export default function CreateCoursePage() {
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [createdCourseId, setCreatedCourseId] = useState("");
   const queryClient = useQueryClient();
+  const { trackEvent } = useTracking();
 
   // Calculate course stats
   const totalDuration = calculateTotalDuration(
@@ -251,6 +253,17 @@ export default function CreateCoursePage() {
       };
 
       const response = await createCourse(courseRequest);
+
+      // track event
+      trackEvent("course_created", user?.id, {
+        course_id: response.body.course_id,
+        course_title: data.title,
+        course_difficulty: data.courseDifficulty,
+        course_detail: data.courseDetail,
+        is_public: data.isPublic,
+        amount_of_videos: courseVideos.length,
+        video_length: totalDuration,
+      });
       // update user courses cache
       queryClient.invalidateQueries({ queryKey: ["userCourses"] });
       // queryClient.invalidateQueries({ queryKey: [""] });
@@ -283,7 +296,7 @@ export default function CreateCoursePage() {
       {/* Header */}
       <div className="mb-4 flex flex-row space-x-2 items-center">
         <Sparkles className="text-[#407e8b] dark:text-[#60a5fa] h-5 w-5" />
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+        <h1 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">
           Create a New Course
         </h1>
       </div>

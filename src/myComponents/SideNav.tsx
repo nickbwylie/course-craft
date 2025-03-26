@@ -12,10 +12,12 @@ import {
   Library,
   ChevronRight,
   ArrowRightToLine,
+  Settings, // Added Settings icon
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "../hooks/use-toast.ts";
@@ -39,14 +41,26 @@ import SupportModal from "./SupportModal.tsx";
 import ThemeToggle from "./ThemeToggle.tsx";
 import { useDeleteCourse, useUserCourses } from "@/hooks/useUserCourses.ts";
 
+// Define navigation items including Settings
 const navItems = [
   {
     name: "library",
     href: "/library",
     icon: Library,
+    requiresAuth: true,
   },
-  { name: "explore", href: "/explore", icon: Compass },
-  { name: "create", href: "/create", icon: CirclePlus },
+  {
+    name: "explore",
+    href: "/explore",
+    icon: Compass,
+    requiresAuth: false,
+  },
+  {
+    name: "create",
+    href: "/create",
+    icon: CirclePlus,
+    requiresAuth: false,
+  },
 ] as const;
 
 interface SideNavProps {
@@ -137,7 +151,15 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                 side="bottom"
                 className="z-50 bg-slate-800 text-white"
               >
-                <p>Collapse</p>
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 5 }}
+                  transition={{ duration: 0.4 }}
+                  className="bg-slate-800 text-white rounded text-sm"
+                >
+                  Collapse
+                </motion.div>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -170,7 +192,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
         {/* Main navigation */}
         <div className="space-y-1 pb-2">
           {navItems.map((item) => {
-            if (item.name === "library" && !user?.id) return null;
+            if (item.requiresAuth && !user?.id) return null;
             const isActive = item.href === url;
 
             return (
@@ -190,6 +212,23 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               </div>
             );
           })}
+
+          {/* Add Settings nav item - only show when logged in */}
+          {user?.id && (
+            <div
+              className={`nav-item ${url === "/settings" ? "active" : ""} ${
+                !delayedOpen ? "justify-center" : ""
+              } dark:hover:bg-gray-800 dark:text-slate-300`}
+              onClick={() => navigate("/settings")}
+            >
+              <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+              {delayedOpen && (
+                <span className="ml-3 text-sm font-medium capitalize">
+                  Settings
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* My Courses Section */}
@@ -202,64 +241,96 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               </h3>
             </div>
             <div className="space-y-1">
-              {courses.map((course) => {
-                const isActive = course.course_id === id;
-
-                return (
-                  <div
-                    key={course.course_id}
-                    className={`course-item p-2 relative ${
-                      isActive ? "active" : ""
-                    } dark:hover:bg-gray-800 dark:text-slate-300`}
-                    onMouseEnter={() => setHoveredCourse(course.course_id)}
-                    onMouseLeave={() => setHoveredCourse(null)}
-                    onClick={() => navigate(`/course/${course.course_id}`)}
-                  >
-                    <div className="flex items-center overflow-hidden">
-                      <Book className="h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
-                      <span className="ml-2 text-sm truncate-text">
-                        {course.course_title}
-                      </span>
-                    </div>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`p-1 h-7 w-7 action-button transition-opacity ${
-                            hoveredCourse === course.course_id
-                              ? "opacity-100"
-                              : "opacity-0"
-                          } dark:hover:bg-gray-700`}
-                          onClick={(e) => e.stopPropagation()}
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.05, // Reduced from 0.1 for smoother sequence
+                      delayChildren: 0.1, // Add a small initial delay
+                      staggerDirection: 1, // Ensure forward direction
+                      ease: "easeOut", // Add easing function
+                    },
+                  },
+                  hidden: {},
+                }}
+              >
+                {courses.map((course) => {
+                  const isActive = course.course_id === id;
+                  return (
+                    <motion.div
+                      key={course.course_id}
+                      variants={{
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: {
+                            duration: 0.4, // Slightly longer duration
+                            ease: "easeOut", // Smooth easing function
+                          },
+                        },
+                        hidden: {
+                          opacity: 0,
+                          y: 15, // Reduced from 20 for subtler effect
+                          transition: {
+                            duration: 0.3, // Quick exit animation
+                          },
+                        },
+                      }}
+                      className={`course-item p-2 relative ${
+                        isActive ? "active" : ""
+                      } dark:hover:bg-gray-800 dark:text-slate-300`}
+                      onMouseEnter={() => setHoveredCourse(course.course_id)}
+                      onMouseLeave={() => setHoveredCourse(null)}
+                      onClick={() => navigate(`/course/${course.course_id}`)}
+                    >
+                      {/* Rest of your component content */}
+                      <div className="flex items-center overflow-hidden">
+                        <Book className="h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
+                        <span className="ml-2 text-sm truncate-text">
+                          {course.course_title}
+                        </span>
+                      </div>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={`p-1 h-7 w-7 action-button transition-opacity ${
+                              hoveredCourse === course.course_id
+                                ? "opacity-100"
+                                : "opacity-0"
+                            } dark:hover:bg-gray-700`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="p-0 w-32 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700"
+                          align="end"
+                          side="right"
+                          sideOffset={5}
                         >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="p-0 w-32 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700"
-                        align="end"
-                        side="right"
-                        sideOffset={5}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start  text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteCourse(course.course_id);
-                          }}
-                        >
-                          <Trash className="h-4 w-4 mr-2" />
-                          Delete
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                );
-              })}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteCourse(course.course_id);
+                            }}
+                          >
+                            <Trash className="h-4 w-4 mr-2" />
+                            Delete
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
             </div>
           </div>
         )}
@@ -271,7 +342,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
           <div
             className={`footer-button p-2 flex items-center cursor-pointer ${
               !delayedOpen ? "justify-center w-10" : "justify-start"
-            }  dark:text-slate-300`}
+            } dark:text-slate-300`}
             onClick={() => setSupportModalOpen(true)}
           >
             <HelpCircle className="h-5 w-5 text-slate-600 dark:text-slate-400" />

@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTracking } from "@/hooks/useTracking";
 
 interface ThemeToggleProps {
   variant?: "default" | "outline" | "ghost";
@@ -13,6 +15,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   size = "icon",
 }) => {
   const [isDark, setIsDark] = useState<boolean>(true);
+
+  const { trackEvent } = useTracking();
   // Initialize theme based on localStorage or system preference
   useEffect(() => {
     // Check localStorage first
@@ -36,9 +40,11 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
     if (newDarkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
+      trackEvent("theme_toggle", undefined, { theme: "dark" });
     } else {
       document.documentElement.classList.remove("dark");
       localStorage.setItem("theme", "light");
+      trackEvent("theme_toggle", undefined, { theme: "light" });
     }
   };
 
@@ -50,11 +56,23 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
       aria-label="Toggle theme"
       className="rounded-full"
     >
-      {isDark ? (
-        <Sun className="h-[1.2rem] w-[1.2rem]" />
-      ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem]" />
-      )}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0, rotate: -30 }}
+        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+        exit={{ scale: 0.5, opacity: 0, rotate: 30 }}
+        key={isDark ? "dark" : "light"}
+        transition={{
+          duration: 0.3,
+          type: "spring",
+          stiffness: 200,
+        }}
+      >
+        {isDark ? (
+          <Sun className="h-[1.2rem] w-[1.2rem]" />
+        ) : (
+          <Moon className="h-[1.2rem] w-[1.2rem]" />
+        )}
+      </motion.div>
     </Button>
   );
 };
