@@ -77,17 +77,17 @@ const LandingPage = () => {
                     CourseCraft
                   </span>
                 </div>
-                <div className="flex items-center space-x-2 sm:space-x-4 ">
+                <div className="flex items-center space-x-1 sm:space-x-4 ">
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 p-2 dark:hover:bg-slate-800 text-xs sm:text-sm"
+                    className="hover:bg-slate-100 p-1 dark:hover:bg-slate-800 text-xs sm:text-sm"
                     onClick={() => navigate("/explore")}
                   >
                     Explore
                   </Button>
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 dark:hover:bg-slate-800  text-xs sm:text-sm p-2"
+                    className="hover:bg-slate-100 dark:hover:bg-slate-800  text-xs sm:text-sm p-1"
                     onClick={() => setIsAboutModalOpen(true)}
                   >
                     About
