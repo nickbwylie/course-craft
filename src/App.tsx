@@ -15,7 +15,6 @@ import { persistQueryClient } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 
 // Import our animation components
-import { AnimatedLayout } from "./animations/page-transitions";
 import SettingsPage from "./pages/SettingsPage";
 import { useTracking } from "./hooks/useTracking";
 import { useAuth } from "./contexts/AuthContext";
@@ -64,6 +63,10 @@ export default function App() {
       page_path: window.location.pathname,
       page_title: document.title,
     });
+    const authRoutes = ["/library", "/settings"];
+    if (!user && authRoutes.includes(window.location.pathname)) {
+      window.location.href = "/explore";
+    }
   }, [window.location.pathname, trackEvent, user?.id]);
 
   return useMemo(
@@ -92,7 +95,6 @@ export default function App() {
                 {/* Fallback Route for 404 or unmatched paths */}
                 <Route path="/create" element={<CreateCourse />} />
 
-                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/library" element={<LibraryPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>

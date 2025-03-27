@@ -1,3 +1,46 @@
+/* Mobile-specific layout styles */
+.mobile-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Prevent outer scrolling */
+  position: relative;
+  padding-bottom: 0px;
+}
+
+/* This invisible header tricks iOS Safari into not collapsing the UI */
+.mobile-header {
+  flex-shrink: 0;
+}
+
+/* Scrollable content area */
+.mobile-content {
+  flex: 1;
+  overflow-y: auto; /* Only this element should scroll */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0px; /* Add space for the bottom nav */
+}
+
+/* Disable scrolling on body when in mobile mode */
+@media (max-width: 767px) {
+  body {
+    overflow-y: auto;
+  }
+
+  /* Hide all other potential scrollbars */
+  html,
+  div.overflow-x-hidden,
+  div.overflow-hidden {
+    overflow: hidden !important;
+  }
+
+  /* Make sure only the mobile content scrolls */
+  .mobile-content {
+    overflow-y: auto !important;
+  }
+}
+
+/* Keep existing styles */
 .pageWithNavOpen {
   margin-left: 240px;
   padding-right: 240px;

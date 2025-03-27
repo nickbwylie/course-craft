@@ -227,9 +227,9 @@ const CourseCard = React.memo(function CourseCard({
   );
 
   return (
-    <HoverCard>
+    <HoverCard openDelay={100} closeDelay={50}>
       <HoverCardTrigger
-        className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform hover:translate-y-[-4px]"
+        className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer hover:-translate-y-1"
         onClick={onViewCourse}
       >
         <div className="rounded-xl overflow-hidden">
@@ -273,7 +273,7 @@ const CourseCard = React.memo(function CourseCard({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-xl border-slate-200 dark:border-gray-700 dark:bg-gray-800 rounded-xl hidden sm:block z-50"
+        className="w-80 p-0 shadow-xl  dark:bg-gray-700 rounded-xl hidden sm:block z-50"
         side="right"
         align="start"
         sideOffset={5}
@@ -322,7 +322,7 @@ const CourseCard = React.memo(function CourseCard({
             Start Learning
           </Button>
         </div>
-        <Arrow className="fill-white dark:fill-gray-800" />
+        <Arrow className="fill-slate-200 dark:fill-gray-700" />
       </HoverCardContent>
     </HoverCard>
   );
@@ -628,7 +628,7 @@ export default function ExplorePage() {
             {!isLoading && filteredCourses && (
               <Badge
                 variant="outline"
-                className="text-slate-600 bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600 px-2.5 py-1 text-sm"
+                className="text-slate-600 bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600 px-2.5 py-1 text-xs"
               >
                 {userGeneratedCourses?.length} courses
               </Badge>

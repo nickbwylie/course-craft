@@ -10,7 +10,6 @@ import {
   MoreHorizontal,
   Trash,
   Library,
-  ChevronRight,
   ArrowRightToLine,
   Settings, // Added Settings icon
 } from "lucide-react";
@@ -22,15 +21,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "../hooks/use-toast.ts";
 import { useAuth } from "@/contexts/AuthContext.tsx";
-import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 import { useParams } from "react-router-dom";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
-import { SERVER } from "@/constants.ts";
-import { supabase } from "@/supabaseconsant.ts";
 import { FaFeatherAlt } from "react-icons/fa";
 import {
   Tooltip,
@@ -80,7 +76,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const { user, signOut, setShowLoginModal } = useAuth();
   const { id } = useParams();
   const [supportModalOpen, setSupportModalOpen] = useState(false);
-  const { data: courses, isLoading, isError } = useUserCourses();
+  const { data: courses } = useUserCourses();
   const deleteUserCourse = useDeleteCourse();
 
   const deleteCourse = async (courseId: string) => {
@@ -241,51 +237,23 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               </h3>
             </div>
             <div className="space-y-1">
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.05, // Reduced from 0.1 for smoother sequence
-                      delayChildren: 0.1, // Add a small initial delay
-                      staggerDirection: 1, // Ensure forward direction
-                      ease: "easeOut", // Add easing function
-                    },
-                  },
-                  hidden: {},
-                }}
-              >
-                {courses.map((course) => {
+              <div>
+                {courses.map((course, index) => {
                   const isActive = course.course_id === id;
                   return (
-                    <motion.div
+                    <div
                       key={course.course_id}
-                      variants={{
-                        visible: {
-                          opacity: 1,
-                          y: 0,
-                          transition: {
-                            duration: 0.4, // Slightly longer duration
-                            ease: "easeOut", // Smooth easing function
-                          },
-                        },
-                        hidden: {
-                          opacity: 0,
-                          y: 15, // Reduced from 20 for subtler effect
-                          transition: {
-                            duration: 0.3, // Quick exit animation
-                          },
-                        },
-                      }}
                       className={`course-item p-2 relative ${
                         isActive ? "active" : ""
-                      } dark:hover:bg-gray-800 dark:text-slate-300`}
+                      } dark:hover:bg-gray-800 dark:text-slate-300 animate-fade-in-up`}
+                      style={{
+                        animationDelay: `${index * 30}ms`,
+                        animationFillMode: "both",
+                      }}
                       onMouseEnter={() => setHoveredCourse(course.course_id)}
                       onMouseLeave={() => setHoveredCourse(null)}
                       onClick={() => navigate(`/course/${course.course_id}`)}
                     >
-                      {/* Rest of your component content */}
                       <div className="flex items-center overflow-hidden">
                         <Book className="h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
                         <span className="ml-2 text-sm truncate-text">
@@ -327,10 +295,10 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                           </Button>
                         </PopoverContent>
                       </Popover>
-                    </motion.div>
+                    </div>
                   );
                 })}
-              </motion.div>
+              </div>
             </div>
           </div>
         )}

@@ -54,7 +54,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
       size={size}
       onClick={toggleTheme}
       aria-label="Toggle theme"
-      className="rounded-full"
+      className="rounded-full focus:hidden"
     >
       <motion.div
         initial={{ scale: 0.5, opacity: 0, rotate: -30 }}

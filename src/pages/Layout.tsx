@@ -1,8 +1,7 @@
-// Layout.tsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import SideNav from "../myComponents/SideNav"; // Import your SideNav component
-import BottomNav from "../myComponents/BottomNav"; // Import the new BottomNav component
+import SideNav from "../myComponents/SideNav";
+import BottomNav from "../myComponents/BottomNav";
 import "./Layout.css";
 import LoginModal from "./Login";
 import { ToastProvider, ToastViewport } from "../components/ui/toast.tsx";
@@ -16,6 +15,8 @@ const Layout = () => {
   const { user } = useAuth();
   const { getUserCourses } = useCoursesActivity();
   const { pathname } = useLocation();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef(false);
 
   // Check if screen is mobile
   useEffect(() => {
@@ -36,12 +37,67 @@ const Layout = () => {
     return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
+  // Create a debounced scroll handler to prevent glitches
+  const handleScroll = useCallback(() => {
+    if (!isScrollingRef.current) {
+      isScrollingRef.current = true;
+
+      // Reset the scrolling flag after a short delay
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 100);
+    }
+  }, []);
+
+  // Add tab visibility change handling
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "instant",
-    });
-  }, [pathname]);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // When tab becomes visible again, ensure scrolling is properly stopped
+        isScrollingRef.current = false;
+
+        // Small delay to ensure browser has settled
+        setTimeout(() => {
+          if (contentRef.current) {
+            // Force a tiny scroll to "reset" the scroll state
+            const currentPos = contentRef.current.scrollTop;
+            contentRef.current.scrollTop = currentPos + 1;
+            setTimeout(() => {
+              contentRef.current!.scrollTop = currentPos;
+            }, 10);
+          }
+        }, 50);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // Scroll to top when pathname changes
+  useEffect(() => {
+    // Cancel any ongoing scrolling
+    isScrollingRef.current = false;
+
+    // Add small delay to ensure everything is ready
+    setTimeout(() => {
+      if (isMobile && contentRef.current) {
+        // For mobile, scroll the content container
+        contentRef.current.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      } else {
+        // For desktop, use traditional window scroll
+        window.scrollTo({
+          top: 0,
+          behavior: "instant",
+        });
+      }
+    }, 50);
+  }, [pathname, isMobile]);
 
   // When the user changes, fetch user courses
   useEffect(() => {
@@ -50,11 +106,22 @@ const Layout = () => {
     }
   }, [user?.id]);
 
+  // Add scroll event listeners for the content container
+  useEffect(() => {
+    const content = contentRef.current;
+    if (isMobile && content) {
+      content.addEventListener("scroll", handleScroll, { passive: true });
+
+      return () => {
+        content.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [isMobile, handleScroll]);
   return (
     <div style={{ minHeight: "100vh", width: "100%" }}>
       <TooltipProvider>
         <ToastProvider>
-          <div className="flex flex-col w-full overflow-x-hidden min-h-screen bg-background-dark dark:bg-gray-900">
+          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-gray-900">
             {!user?.id && <LoginModal />}
 
             {/* Show side navigation on desktop */}
@@ -64,28 +131,38 @@ const Layout = () => {
               </div>
             )}
 
-            {/* Main content area */}
-            <div
-              className={`w-full rounded-2xl bg-background dark:bg-gray-800 flex-1 ${
-                !isMobile && navOpen
-                  ? "pageWithNavOpen"
-                  : !isMobile && !navOpen
-                  ? "pageWithNavClosed"
-                  : ""
-              }`}
-              style={{
-                minHeight: "100vh",
-                paddingLeft: isMobile ? "0" : "", // Remove padding on mobile
-                paddingRight: isMobile ? "0" : "", // Remove padding on mobile
-                marginLeft: isMobile ? "0" : "", // Remove margin on mobile
-                paddingBottom: isMobile ? "200px" : "20px",
-              }}
-            >
-              <Outlet /> {/* This renders the matched child route */}
-            </div>
+            {/* Main content structure for mobile */}
+            {isMobile ? (
+              <div className="mobile-layout">
+                {/* Small invisible header to force content below iOS address bar */}
+                <div className="mobile-header" style={{ height: "1px" }} />
 
-            {/* Show bottom navigation on mobile */}
-            {isMobile && <BottomNav />}
+                {/* Scrollable content area */}
+                <div
+                  className="mobile-content"
+                  ref={contentRef}
+                  style={{ paddingBottom: "180px" }}
+                >
+                  <Outlet />
+                </div>
+
+                {/* Bottom nav acts as a footer to contain scroll area */}
+                <BottomNav />
+              </div>
+            ) : (
+              /* Desktop layout */
+              <div
+                className={`w-full rounded-2xl bg-background dark:bg-gray-800 flex-1 ${
+                  navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
+                }`}
+                style={{
+                  minHeight: "calc(100vh)",
+                  paddingBottom: "20px",
+                }}
+              >
+                <Outlet />
+              </div>
+            )}
           </div>
           <ToastViewport />
         </ToastProvider>
