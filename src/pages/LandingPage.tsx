@@ -71,27 +71,29 @@ const LandingPage = () => {
           <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
             <div className="max-w-7xl mx-auto px-6 py-4">
               <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 ">
                   <FaFeatherAlt className="h-6 w-6 text-[#407e8b] dark:text-[#60a5fa]" />
-                  <span className="font-bold text-xl">CourseCraft</span>
+                  <span className="font-bold text-md sm:text-xl">
+                    CourseCraft
+                  </span>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2 sm:space-x-4 ">
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="hover:bg-slate-100 p-2 dark:hover:bg-slate-800 text-xs sm:text-sm"
                     onClick={() => navigate("/explore")}
                   >
                     Explore
                   </Button>
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="hover:bg-slate-100 dark:hover:bg-slate-800  text-xs sm:text-sm p-2"
                     onClick={() => setIsAboutModalOpen(true)}
                   >
                     About
                   </Button>
                   <Button
-                    className="bg-[#407e8b] hover:bg-[#305f6b] text-white dark:bg-[#407e8b] dark:hover:bg-[#54adbf]"
+                    className="bg-[#407e8b] hover:bg-[#305f6b] text-white dark:bg-[#407e8b] dark:hover:bg-[#54adbf]  text-xs sm:text-sm"
                     onClick={() => navigate("/create")}
                   >
                     Create Course
