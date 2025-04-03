@@ -287,48 +287,6 @@ export default function LoginModal() {
     alert("Unable to sign in. Please check your credentials.");
   };
 
-  const handleLogin = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-
-    if (!email) {
-      alert("Enter an email");
-      return;
-    }
-    if (!password) {
-      alert("Enter a password");
-      return;
-    }
-
-    const signInAttempt = await signInWithEmail();
-
-    if (signInAttempt.data?.user && !signInAttempt.error) {
-      alert("User signed in");
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        emailRedirectTo: "http://localhost:5173/confirmed",
-      },
-    });
-
-    if (data?.user?.id && !error) {
-      await supabase.from("users").insert({
-        id: data.user?.id,
-        email: email,
-        created_at: new Date().toISOString(),
-        name: "",
-      });
-
-      alert("User has been created");
-    } else {
-      alert("Error logging in");
-    }
-  };
   return (
     <>
       {/* Modal Overlay */}
@@ -404,12 +362,6 @@ export default function LoginModal() {
                       onClick={(e) => loginWithEmail(e)}
                     >
                       Login
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full bg-transparent hover:bg-white/10"
-                    >
-                      Login with Google
                     </Button>
                   </div>
                   <div className="mt-4 text-center text-sm">

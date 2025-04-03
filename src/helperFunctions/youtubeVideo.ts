@@ -58,7 +58,7 @@ export async function createCourse(courseRequest: AddCourseRequest) {
       throw new Error(data.message || "Failed to create course");
     }
 
-    return data.data;
+    return data;
   } catch (e: any) {
     console.error("Error creating course:", e);
     throw new Error("Failed to create course");

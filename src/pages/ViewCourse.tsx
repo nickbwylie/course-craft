@@ -12,6 +12,8 @@ import {
   Newspaper,
   Pencil,
   Play,
+  Share,
+  Share2,
   Tv,
 } from "lucide-react";
 
@@ -23,7 +25,10 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/hooks/use-toast";
 
-import { parseYouTubeDuration } from "@/helperFunctions/youtubeVideo";
+import {
+  calculateTotalDuration,
+  parseYouTubeDuration,
+} from "@/helperFunctions/youtubeVideo";
 import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
 import { Json } from "supabase-types.ts";
 import { useTheme } from "@/styles/useTheme";
@@ -149,8 +154,6 @@ export default function ViewCourse() {
   const [showCompletionButton, setShowCompletionButton] = useState(false);
 
   const { id } = useParams();
-  const { theme } = useTheme();
-  const isDarkMode = theme === darkTheme;
 
   // Get course progress functions
   const {
@@ -323,9 +326,13 @@ export default function ViewCourse() {
         course_id: id,
         course_title: courseVideos[0]?.course_title || "",
         course_description: courseVideos[0]?.course_description || "",
-        thumbnail_url: `https://img.youtube.com/vi/${courseVideos[0]?.youtube_id}/hqdefault.jpg`,
+        thumbnail_url: `https://img.youtube.com/vi/${courseVideos[0]?.youtube_id}/maxresdefault.jpg`,
         created_at: new Date().toISOString(),
-        total_duration: calculateTotalDuration(courseVideos),
+        total_duration: calculateTotalDuration(
+          courseVideos.map((v) => {
+            return v.video_duration;
+          })
+        ),
         total_videos: courseVideos.length,
         public: true, // Default value
         course_difficulty: courseVideos[0].course_difficulty,
@@ -344,25 +351,6 @@ export default function ViewCourse() {
       );
     }
   }, [id, selectedCourse, completedVideos, watchedVideos, courseVideos]);
-
-  // Calculate total duration for all videos
-  const calculateTotalDuration = (videos: CourseVideo[]): string => {
-    let totalSeconds = 0;
-
-    videos.forEach((video) => {
-      const duration = video.video_duration;
-      const [hours, minutes, seconds] = duration.split(":").map(Number);
-      totalSeconds += hours * 3600 + minutes * 60 + seconds;
-    });
-
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  };
 
   // Handle navigation between videos
   const goToNextVideo = () => {
@@ -383,43 +371,34 @@ export default function ViewCourse() {
       ? courseVideos[selectedCourse]
       : null;
 
-  useEffect(() => {
-    // Function to save all current progress data
-    const saveAllProgress = () => {
-      if (id && courseVideos && courseVideos.length > 0) {
-        // ... save progress logic ...
+  // Handle sharing the course with others
+  const handleShareCourse = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle =
+      courseVideos?.[0]?.course_title || "Check out this course";
+    const shareText =
+      courseVideos?.[0]?.course_description ||
+      "I found this interesting course on CourseCraft";
+
+    try {
+      // Try using the Web Share API if available
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback to copying to clipboard
+        await navigator.clipboard.writeText(shareUrl);
       }
-    };
-
-    // Save on beforeunload event
-    const handleBeforeUnload = () => {
-      saveAllProgress();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    // Save every 30 seconds as backup
-    const autoSaveInterval = setInterval(saveAllProgress, 30000);
-
-    // Clean up listeners
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      clearInterval(autoSaveInterval);
-
-      // Also save on component unmount
-      saveAllProgress();
-    };
-  }, [
-    id,
-    courseVideos,
-    selectedCourse,
-    completedVideos,
-    watchedVideos,
-    videoWatchTime,
-  ]);
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   return (
-    <div className="flex flex-col max-w-5xl mx-auto min-h-screen">
+    <div className="flex flex-col max-w-7xl mx-auto min-h-screen">
       {/* Mobile Navigation Button */}
       <div className="lg:hidden fixed top-4 right-8 z-50">
         <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
@@ -557,46 +536,60 @@ export default function ViewCourse() {
 
               {/* Video Title and Navigation */}
               <div className="flex flex-col sm:flex-col sm:items-center justify-start mb-6 text-start">
-                <div className="w-full mb-4 sm:mb-4">
+                <div className="w-full mb-4 sm:mb-4 flex justify-between items-start">
                   {isLoading || !currentVideo ? (
                     <>
                       <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
                       <Skeleton className="h-4 w-40 dark:bg-slate-700" />
                     </>
                   ) : (
-                    <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                      {currentVideo.video_title}
-                    </h2>
+                    <>
+                      <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                        {currentVideo.video_title}
+                      </h2>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleShareCourse()}
+                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-3xl flex items-center"
+                      >
+                        <Share className="h-4 w-4 mr-1" />
+                        Share
+                      </Button>
+                    </>
                   )}
                 </div>
 
-                <div className="flex flex-row w-full items-center justify-between gap-4 mb-6">
-                  <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1 truncate">
-                    <Avatar className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-clip mr-3 border dark:border-white bg-gray-700">
+                <div className="flex w-full items-center justify-between gap-4 mb-6">
+                  {/* Left side: Avatar and Text */}
+                  <div className="flex items-center flex-1 min-w-0 gap-3">
+                    <Avatar className="w-11 h-11 flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden bg-gray-700">
                       <AvatarImage src={currentVideo?.channel_thumbnail} />
                       <AvatarFallback>
-                        <div className="bg-gray-400 w-full"></div>
+                        <div className="bg-gray-400 w-full h-full"></div>
                       </AvatarFallback>
-                    </Avatar>{" "}
-                    <div className="flex flex-col">
-                      <div className="font-normal dark:text-slate-300 text-slate-800">
+                    </Avatar>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-normal dark:text-gray-100 text-gray-900 text-sm truncate">
                         {currentVideo?.channel_title}
-                      </div>
-                      <div className="text-xs">
+                      </span>
+                      <span className="text-xs font-light truncate dark:text-gray-400">
                         {currentVideo?.view_count &&
                           `${formatViewCount(currentVideo.view_count)} - `}
                         {currentVideo?.published_at &&
                           formatTimeAgo(currentVideo.published_at)}
-                      </div>
+                      </span>
                     </div>
-                  </p>
-                  <div className="flex items-center gap-2">
+                  </div>
+
+                  {/* Right side: Buttons */}
+                  <div className="flex items-center gap-2 ">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={goToPreviousVideo}
                       disabled={isLoading || !courseVideos}
-                      className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 flex justify-center items-center text-sm"
                     >
                       <ChevronLeft className="h-4 w-4 mr-1" />
                       Previous
@@ -605,7 +598,7 @@ export default function ViewCourse() {
                       size="sm"
                       onClick={goToNextVideo}
                       disabled={isLoading || !courseVideos}
-                      className="bg-cyan-600 hover:bg-cyan-500 text-white"
+                      className="bg-cyan-600 hover:bg-cyan-500 text-white p-2 flex justify-center items-center text-sm"
                     >
                       Next
                       <ChevronRight className="h-4 w-4 ml-1" />
@@ -759,26 +752,18 @@ export default function ViewCourse() {
                                   className={`text-xs ${
                                     showSummary
                                       ? "bg-cyan-600 text-white hover:bg-cyan-500"
-                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300  "
                                   }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowSummary(true);
-                                  }}
                                 >
                                   Summary
                                 </Badge>
                                 <Badge
                                   variant={!showSummary ? "default" : "outline"}
-                                  className={`text-xs ${
+                                  className={`text-xs  ${
                                     !showSummary
                                       ? "bg-cyan-600 text-white hover:bg-cyan-500"
-                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100"
+                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
                                   }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowSummary(false);
-                                  }}
                                 >
                                   Quiz
                                 </Badge>
@@ -816,37 +801,48 @@ export default function ViewCourse() {
 
           {/* Video Title and Navigation */}
           <div className="flex flex-col justify-start mb-6 text-start">
-            <div className="w-full mb-4">
+            <div className="w-full mb-4 sm:mb-4 flex justify-between items-start">
               {isLoading || !currentVideo ? (
                 <>
                   <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
                   <Skeleton className="h-4 w-40 dark:bg-slate-700" />
                 </>
               ) : (
-                <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                  {currentVideo.video_title}
-                </h2>
+                <>
+                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                    {currentVideo.video_title}
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleShareCourse()}
+                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-3xl flex items-center"
+                  >
+                    <Share className="h-4 w-4 mr-1" />
+                    Share
+                  </Button>
+                </>
               )}
             </div>
 
             <div className="flex flex-row w-full items-center justify-between gap-4 mb-6">
               <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1 truncate">
-                <Avatar className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-clip mr-3 border dark:border-white  bg-gray-700">
+                <Avatar className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-clip mr-3  bg-gray-700">
                   <AvatarImage src={currentVideo?.channel_thumbnail} />
                   <AvatarFallback>
                     <div className="bg-gray-400 w-full"></div>
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <div className="font-normal dark:text-slate-300 text-slate-800">
+                  <span className="font-normal dark:text-gray-100 text-gray-900 text-sm truncate">
                     {currentVideo?.channel_title}
-                  </div>
-                  <div className="text-xs">
+                  </span>
+                  <span className="text-xs font-light truncate dark:text-gray-400">
                     {currentVideo?.view_count &&
                       `${formatViewCount(currentVideo.view_count)} - `}
                     {currentVideo?.published_at &&
                       formatTimeAgo(currentVideo.published_at)}
-                  </div>
+                  </span>
                 </div>
               </p>
               <div className="flex items-center gap-2">

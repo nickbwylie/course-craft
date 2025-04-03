@@ -10,8 +10,6 @@ import {
   TrendingUp,
   Plus,
   Calendar,
-  Search,
-  Filter,
   BookOpen,
   Star,
   PlusCircle,
@@ -27,11 +25,8 @@ import { Arrow } from "@radix-ui/react-hover-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
-import { SearchableDropdown } from "@/myComponents/SearchableDropDown";
-import { Input } from "@/components/ui/input";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
-import { CoolButton } from "@/myComponents/CoolButton";
 
 const months = [
   "January",

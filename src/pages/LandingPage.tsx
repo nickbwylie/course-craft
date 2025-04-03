@@ -479,7 +479,7 @@ const LandingPage = () => {
                   What Our Users Say
                 </h2>
                 <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                  Join thousands of learners who have transformed their
+                  Join a community of learners who have transformed their
                   education experience
                 </p>
               </div>
@@ -557,13 +557,9 @@ const LandingPage = () => {
           {/* CTA Section */}
           <section className="py-24 bg-gradient-to-r from-[#1e2b38] to-[#1c446f] text-white">
             <div className="max-w-4xl mx-auto text-center px-6">
-              <h2 className="text-3xl lg:text-5xl font-bold mb-6">
+              <h2 className="text-3xl lg:text-5xl font-bold mb-8">
                 Ready to Reimagine Your Learning Journey?
               </h2>
-              <p className="text-xl mb-8 text-white/90">
-                Join thousands of learners who have transformed their
-                educational experience with CourseCraft
-              </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
                   size="lg"
@@ -603,11 +599,6 @@ const LandingPage = () => {
                 <div>
                   <h4 className="font-bold text-lg mb-4">Product</h4>
                   <ul className="space-y-2 text-slate-400">
-                    <li>
-                      <a className="hover:text-white transition-colors">
-                        Features
-                      </a>
-                    </li>
                     <li>
                       <a
                         href="/explore"

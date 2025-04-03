@@ -27,7 +27,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
-import { FaFeatherAlt } from "react-icons/fa";
+import { FaFeatherAlt, FaHammer } from "react-icons/fa";
 import {
   Tooltip,
   TooltipContent,
@@ -243,7 +243,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                   return (
                     <div
                       key={course.course_id}
-                      className={`course-item p-2 relative ${
+                      className={`course-item cursor-pointer p-2 relative ${
                         isActive ? "active" : ""
                       } dark:hover:bg-gray-800 dark:text-slate-300 animate-fade-in-up`}
                       style={{

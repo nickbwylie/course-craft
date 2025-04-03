@@ -21,6 +21,14 @@ export function useUserCourses() {
         { user_id: user.id }
       );
 
+      // filter to get the newest course first
+      if (data) {
+        data.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      }
+
       if (error) {
         throw new Error(error.message);
       }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -13,18 +13,15 @@ import {
   BookMarked,
   ExternalLink,
 } from "lucide-react";
-import { CourseWithFirstVideo } from "@/types/CourseType";
+import { courseDifficultyMap, CourseWithFirstVideo } from "@/types/CourseType";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useCoursesActivity } from "@/contexts/CoursesActivityContext";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { supabase } from "@/supabaseconsant";
-import { SERVER } from "@/constants";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import "@/styles/toast.css"; // Import the toast styles
@@ -105,6 +102,15 @@ export function CourseListItem({
     });
   };
 
+  const difficultyText =
+    course.course_difficulty in courseDifficultyMap
+      ? courseDifficultyMap[
+          course.course_difficulty as keyof typeof courseDifficultyMap
+        ]
+      : "Simple";
+
+  console.log(`course duration ${course.total_duration}`);
+
   return (
     <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl dark:hover:shadow-black/20 transition-all duration-200 flex items-start gap-3">
       {/* Thumbnail with overlay for quick access */}
@@ -161,7 +167,7 @@ export function CourseListItem({
                   className="dark:bg-gray-800 dark:border-gray-700"
                 >
                   <p className="text-xs dark:text-gray-200">
-                    Make course {publicCourse ? "private" : "public"}
+                    Make course {course.public ? "private" : "public"}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -232,7 +238,7 @@ export function CourseListItem({
             variant="outline"
             className="h-5 bg-cyan-50 dark:bg-cyan-900/20 text-cyan-700 dark:text-cyan-400 text-xs font-normal border-cyan-100 dark:border-cyan-800/30 px-1.5"
           >
-            Normal
+            {difficultyText}
           </Badge>
           {publicCourse && !showProgress && (
             <Badge
@@ -332,19 +338,6 @@ function LibraryPage() {
     "pb-2 text-lg cursor-pointer border-b-2 font-normal border-gray-800 dark:border-cyan-500 text-gray-900 dark:text-white";
   const notSelectedStyle =
     "pb-2 text-lg cursor-pointer hover:border-b-2 hover:border-gray-400 dark:hover:border-gray-600 font-light text-gray-700 dark:text-gray-300";
-
-  // Add this inside your LibraryPage component when rendering the In Progress tab:
-  // console.log(
-  //   "Course progress:",
-  //   inProgressCourses.map((course) => ({
-  //     id: course.course_id,
-  //     title: course.course_title,
-  //     totalVideos: course.total_videos,
-  //     watched: course.watchedVideos?.length || 0,
-  //     completed: course.completedVideos?.length || 0,
-  //     percentage: getCompletionPercentage(course.course_id),
-  //   }))
-  // );
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">

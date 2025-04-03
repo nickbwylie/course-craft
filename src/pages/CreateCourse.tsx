@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -86,6 +86,11 @@ const courseFormSchema = z.object({
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
+
+interface CreateCourseResponse {
+  message: string;
+  course_id: string;
+}
 
 // Main component
 export default function CreateCoursePage() {
@@ -207,6 +212,16 @@ export default function CreateCoursePage() {
       return;
     }
 
+    if (isOverDurationLimit) {
+      toast({
+        title: "Course too long",
+        description:
+          "Total course duration exceeds the maximum limit of 10 hours. Please remove some videos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setProgress(0);
 
@@ -252,11 +267,13 @@ export default function CreateCoursePage() {
         is_public: data.isPublic,
       };
 
-      const response = await createCourse(courseRequest);
+      const response = (await createCourse(
+        courseRequest
+      )) as CreateCourseResponse;
 
       // track event
       trackEvent("course_created", user?.id, {
-        course_id: response.body.course_id,
+        course_id: response.course_id,
         course_title: data.title,
         course_difficulty: data.courseDifficulty,
         course_detail: data.courseDetail,
@@ -268,7 +285,7 @@ export default function CreateCoursePage() {
       queryClient.invalidateQueries({ queryKey: ["userCourses"] });
       // queryClient.invalidateQueries({ queryKey: [""] });
 
-      setCreatedCourseId(response.body.course_id || "");
+      setCreatedCourseId(response.course_id || "");
 
       clearInterval(timer);
       setProgress(100);
@@ -276,6 +293,7 @@ export default function CreateCoursePage() {
       setTimeout(() => {
         setIsSubmitting(false);
         setSuccessModalOpen(true);
+        form.reset();
       }, 500);
     } catch (error) {
       clearInterval(timer);
@@ -290,6 +308,12 @@ export default function CreateCoursePage() {
       });
     }
   }
+
+  const isOverDurationLimit = useMemo(() => {
+    if (!totalDuration) return false;
+    const [hours, minutes, seconds] = totalDuration.split(":").map(Number);
+    return hours >= 10;
+  }, [totalDuration]);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">

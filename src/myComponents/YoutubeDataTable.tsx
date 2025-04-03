@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   HoverCard,

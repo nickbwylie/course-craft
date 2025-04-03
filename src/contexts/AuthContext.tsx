@@ -9,7 +9,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   showLoginModal: boolean;
   setShowLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
-  refreshSession: () => Promise<void>; // New function to manually refresh session
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,81 +28,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Function to refresh the session
   const refreshSession = async () => {
     try {
+      console.log("Attempting to refresh session...");
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error) {
         console.error("Error refreshing session:", error);
-        // If refresh fails, clear user state and possibly show login modal
-        setUser(null);
-        setSession(null);
-        setShowLoginModal(true);
+        // Only clear user state if there's an actual auth error, not just a network error
+        if (error.message.includes("JWT") || error.message.includes("token")) {
+          setUser(null);
+          setSession(null);
+        }
         return;
       }
 
       if (data?.session) {
+        console.log("Session refreshed successfully");
         setUser(data.session.user);
         setSession(data.session);
 
         // Schedule next refresh before token expires
-        // Typically refresh when token is 3/4 through its lifetime
-        if (refreshTimerRef.current) {
-          clearTimeout(refreshTimerRef.current);
-        }
-
-        const expiresIn = data.session.expires_in || 3600; // Default to 1 hour if not specified
-        const refreshTime = expiresIn * 1000 * 0.75; // Convert to ms and schedule at 75% of lifetime
-
-        refreshTimerRef.current = setTimeout(refreshSession, refreshTime);
+        scheduleRefresh(data.session);
       }
     } catch (err) {
       console.error("Unexpected error refreshing session:", err);
     }
   };
 
+  // Helper function to schedule the next refresh
+  const scheduleRefresh = (currentSession: Session) => {
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+    }
+
+    // Get token expiration time
+    const expiresAt = currentSession.expires_at;
+    if (!expiresAt) {
+      console.warn("No expiration time found in session");
+      return;
+    }
+
+    // Calculate time until expiration in milliseconds
+    const expiresIn = expiresAt * 1000 - Date.now();
+    // Refresh at 85% of the way through the token lifetime for safety
+    const refreshTime = Math.max(1000, expiresIn * 0.85);
+
+    console.log(
+      `Scheduling next refresh in ${Math.round(refreshTime / 1000)} seconds`
+    );
+    refreshTimerRef.current = setTimeout(refreshSession, refreshTime);
+  };
+
   useEffect(() => {
     // Check if a session exists on initial load
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      const currentSession = data?.session;
+    const getInitialSession = async () => {
+      try {
+        console.log("Getting initial session...");
+        // This gets any existing session from localStorage
+        const { data, error } = await supabase.auth.getSession();
 
-      setUser(currentSession?.user || null);
-      setSession(currentSession || null);
+        if (error) {
+          console.error("Error getting initial session:", error);
+          setIsLoading(false);
+          return;
+        }
 
-      // If we have a session, set up refresh timer
-      if (currentSession) {
-        const expiresIn = currentSession.expires_in || 3600;
-        const refreshTime = expiresIn * 1000 * 0.75;
+        const currentSession = data?.session;
+        if (currentSession) {
+          console.log("Initial session found");
+          setUser(currentSession.user);
+          setSession(currentSession);
 
-        refreshTimerRef.current = setTimeout(refreshSession, refreshTime);
+          // Schedule refresh for this session
+          scheduleRefresh(currentSession);
+        } else {
+          console.log("No initial session found");
+        }
+      } catch (e) {
+        console.error("Unexpected error getting initial session:", e);
+      } finally {
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
 
-    getSession();
+    getInitialSession();
 
     // Listen for auth state changes
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
-        setUser(newSession?.user || null);
-        setSession(newSession);
+        console.log(`Auth state changed: ${event}`);
 
-        // If user signed in or token was refreshed, set up refresh timer
         if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-          if (refreshTimerRef.current) {
-            clearTimeout(refreshTimerRef.current);
-          }
+          setUser(newSession?.user || null);
+          setSession(newSession);
 
           if (newSession) {
-            const expiresIn = newSession.expires_in || 3600;
-            const refreshTime = expiresIn * 1000 * 0.75;
-
-            refreshTimerRef.current = setTimeout(refreshSession, refreshTime);
+            scheduleRefresh(newSession);
           }
-        }
+        } else if (event === "SIGNED_OUT") {
+          setUser(null);
+          setSession(null);
 
-        // If user signed out, clear refresh timer
-        if (event === "SIGNED_OUT") {
           if (refreshTimerRef.current) {
             clearTimeout(refreshTimerRef.current);
             refreshTimerRef.current = null;
@@ -123,15 +148,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const signOut = async () => {
-    // Clear refresh timer
-    if (refreshTimerRef.current) {
-      clearTimeout(refreshTimerRef.current);
-      refreshTimerRef.current = null;
-    }
+    try {
+      // Clear refresh timer
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
 
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
+      await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
