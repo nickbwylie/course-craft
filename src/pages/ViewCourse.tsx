@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { supabase } from "../supabaseconsant";
 import "./CoursePage.css";
@@ -23,16 +23,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "@/hooks/use-toast";
-
 import {
   calculateTotalDuration,
   parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
 import Quiz, { QuizQuestion } from "../quiz/Quiz.tsx";
 import { Json } from "supabase-types.ts";
-import { useTheme } from "@/styles/useTheme";
-import { darkTheme } from "@/styles/myTheme";
 import { CourseWithFirstVideo } from "@/types/CourseType";
 import { useCourseProgress } from "@/hooks/useCourseProgress.ts";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
@@ -41,6 +37,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable.tsx";
+import { SpeechButton } from "@/myComponents/Speak.tsx";
+import { FeatureTooltip } from "@/myComponents/VoiceOverTooltip.tsx";
 
 export interface CourseVideo {
   course_description: string;
@@ -61,6 +59,29 @@ export interface CourseVideo {
   published_at: string;
 }
 
+const cleanedSummary = (text: string) => {
+  if (!text) return "";
+
+  let textOutput: string = "";
+
+  const cleanedText = text.replaceAll("*", "");
+  // Split the text by "###" marker to separate sections
+  const sections = cleanedText.split("### ").filter(Boolean);
+
+  // Map over sections to create JSX for each part
+  sections.map((section, index) => {
+    // Split each section into the first line (heading) and the rest (content)
+    const [heading, ...content] = section.split(/\n/);
+
+    // Remove "Key Point X: " part from heading using regex
+    const cleanedHeading = heading.replace(/Key Point \d+:\s*/, "").trim();
+
+    textOutput += cleanedHeading + "\n" + content.join(" ").trim() + "\n\n";
+
+    return "";
+  });
+  return textOutput;
+};
 // Parse summary text into formatted sections
 const parseSummary = (text: string) => {
   if (!text) return [];
@@ -152,6 +173,7 @@ export default function ViewCourse() {
     [key: number]: number;
   }>({});
   const [showCompletionButton, setShowCompletionButton] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
 
   const { id } = useParams();
 
@@ -398,282 +420,24 @@ export default function ViewCourse() {
   };
 
   return (
-    <div className="flex flex-col max-w-7xl mx-auto min-h-screen">
-      {/* Mobile Navigation Button */}
-      <div className="lg:hidden fixed top-4 right-8 z-50">
-        <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="bg-white hover:bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700"
+    <>
+      <div className="flex flex-col max-w-7xl mx-auto min-h-screen">
+        {/* Mobile Navigation Button */}
+        <div className="lg:hidden fixed top-4 right-8 z-50">
+          <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="bg-white hover:bg-white dark:bg-slate-800 shadow-md border-slate-200 dark:border-slate-700"
+              >
+                <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-80 sm:w-96 p-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700"
             >
-              <Menu className="h-5 w-5 text-slate-700 dark:text-slate-200" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side="right"
-            className="w-80 sm:w-96 p-0 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700"
-          >
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-              <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
-                Course Content
-              </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {courseVideos ? `${courseVideos.length} videos` : "Loading..."}
-              </p>
-            </div>
-
-            <ScrollArea className="h-[calc(100vh-80px)] p-4">
-              {isLoading
-                ? Array(5)
-                    .fill(0)
-                    .map((_, i) => (
-                      <div key={i} className="mb-4">
-                        <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
-                      </div>
-                    ))
-                : courseVideos?.map((courseVideo, index) => (
-                    <div
-                      key={index}
-                      onClick={() => {
-                        setSelectedCourse(index);
-                        setIsMobileNavOpen(false);
-                      }}
-                      className={`flex items-start p-3 mb-2 rounded-lg cursor-pointer ${
-                        index === selectedCourse
-                          ? "bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-800"
-                          : "hover:bg-slate-50 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      <div className="flex-shrink-0 mr-3 relative">
-                        {index === selectedCourse && (
-                          <div className="absolute inset-0 bg-cyan-500/30 rounded flex items-center justify-center">
-                            <img
-                              src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
-                              alt="Video Thumbnail"
-                              className="absolute inset-0 w-full h-full object-cover opacity-50"
-                            />
-                          </div>
-                        )}
-                        <div className="w-20 h-12 bg-slate-200 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
-                          <img
-                            src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
-                            alt="Video Thumbnail"
-                            className="absolute inset-0 w-full h-full object-cover opacity-50"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h4
-                          className={`text-sm ${
-                            index === selectedCourse
-                              ? "font-medium text-slate-800 dark:text-slate-200"
-                              : "text-slate-700 dark:text-slate-300"
-                          }`}
-                        >
-                          {courseVideo.video_title}
-                        </h4>
-                        <div className="flex items-center mt-1">
-                          <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            {parseYouTubeDuration(courseVideo.video_duration)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-            </ScrollArea>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      {/* Course Header */}
-      <div className="px-4 md:px-8 py-6 mb-2 border-b border-slate-200 dark:border-slate-700">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semi-bold text-slate-800 dark:text-slate-200">
-            {isLoading ? (
-              <Skeleton className="h-8 w-3/4 dark:bg-slate-700" />
-            ) : (
-              courseVideos && courseVideos[0]?.course_title
-            )}
-          </h1>
-
-          {/* Desktop theme toggle */}
-          <div className="hidden lg:flex"></div>
-        </div>
-
-        {isLoading ? (
-          <Skeleton className="h-4 w-1/2 dark:bg-slate-700" />
-        ) : (
-          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400"></div>
-        )}
-      </div>
-
-      {/* Main Content Area with Resizable Panels */}
-      <div className="flex-1 hidden lg:block">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="min-h-[calc(100vh-145px)]"
-        >
-          {/* Left Content Area - Video and Tabs */}
-          <ResizablePanel defaultSize={65} minSize={40} className="relative">
-            <div className="px-8 pt-4 md:px-8 pb-8 relative">
-              {/* Video Container */}
-              <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
-                {isLoading || !currentVideo ? (
-                  <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
-                ) : (
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
-                    title={currentVideo.video_title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
-                )}
-              </div>
-
-              {/* Video Title and Navigation */}
-              <div className="flex flex-col sm:flex-col sm:items-center justify-start mb-6 text-start">
-                <div className="w-full mb-4 sm:mb-4 flex justify-between items-start">
-                  {isLoading || !currentVideo ? (
-                    <>
-                      <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
-                      <Skeleton className="h-4 w-40 dark:bg-slate-700" />
-                    </>
-                  ) : (
-                    <>
-                      <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                        {currentVideo.video_title}
-                      </h2>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleShareCourse()}
-                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-3xl flex items-center"
-                      >
-                        <Share className="h-4 w-4 mr-1" />
-                        Share
-                      </Button>
-                    </>
-                  )}
-                </div>
-
-                <div className="flex w-full items-center justify-between gap-4 mb-6">
-                  {/* Left side: Avatar and Text */}
-                  <div className="flex items-center flex-1 min-w-0 gap-3">
-                    <Avatar className="w-11 h-11 flex-shrink-0 rounded-full flex items-center justify-center overflow-hidden bg-gray-700">
-                      <AvatarImage src={currentVideo?.channel_thumbnail} />
-                      <AvatarFallback>
-                        <div className="bg-gray-400 w-full h-full"></div>
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-normal dark:text-gray-100 text-gray-900 text-sm truncate">
-                        {currentVideo?.channel_title}
-                      </span>
-                      <span className="text-xs font-light truncate dark:text-gray-400">
-                        {currentVideo?.view_count &&
-                          `${formatViewCount(currentVideo.view_count)} - `}
-                        {currentVideo?.published_at &&
-                          formatTimeAgo(currentVideo.published_at)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Right side: Buttons */}
-                  <div className="flex items-center gap-2 ">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={goToPreviousVideo}
-                      disabled={isLoading || !courseVideos}
-                      className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 flex justify-center items-center text-sm"
-                    >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      Previous
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={goToNextVideo}
-                      disabled={isLoading || !courseVideos}
-                      className="bg-cyan-600 hover:bg-cyan-500 text-white p-2 flex justify-center items-center text-sm"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <Tabs defaultValue="summary" className="w-full">
-                  <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-600">
-                    <TabsTrigger
-                      value="summary"
-                      className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                      onClick={() => setShowSummary(true)}
-                    >
-                      <Newspaper className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
-                      Summary
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="quiz"
-                      className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                      onClick={() => setShowSummary(false)}
-                    >
-                      <Pencil className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
-                      Quiz
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="summary" className="mt-0">
-                    {isLoading || !currentVideo ? (
-                      Array(3)
-                        .fill(0)
-                        .map((_, i) => (
-                          <div key={i} className="mb-6">
-                            <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
-                            <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                            <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                            <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
-                          </div>
-                        ))
-                    ) : (
-                      <div className="prose prose-sm w-full">
-                        {parseSummary(currentVideo.video_summary)}
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  <TabsContent value="quiz" className="mt-0">
-                    {isLoading || !currentVideo ? (
-                      <div className="space-y-4">
-                        <Skeleton className="h-8 w-full dark:bg-slate-700" />
-                        <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                        <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                      </div>
-                    ) : (
-                      <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
-                        {/* Assuming Quiz is a component defined elsewhere */}
-                        {currentVideo.quiz && (
-                          <Quiz key={selectedCourse} quiz={currentVideo.quiz} />
-                        )}
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
-              </div>
-            </div>
-          </ResizablePanel>
-
-          {/* Resizable Handle */}
-          <ResizableHandle withHandle />
-
-          {/* Right Sidebar - Course Modules */}
-          <ResizablePanel defaultSize={35} minSize={20}>
-            <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">
               <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                 <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
                   Course Content
@@ -685,167 +449,471 @@ export default function ViewCourse() {
                 </p>
               </div>
 
-              <ScrollArea className="flex-1">
-                <div className="p-4">
-                  {isLoading ? (
-                    Array(5)
+              <ScrollArea className="h-[calc(100vh-80px)] p-4">
+                {isLoading
+                  ? Array(5)
                       .fill(0)
                       .map((_, i) => (
                         <div key={i} className="mb-4">
                           <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
                         </div>
                       ))
-                  ) : (
-                    <div className="space-y-2">
-                      {courseVideos?.map((courseVideo, index) => (
-                        <div
-                          key={index}
-                          onClick={() => setSelectedCourse(index)}
-                          className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                            index === selectedCourse
-                              ? "bg-[#407e8b14] dark:bg-[#407e8b40]"
-                              : "hover:bg-slate-50 dark:hover:bg-slate-800"
-                          }`}
-                        >
-                          <div className="flex items-start">
-                            <div className="flex-shrink-0 mr-3">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                                {index < selectedCourse ? (
-                                  <CheckCircle className="h-5 w-5 text-cyan-700 dark:text--500" />
-                                ) : index === selectedCourse ? (
-                                  <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-1.5">
-                                    <Play className="h-4 w-4 text-cyan-600 dark:text-cyan-400 fill-cyan-600 dark:fill-cyan-400" />
-                                  </div>
-                                ) : (
-                                  <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                    {index + 1}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex-1">
-                              <h4
-                                className={`text-sm ${
-                                  index === selectedCourse
-                                    ? "font-medium text-slate-800 dark:text-slate-200"
-                                    : "text-slate-700 dark:text-slate-300"
-                                } line-clamp-2`}
-                              >
-                                {courseVideo.video_title}
-                              </h4>
-                              <div className="flex items-center mt-1">
-                                <Tv className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                  {parseYouTubeDuration(
-                                    courseVideo.video_duration
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
+                  : courseVideos?.map((courseVideo, index) => (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          setSelectedCourse(index);
+                          setIsMobileNavOpen(false);
+                        }}
+                        className={`flex items-start p-3 mb-2 rounded-lg cursor-pointer ${
+                          index === selectedCourse
+                            ? "bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-800"
+                            : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                        }`}
+                      >
+                        <div className="flex-shrink-0 mr-3 relative">
                           {index === selectedCourse && (
-                            <div className="mt-2 pl-11">
-                              <div className="flex gap-2">
-                                <Badge
-                                  variant={showSummary ? "default" : "outline"}
-                                  className={`text-xs ${
-                                    showSummary
-                                      ? "bg-cyan-600 text-white hover:bg-cyan-500"
-                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300  "
-                                  }`}
-                                >
-                                  Summary
-                                </Badge>
-                                <Badge
-                                  variant={!showSummary ? "default" : "outline"}
-                                  className={`text-xs  ${
-                                    !showSummary
-                                      ? "bg-cyan-600 text-white hover:bg-cyan-500"
-                                      : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
-                                  }`}
-                                >
-                                  Quiz
-                                </Badge>
-                              </div>
+                            <div className="absolute inset-0 bg-cyan-500/30 rounded flex items-center justify-center">
+                              <img
+                                src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
+                                alt="Video Thumbnail"
+                                className="absolute inset-0 w-full h-full object-cover opacity-50"
+                              />
                             </div>
                           )}
+                          <div className="w-20 h-12 bg-slate-200 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
+                            <img
+                              src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
+                              alt="Video Thumbnail"
+                              className="absolute inset-0 w-full h-full object-cover opacity-50"
+                            />
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                        <div className="flex-1">
+                          <h4
+                            className={`text-sm ${
+                              index === selectedCourse
+                                ? "font-medium text-slate-800 dark:text-slate-200"
+                                : "text-slate-700 dark:text-slate-300"
+                            }`}
+                          >
+                            {courseVideo.video_title}
+                          </h4>
+                          <div className="flex items-center mt-1">
+                            <Clock className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {parseYouTubeDuration(courseVideo.video_duration)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        {/* Course Header */}
+        <div className="px-4 md:px-8 py-6 mb-4 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">
+              {isLoading ? (
+                <Skeleton className="h-8 w-3/4 dark:bg-slate-700" />
+              ) : (
+                courseVideos && courseVideos[0]?.course_title
+              )}
+            </h1>
+          </div>
+        </div>
+
+        {/* Main Content Area with Resizable Panels */}
+        <div className="flex-1 hidden lg:block">
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="min-h-[calc(100vh-145px)]"
+          >
+            {/* Left Content Area - Video and Tabs */}
+            <ResizablePanel defaultSize={65} minSize={40} className="relative">
+              <div className="px-8 pt-4 md:px-8 pb-8 relative">
+                {/* Video Container */}
+                <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
+                  {isLoading || !currentVideo ? (
+                    <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
+                  ) : (
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
+                      title={currentVideo.video_title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
                   )}
                 </div>
-              </ScrollArea>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
 
-      {/* Mobile Layout (non-resizable) */}
-      <div className="flex-1 lg:hidden flex flex-col">
-        <div className="px-4 md:px-8 pt-4 pb-8">
-          {/* Video Container */}
-          <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
-            {isLoading || !currentVideo ? (
-              <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
-            ) : (
-              <iframe
-                className="w-full h-full"
-                src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
-                title={currentVideo.video_title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              ></iframe>
-            )}
-          </div>
+                {/* Video Title and Controls Section */}
+                <div className="mb-6">
+                  {/* Title and Share Button */}
+                  <div className="flex justify-between items-start mb-4">
+                    {isLoading || !currentVideo ? (
+                      <Skeleton className="h-6 w-3/4 dark:bg-slate-700" />
+                    ) : (
+                      <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                        {currentVideo.video_title}
+                      </h2>
+                    )}
 
-          {/* Video Title and Navigation */}
-          <div className="flex flex-col justify-start mb-6 text-start">
-            <div className="w-full mb-4 sm:mb-4 flex justify-between items-start">
+                    {!isLoading && currentVideo && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleShareCourse}
+                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                      >
+                        <Share className="h-4 w-4 mr-2" />
+                        Share
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Creator Info and Navigation Controls */}
+                  <div className="flex items-center justify-between">
+                    {/* Channel Information */}
+                    <div className="flex items-center space-x-3">
+                      {isLoading || !currentVideo ? (
+                        <Skeleton className="h-10 w-10 rounded-full dark:bg-slate-700" />
+                      ) : (
+                        <Avatar className="h-10 w-10 rounded-full border dark:border-slate-700 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                          <AvatarImage src={currentVideo?.channel_thumbnail} />
+                          <AvatarFallback>
+                            <div className="bg-gray-400 w-full h-full"></div>
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+
+                      <div className="flex flex-col">
+                        {isLoading || !currentVideo ? (
+                          <>
+                            <Skeleton className="h-4 w-40 mb-1 dark:bg-slate-700" />
+                            <Skeleton className="h-3 w-24 dark:bg-slate-700" />
+                          </>
+                        ) : (
+                          <>
+                            <span className="font-medium dark:text-slate-200">
+                              {currentVideo?.channel_title}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              {currentVideo?.view_count &&
+                                `${formatViewCount(
+                                  currentVideo.view_count
+                                )} views • `}
+                              {currentVideo?.published_at &&
+                                formatTimeAgo(currentVideo.published_at)}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={goToPreviousVideo}
+                        disabled={isLoading || !courseVideos}
+                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1" />
+                        Previous
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={goToNextVideo}
+                        disabled={isLoading || !courseVideos}
+                        className="bg-cyan-600 hover:bg-cyan-500 text-white"
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <Tabs defaultValue="summary" className="w-full">
+                    <TabsList className="mb-6 grid grid-cols-2 w-full md:w-auto bg-slate-100 dark:bg-slate-600">
+                      <TabsTrigger
+                        value="summary"
+                        className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
+                        onClick={() => setShowSummary(true)}
+                      >
+                        <Newspaper className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
+                        Summary
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="quiz"
+                        className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
+                        onClick={() => setShowSummary(false)}
+                      >
+                        <Pencil className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
+                        Quiz
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="summary" className="mt-0">
+                      {isLoading || !currentVideo ? (
+                        Array(3)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div key={i} className="mb-6">
+                              <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
+                              <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                              <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                              <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
+                            </div>
+                          ))
+                      ) : (
+                        <div className="prose prose-sm w-full">
+                          <div className="flex justify-end items-center mb-4">
+                            <SpeechButton
+                              textContent={cleanedSummary(
+                                currentVideo.video_summary
+                              )}
+                            />
+                          </div>
+                          {parseSummary(currentVideo.video_summary)}
+                        </div>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="quiz" className="mt-0">
+                      {isLoading || !currentVideo ? (
+                        <div className="space-y-4">
+                          <Skeleton className="h-8 w-full dark:bg-slate-700" />
+                          <Skeleton className="h-24 w-full dark:bg-slate-700" />
+                          <Skeleton className="h-24 w-full dark:bg-slate-700" />
+                        </div>
+                      ) : (
+                        <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
+                          {currentVideo.quiz && (
+                            <Quiz
+                              key={selectedCourse}
+                              quiz={currentVideo.quiz}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              </div>
+            </ResizablePanel>
+
+            {/* Resizable Handle */}
+            <ResizableHandle withHandle />
+
+            {/* Right Sidebar - Course Modules */}
+            <ResizablePanel defaultSize={35} minSize={20}>
+              <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">
+                <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                  <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
+                    Course Content
+                  </h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {courseVideos
+                      ? `${courseVideos.length} videos`
+                      : "Loading..."}
+                  </p>
+                </div>
+
+                <ScrollArea className="flex-1">
+                  <div className="p-4">
+                    {isLoading ? (
+                      Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <div key={i} className="mb-4">
+                            <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
+                          </div>
+                        ))
+                    ) : (
+                      <div className="space-y-2">
+                        {courseVideos?.map((courseVideo, index) => (
+                          <div
+                            key={index}
+                            onClick={() => setSelectedCourse(index)}
+                            className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                              index === selectedCourse
+                                ? "bg-[#407e8b14] dark:bg-[#407e8b40]"
+                                : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                            }`}
+                          >
+                            <div className="flex items-start">
+                              <div className="flex-shrink-0 mr-3">
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                                  {index < selectedCourse ? (
+                                    <CheckCircle className="h-5 w-5 text-cyan-700 dark:text-cyan-500" />
+                                  ) : index === selectedCourse ? (
+                                    <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-1.5">
+                                      <Play className="h-4 w-4 text-cyan-600 dark:text-cyan-400 fill-cyan-600 dark:fill-cyan-400" />
+                                    </div>
+                                  ) : (
+                                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                      {index + 1}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex-1">
+                                <h4
+                                  className={`text-sm ${
+                                    index === selectedCourse
+                                      ? "font-medium text-slate-800 dark:text-slate-200"
+                                      : "text-slate-700 dark:text-slate-300"
+                                  } line-clamp-2`}
+                                >
+                                  {courseVideo.video_title}
+                                </h4>
+                                <div className="flex items-center mt-1">
+                                  <Tv className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
+                                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                                    {parseYouTubeDuration(
+                                      courseVideo.video_duration
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {index === selectedCourse && (
+                              <div className="mt-2 pl-11">
+                                <div className="flex gap-2">
+                                  <Badge
+                                    variant={
+                                      showSummary ? "default" : "outline"
+                                    }
+                                    className={`text-xs ${
+                                      showSummary
+                                        ? "bg-cyan-600 text-white hover:bg-cyan-500"
+                                        : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowSummary(true);
+                                    }}
+                                  >
+                                    Summary
+                                  </Badge>
+                                  <Badge
+                                    variant={
+                                      !showSummary ? "default" : "outline"
+                                    }
+                                    className={`text-xs ${
+                                      !showSummary
+                                        ? "bg-cyan-600 text-white hover:bg-cyan-500"
+                                        : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
+                                    }`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowSummary(false);
+                                    }}
+                                  >
+                                    Quiz
+                                  </Badge>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
+
+        {/* Mobile Layout (non-resizable) */}
+        <div className="flex-1 lg:hidden flex flex-col">
+          <div className="px-4 md:px-8 pt-4 pb-8">
+            {/* Video Container */}
+            <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
               {isLoading || !currentVideo ? (
-                <>
-                  <Skeleton className="h-6 w-64 mb-2 dark:bg-slate-700" />
-                  <Skeleton className="h-4 w-40 dark:bg-slate-700" />
-                </>
+                <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
               ) : (
-                <>
+                <iframe
+                  className="w-full h-full"
+                  src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
+                  title={currentVideo.video_title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                ></iframe>
+              )}
+            </div>
+
+            {/* Video Title and Controls (Mobile) */}
+            <div className="mb-6">
+              {/* Title with Share Button */}
+              <div className="flex justify-between items-start mb-4">
+                {isLoading || !currentVideo ? (
+                  <Skeleton className="h-6 w-2/3 dark:bg-slate-700" />
+                ) : (
                   <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     {currentVideo.video_title}
                   </h2>
+                )}
+
+                {!isLoading && currentVideo && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleShareCourse()}
-                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-3xl flex items-center"
+                    onClick={handleShareCourse}
+                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
                   >
                     <Share className="h-4 w-4 mr-1" />
                     Share
                   </Button>
-                </>
-              )}
-            </div>
+                )}
+              </div>
 
-            <div className="flex flex-row w-full items-center justify-between gap-4 mb-6">
-              <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center text-start mt-1 truncate">
-                <Avatar className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center overflow-clip mr-3  bg-gray-700">
-                  <AvatarImage src={currentVideo?.channel_thumbnail} />
-                  <AvatarFallback>
-                    <div className="bg-gray-400 w-full"></div>
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="font-normal dark:text-gray-100 text-gray-900 text-sm truncate">
-                    {currentVideo?.channel_title}
-                  </span>
-                  <span className="text-xs font-light truncate dark:text-gray-400">
-                    {currentVideo?.view_count &&
-                      `${formatViewCount(currentVideo.view_count)} - `}
-                    {currentVideo?.published_at &&
-                      formatTimeAgo(currentVideo.published_at)}
-                  </span>
-                </div>
-              </p>
-              <div className="flex items-center gap-2">
+              {/* Channel Info */}
+              <div className="flex items-center mb-4">
+                {isLoading || !currentVideo ? (
+                  <div className="flex items-center w-full">
+                    <Skeleton className="h-10 w-10 rounded-full mr-3 dark:bg-slate-700" />
+                    <div>
+                      <Skeleton className="h-4 w-32 mb-1 dark:bg-slate-700" />
+                      <Skeleton className="h-3 w-24 dark:bg-slate-700" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center w-full">
+                    <Avatar className="h-10 w-10 rounded-full border dark:border-slate-700 overflow-hidden bg-gray-100 dark:bg-gray-700 mr-3">
+                      <AvatarImage src={currentVideo?.channel_thumbnail} />
+                      <AvatarFallback>
+                        <div className="bg-gray-400 w-full h-full"></div>
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                        {currentVideo?.channel_title}
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                        {currentVideo?.view_count &&
+                          `${formatViewCount(
+                            currentVideo.view_count
+                          )} views • `}
+                        {currentVideo?.published_at &&
+                          formatTimeAgo(currentVideo.published_at)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Navigation buttons */}
+              <div className="flex items-center justify-end gap-3 mt-2">
                 <Button
                   variant="outline"
                   size="sm"
@@ -867,70 +935,75 @@ export default function ViewCourse() {
                 </Button>
               </div>
             </div>
-          </div>
 
-          <div className="mb-8">
-            <Tabs defaultValue="summary" className="w-full">
-              <TabsList className="mb-6 grid grid-cols-2 w-full bg-slate-100 dark:bg-slate-600">
-                <TabsTrigger
-                  value="summary"
-                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                  onClick={() => setShowSummary(true)}
-                >
-                  <Newspaper className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
-                  Summary
-                </TabsTrigger>
-                <TabsTrigger
-                  value="quiz"
-                  className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                  onClick={() => setShowSummary(false)}
-                >
-                  <Pencil className="h-5 w-5 mr-1 text-slate-900 dark:text-slate-100" />
-                  Quiz
-                </TabsTrigger>
-              </TabsList>
+            <div className="mb-8">
+              <Tabs defaultValue="summary" className="w-full">
+                <TabsList className="mb-6 grid grid-cols-2 w-full bg-slate-100 dark:bg-slate-600">
+                  <TabsTrigger
+                    value="summary"
+                    className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
+                    onClick={() => setShowSummary(true)}
+                  >
+                    <Newspaper className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
+                    Summary
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="quiz"
+                    className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
+                    onClick={() => setShowSummary(false)}
+                  >
+                    <Pencil className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
+                    Quiz
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="summary" className="mt-0">
-                {isLoading || !currentVideo ? (
-                  Array(3)
-                    .fill(0)
-                    .map((_, i) => (
-                      <div key={i} className="mb-6">
-                        <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
-                        <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                        <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                        <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
+                <TabsContent value="summary" className="mt-0">
+                  {isLoading || !currentVideo ? (
+                    Array(3)
+                      .fill(0)
+                      .map((_, i) => (
+                        <div key={i} className="mb-6">
+                          <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
+                          <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                          <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
+                          <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
+                        </div>
+                      ))
+                  ) : (
+                    <div className="prose prose-sm w-full">
+                      <div className="flex justify-end items-center mb-4">
+                        <SpeechButton
+                          textContent={currentVideo.video_summary}
+                        />
                       </div>
-                    ))
-                ) : (
-                  <div className="prose prose-sm w-full">
-                    {parseSummary(currentVideo.video_summary)}
-                  </div>
-                )}
-              </TabsContent>
+                      {parseSummary(currentVideo.video_summary)}
+                    </div>
+                  )}
+                </TabsContent>
 
-              <TabsContent value="quiz" className="mt-0">
-                {isLoading || !currentVideo ? (
-                  <div className="space-y-4">
-                    <Skeleton className="h-8 w-full dark:bg-slate-700" />
-                    <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                    <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                  </div>
-                ) : (
-                  <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
-                    {currentVideo.quiz && (
-                      <Quiz
-                        key={selectedCourse}
-                        quiz={currentVideo.quiz as QuizQuestion[]}
-                      />
-                    )}
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="quiz" className="mt-0">
+                  {isLoading || !currentVideo ? (
+                    <div className="space-y-4">
+                      <Skeleton className="h-8 w-full dark:bg-slate-700" />
+                      <Skeleton className="h-24 w-full dark:bg-slate-700" />
+                      <Skeleton className="h-24 w-full dark:bg-slate-700" />
+                    </div>
+                  ) : (
+                    <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
+                      {currentVideo.quiz && (
+                        <Quiz
+                          key={selectedCourse}
+                          quiz={currentVideo.quiz as QuizQuestion[]}
+                        />
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
