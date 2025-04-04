@@ -98,6 +98,23 @@ const parseSummary = (text: string) => {
     // Remove "Key Point X: " part from heading using regex
     const cleanedHeading = heading.replace(/Key Point \d+:\s*/, "").trim();
 
+    if (index === 0) {
+      return (
+        <div key={index} className="mb-6">
+          <div className="flex flex-row justify-between items-center w-full">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              {cleanedHeading}
+            </h3>
+            <div className="flex ml-2 mb-2">
+              <SpeechButton textContent={cleanedSummary(text)} />
+            </div>
+          </div>
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+            {content.join(" ").trim()}
+          </p>
+        </div>
+      );
+    }
     return (
       <div key={index} className="mb-6">
         <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-2">
@@ -674,13 +691,13 @@ export default function ViewCourse() {
                           ))
                       ) : (
                         <div className="prose prose-sm w-full">
-                          <div className="flex justify-end items-center mb-4">
+                          {/* <div className="flex justify-end items-center mb-4">
                             <SpeechButton
                               textContent={cleanedSummary(
                                 currentVideo.video_summary
                               )}
                             />
-                          </div>
+                          </div> */}
                           {parseSummary(currentVideo.video_summary)}
                         </div>
                       )}
@@ -971,11 +988,6 @@ export default function ViewCourse() {
                       ))
                   ) : (
                     <div className="prose prose-sm w-full">
-                      <div className="flex justify-end items-center mb-4">
-                        <SpeechButton
-                          textContent={currentVideo.video_summary}
-                        />
-                      </div>
                       {parseSummary(currentVideo.video_summary)}
                     </div>
                   )}
