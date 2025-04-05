@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { supabase } from "../supabaseconsant";
 import "./CoursePage.css";
@@ -13,7 +13,6 @@ import {
   Pencil,
   Play,
   Share,
-  Share2,
   Tv,
 } from "lucide-react";
 
@@ -38,7 +37,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable.tsx";
 import { SpeechButton } from "@/myComponents/Speak.tsx";
-import { FeatureTooltip } from "@/myComponents/VoiceOverTooltip.tsx";
+import { useAuth } from "@/contexts/AuthContext.tsx";
 
 export interface CourseVideo {
   course_description: string;
@@ -83,7 +82,7 @@ const cleanedSummary = (text: string) => {
   return textOutput;
 };
 // Parse summary text into formatted sections
-const parseSummary = (text: string) => {
+const parseSummary = (text: string, authenticated?: boolean) => {
   if (!text) return [];
 
   const cleanedText = text.replaceAll("*", "");
@@ -98,7 +97,7 @@ const parseSummary = (text: string) => {
     // Remove "Key Point X: " part from heading using regex
     const cleanedHeading = heading.replace(/Key Point \d+:\s*/, "").trim();
 
-    if (index === 0) {
+    if (index === 0 && authenticated) {
       return (
         <div key={index} className="mb-6">
           <div className="flex flex-row justify-between items-center w-full">
@@ -190,8 +189,7 @@ export default function ViewCourse() {
     [key: number]: number;
   }>({});
   const [showCompletionButton, setShowCompletionButton] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(true);
-
+  const { user } = useAuth();
   const { id } = useParams();
 
   // Get course progress functions
@@ -435,6 +433,16 @@ export default function ViewCourse() {
       console.error("Error sharing:", error);
     }
   };
+
+  const parsedSummary = useMemo(() => {
+    console.log("rerendering now");
+    return currentVideo ? (
+      parseSummary(currentVideo.video_summary, !!user)
+    ) : (
+      <></>
+    );
+    // update when video changes or when user authentication state changes
+  }, [user?.id, currentVideo?.video_summary]);
 
   return (
     <>
@@ -691,14 +699,7 @@ export default function ViewCourse() {
                           ))
                       ) : (
                         <div className="prose prose-sm w-full">
-                          {/* <div className="flex justify-end items-center mb-4">
-                            <SpeechButton
-                              textContent={cleanedSummary(
-                                currentVideo.video_summary
-                              )}
-                            />
-                          </div> */}
-                          {parseSummary(currentVideo.video_summary)}
+                          {parsedSummary}
                         </div>
                       )}
                     </TabsContent>
@@ -987,9 +988,7 @@ export default function ViewCourse() {
                         </div>
                       ))
                   ) : (
-                    <div className="prose prose-sm w-full">
-                      {parseSummary(currentVideo.video_summary)}
-                    </div>
+                    <div className="prose prose-sm w-full">{parsedSummary}</div>
                   )}
                 </TabsContent>
 

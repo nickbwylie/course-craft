@@ -116,11 +116,27 @@ export const CustomCarousel: React.FC<{
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-6">
-        <div className="flex flex-col">
-          <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+        <div className="flex flex-col relative">
+          {/* Title with decorative accent */}
+          <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 relative z-10">
             {icon}
             {title}
+            {/* <span
+              className={`absolute -left-4 h-full w-1 rounded-full ${
+                title === "Popular Courses"
+                  ? "bg-red-500/70 dark:bg-red-600/70"
+                  : "bg-cyan-500/70 dark:bg-cyan-600/70"
+              }`}
+            /> */}
           </h3>
+          {/* Subtle underline effect
+          <div
+            className={`absolute -bottom-2 left-0 h-1 w-20 rounded-full opacity-70 ${
+              title === "Popular Courses"
+                ? "bg-red-400 dark:bg-red-600"
+                : "bg-primary/90 dark:bg-primary/90"
+            }`}
+          /> */}
           {subtitle && (
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {subtitle}
@@ -153,6 +169,19 @@ export const CustomCarousel: React.FC<{
 
       <div className="relative">
         <div
+          className={`absolute ${
+            title === "Popular Courses"
+              ? "right-4 top-2  bg-primary-dark/90"
+              : "left-4 bg-primary-dark/90 top-4"
+          } w-full h-full `}
+          style={{
+            display: "inline-block",
+            transform: `${
+              title === "Popular Courses" ? "rotate(-2deg)" : "rotate(2deg)"
+            }`,
+          }}
+        />
+        <div
           ref={carouselRef}
           className="flex overflow-x-scroll scrollbar-hide space-x-5 py-4 pb-6"
           style={{
@@ -165,8 +194,23 @@ export const CustomCarousel: React.FC<{
             <div
               key={index}
               className="flex-shrink-0 w-72 relative"
-              style={{ scrollSnapAlign: "start" }}
+              style={{
+                scrollSnapAlign: "start",
+              }}
             >
+              {/* <div
+                className={`absolute left-4 top-4 opacity-60 ${
+                  title === "Popular Courses" ? "right-4" : "left-4 top-2"
+                } w-full h-full bg-primary-light`}
+                style={{
+                  transform: `${
+                    title === "Popular Courses"
+                      ? "rotate(0deg)"
+                      : "rotate(0deg)"
+                  }`,
+                  display: "inline-block",
+                }}
+              /> */}
               <CourseCard {...video} />
             </div>
           ))}
@@ -268,7 +312,7 @@ const CourseCard = React.memo(function CourseCard({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-xl  dark:bg-gray-700 rounded-xl hidden sm:block z-50"
+        className="w-80 p-0 shadow-xl  dark:bg-gray-900 rounded-xl hidden sm:block z-50"
         side="right"
         align="start"
         sideOffset={5}
@@ -477,7 +521,7 @@ export default function ExplorePage() {
       </div> */}
 
       {/* Main content */}
-      <div className="space-y-12">
+      <div className="space-y-16">
         {/* Featured courses section */}
         <section>
           <div className="flex items-center gap-2 mb-6">
@@ -588,7 +632,7 @@ export default function ExplorePage() {
             <CustomCarousel
               videos={newestCourses}
               title="New Courses"
-              icon={<Plus className="text-emerald-500 h-6 w-6" />}
+              icon={<Plus className="text-primary h-6 w-6" />}
               subtitle="Recently added learning paths"
             />
           </section>
