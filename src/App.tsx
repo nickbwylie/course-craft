@@ -18,6 +18,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 import SettingsPage from "./pages/SettingsPage";
 import { useTracking } from "./hooks/useTracking";
 import { useAuth } from "./contexts/AuthContext";
+import { HelmetProvider } from "react-helmet-async";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -73,33 +74,35 @@ export default function App() {
     () => (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <BrowserRouter>
-            {/* Wrap Routes with AnimatedLayout for page transitions */}
+          <HelmetProvider>
+            <BrowserRouter>
+              {/* Wrap Routes with AnimatedLayout for page transitions */}
 
-            <Routes>
-              {/* Home Page Route */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
+              <Routes>
+                {/* Home Page Route */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsOfService />} />
 
-              {/* Routes that require the side navigation */}
-              <Route element={<Layout />}>
-                <Route
-                  path="course/:id"
-                  element={<ViewCourse key={window.location.pathname} />}
-                />
+                {/* Routes that require the side navigation */}
+                <Route element={<Layout />}>
+                  <Route
+                    path="course/:id"
+                    element={<ViewCourse key={window.location.pathname} />}
+                  />
 
-                {/* Explore Page Route */}
-                <Route path="/explore" element={<ExplorePage />} />
+                  {/* Explore Page Route */}
+                  <Route path="/explore" element={<ExplorePage />} />
 
-                {/* Fallback Route for 404 or unmatched paths */}
-                <Route path="/create" element={<CreateCourse />} />
+                  {/* Fallback Route for 404 or unmatched paths */}
+                  <Route path="/create" element={<CreateCourse />} />
 
-                <Route path="/library" element={<LibraryPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+                  <Route path="/library" element={<LibraryPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </HelmetProvider>
         </ThemeProvider>
       </QueryClientProvider>
     ),

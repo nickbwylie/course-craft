@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/resizable.tsx";
 import { SpeechButton } from "@/myComponents/Speak.tsx";
 import { useAuth } from "@/contexts/AuthContext.tsx";
+import { Helmet } from "react-helmet-async";
 
 export interface CourseVideo {
   course_description: string;
@@ -444,9 +445,46 @@ export default function ViewCourse() {
     // update when video changes or when user authentication state changes
   }, [user?.id, currentVideo?.video_summary]);
 
+  const pageTitle = currentVideo
+    ? `${currentVideo.course_title} - CourseCraft`
+    : "Learning - CourseCraft";
+
+  const pageDescription =
+    currentVideo?.course_description ||
+    "Learn at your own pace with structured content, summaries, and knowledge checks.";
+
   return (
     <>
       <div className="flex flex-col max-w-7xl mx-auto min-h-screen">
+        <Helmet>
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          <meta
+            name="keywords"
+            content="online course, learning, education, custom course"
+          />
+          <link
+            rel="canonical"
+            href={`https://course-craft.tech/course/${id}`}
+          />
+
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="article" />
+          <meta
+            property="og:url"
+            content={`https://course-craft.tech/course/${id}`}
+          />
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+
+          {/* Twitter */}
+          <meta
+            property="twitter:url"
+            content={`https://course-craft.tech/course/${id}`}
+          />
+          <meta property="twitter:title" content={pageTitle} />
+          <meta property="twitter:description" content={pageDescription} />
+        </Helmet>
         {/* Mobile Navigation Button */}
         <div className="lg:hidden fixed top-4 right-8 z-50">
           <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>

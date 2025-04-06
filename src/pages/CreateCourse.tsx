@@ -63,6 +63,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTracking } from "@/hooks/useTracking";
+import { Helmet } from "react-helmet-async";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -315,8 +316,35 @@ export default function CreateCoursePage() {
     return hours >= 10;
   }, [totalDuration]);
 
+  const pageTitle = "Create a Course - CourseCraft";
+  const pageDescription =
+    "Transform YouTube videos into structured learning experiences with AI-generated summaries and quizzes. Create custom courses on any topic.";
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta
+          name="keywords"
+          content="create course, custom learning, AI education, YouTube learning"
+        />
+        <link rel="canonical" href="https://course-craft.tech/create" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://course-craft.tech/create" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+
+        {/* Twitter */}
+        <meta
+          property="twitter:url"
+          content="https://course-craft.tech/create"
+        />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
+      </Helmet>
       {/* Header */}
       <div className="mb-4 flex flex-row space-x-2 items-center">
         <Sparkles className="text-[#407e8b] dark:text-[#60a5fa] h-5 w-5" />

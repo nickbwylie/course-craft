@@ -27,6 +27,7 @@ import { useNavigate } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
+import { Helmet } from "react-helmet-async";
 
 const months = [
   "January",
@@ -489,9 +490,35 @@ export default function ExplorePage() {
     course_title: "AI for Beginners",
     created_at: "2025-03-08T19:11:34.66",
   };
+  const pageTitle = "Explore Courses - CourseCraft";
+  const pageDescription =
+    "Browse and discover custom learning paths created by the CourseCraft community. Find courses on any topic that matches your learning goals.";
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta
+          name="keywords"
+          content="explore courses, learning paths, educational content, custom courses"
+        />
+        <link rel="canonical" href="https://course-craft.tech/explore" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://course-craft.tech/explore" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+
+        {/* Twitter */}
+        <meta
+          property="twitter:url"
+          content="https://course-craft.tech/explore"
+        />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
+      </Helmet>
       {/* Search and Filter Bar */}
       {/* <div className="mb-10 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-gray-700">
         <div className="flex flex-col md:flex-row gap-4">

@@ -1,13 +1,41 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
 
+  const pageTitle = "CourseCraft - Privacy Policy";
+  const pageDescription =
+    "This Privacy Policy explains how CourseCraft collects, uses, and protects your personal data. Learn about your rights and our commitment to your privacy.";
+
   return (
     <div className="mobile-layout">
       <div className="mobile-content">
+        <Helmet>
+          <title>{pageTitle}</title>
+          <meta name="description" content={pageDescription} />
+          <meta
+            name="keywords"
+            content="create course, custom learning, AI education, YouTube learning"
+          />
+          <link rel="canonical" href="https://course-craft.tech/privacy" />
+
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://course-craft.tech/privacy" />
+          <meta property="og:title" content={pageTitle} />
+          <meta property="og:description" content={pageDescription} />
+
+          {/* Twitter */}
+          <meta
+            property="twitter:url"
+            content="https://course-craft.tech/privacy"
+          />
+          <meta property="twitter:title" content={pageTitle} />
+          <meta property="twitter:description" content={pageDescription} />
+        </Helmet>
         <div className="max-w-3xl mx-auto px-8 py-8">
           <div className="flex items-center mb-6">
             <Button

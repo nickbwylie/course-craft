@@ -32,6 +32,7 @@ import {
   useUpdateCoursePrivacy,
   useUserCourses,
 } from "@/hooks/useUserCourses";
+import { Helmet } from "react-helmet-async";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
@@ -347,8 +348,35 @@ function LibraryPage() {
   const notSelectedStyle =
     "pb-2 text-lg cursor-pointer hover:border-b-2 hover:border-gray-400 dark:hover:border-gray-600 font-light text-gray-700 dark:text-gray-300";
 
+  const pageTitle = "My Library - CourseCraft";
+  const pageDescription =
+    "Access your created and enrolled courses. Track your learning progress and continue where you left off.";
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta
+          name="keywords"
+          content="course library, learning progress, personal courses"
+        />
+        <link rel="canonical" href="https://course-craft.tech/library" />
+        <meta name="robots" content="noindex,nofollow" />{" "}
+        {/* Optional: if you want to keep the library private from search engines */}
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://course-craft.tech/library" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        {/* Twitter */}
+        <meta
+          property="twitter:url"
+          content="https://course-craft.tech/library"
+        />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
+      </Helmet>
       {/* Header */}
       <div className="mb-6 w-full flex items-center gap-3">
         <Library className="h-6 w-6 text-cyan-600 dark:text-cyan-500" />

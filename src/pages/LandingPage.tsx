@@ -27,7 +27,7 @@ import { useTheme } from "@/styles/useTheme";
 import createPageScreen from "../assets/create_course.png";
 import exploreScreen from "../assets/explore_page.png";
 import demoScreenshot from "../assets/demoScreenshot.png";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const BenefitItem = ({ children, icon: Icon }) => (
   <div className="flex items-start space-x-4 mb-6 group p-4 rounded-xl transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
