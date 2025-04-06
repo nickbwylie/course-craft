@@ -169,7 +169,7 @@ export const CustomCarousel: React.FC<{
 
       <div className="relative">
         <div
-          className={`absolute ${
+          className={`absolute rounded-lg ${
             title === "Popular Courses"
               ? "right-4 top-2  bg-primary-dark/90"
               : "left-4 bg-primary-dark/90 top-4"
@@ -266,7 +266,7 @@ const CourseCard = React.memo(function CourseCard({
   );
 
   return (
-    <HoverCard openDelay={100} closeDelay={50}>
+    <HoverCard openDelay={200} closeDelay={50}>
       <HoverCardTrigger
         className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer hover:-translate-y-1"
         onClick={onViewCourse}

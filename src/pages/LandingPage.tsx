@@ -26,8 +26,8 @@ import { useTheme } from "@/styles/useTheme";
 // Import your images
 import createPageScreen from "../assets/create_course.png";
 import exploreScreen from "../assets/explore_page.png";
-
 import demoScreenshot from "../assets/demoScreenshot.png";
+import { Helmet } from "react-helmet";
 
 const BenefitItem = ({ children, icon: Icon }) => (
   <div className="flex items-start space-x-4 mb-6 group p-4 rounded-xl transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -67,6 +67,38 @@ const LandingPage = () => {
     <div className="mobile-layout">
       <div className="mobile-content">
         <div className="min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white">
+          <Helmet>
+            <title>
+              CourseCraft - Create Custom Courses from YouTube Videos
+            </title>
+            <meta
+              name="description"
+              content="Transform YouTube videos into personalized learning experiences with AI-generated summaries and quizzes. Learn smarter with CourseCraft."
+            />
+            <meta
+              name="keywords"
+              content="online learning, YouTube courses, AI education, custom courses, educational platform"
+            />
+            <meta
+              property="og:title"
+              content="CourseCraft - Create Custom Courses from YouTube"
+            />
+            <meta
+              property="og:description"
+              content="Transform educational content into personalized learning experiences with AI-generated summaries and quizzes."
+            />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="https://course-craft.tech" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta
+              name="twitter:title"
+              content="CourseCraft - Create Custom Courses from YouTube"
+            />
+            <meta
+              name="twitter:description"
+              content="Transform YouTube videos into interactive learning experiences."
+            />
+          </Helmet>
           {/* Navigation */}
           <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4">

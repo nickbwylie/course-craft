@@ -149,7 +149,7 @@ export function CourseListItem({
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-7 text-gray-600 dark:text-gray-300 text-xs flex items-center gap-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"
+                    className="h-7 text-gray-600 dark:text-gray-300 text-xs flex items-center gap-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 hover:dark:bg-gray-700 hover:bg-gray-50 cursor-default"
                   >
                     <span className="text-xs">Public</span>
                     <Switch
@@ -334,6 +334,14 @@ function LibraryPage() {
   const navigate = useNavigate();
   const { inProgressCourses, getCompletionPercentage } = useCourseProgress();
 
+  const sortedInProgressCourses = useMemo(() => {
+    return [...inProgressCourses].sort((a, b) => {
+      const aLastViewed = new Date(a.lastViewed || 0).getTime();
+      const bLastViewed = new Date(b.lastViewed || 0).getTime();
+      return bLastViewed - aLastViewed; // Sort by last viewed date, most recent first
+    });
+  }, [inProgressCourses]);
+
   const selectedStyle =
     "pb-2 text-lg cursor-pointer border-b-2 font-normal border-gray-800 dark:border-cyan-500 text-gray-900 dark:text-white";
   const notSelectedStyle =
@@ -374,7 +382,7 @@ function LibraryPage() {
                 }}
               />
             ))
-          : inProgressCourses.map((course) => (
+          : sortedInProgressCourses.map((course) => (
               <CourseListItem
                 key={course.course_id}
                 showProgress={true}
