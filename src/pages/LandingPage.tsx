@@ -63,41 +63,63 @@ const LandingPage = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  const seoTitle =
+    "CourseCraft - Create Custom Courses from YouTube in Seconds";
+  const seoDescription =
+    "Transform YouTube videos into personalized learning experiences with AI-generated summaries and quizzes. Learn what you want, when you want, how you want.";
+  const seoKeywords =
+    "online learning, custom courses, education platform, YouTube learning, AI education, personalized learning";
+  const seoCanonicalUrl = "https://course-craft.tech";
+
   return (
     <div className="mobile-layout">
       <div className="mobile-content">
         <div className="min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white">
           <Helmet>
-            <title>
-              CourseCraft - Create Custom Courses from YouTube Videos
-            </title>
-            <meta
-              name="description"
-              content="Transform YouTube videos into personalized learning experiences with AI-generated summaries and quizzes. Learn smarter with CourseCraft."
-            />
-            <meta
-              name="keywords"
-              content="online learning, YouTube courses, AI education, custom courses, educational platform"
-            />
-            <meta
-              property="og:title"
-              content="CourseCraft - Create Custom Courses from YouTube"
-            />
-            <meta
-              property="og:description"
-              content="Transform educational content into personalized learning experiences with AI-generated summaries and quizzes."
-            />
+            {/* Primary Meta Tags */}
+            <title>{seoTitle}</title>
+            <meta name="title" content={seoTitle} />
+            <meta name="description" content={seoDescription} />
+            <meta name="keywords" content={seoKeywords} />
+            <meta name="author" content="Nick Wylie" />
+            <link rel="canonical" href={seoCanonicalUrl} />
+
+            {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />
-            <meta property="og:url" content="https://course-craft.tech" />
-            <meta name="twitter:card" content="summary_large_image" />
+            <meta property="og:url" content={seoCanonicalUrl} />
+            <meta property="og:title" content={seoTitle} />
+            <meta property="og:description" content={seoDescription} />
             <meta
-              name="twitter:title"
-              content="CourseCraft - Create Custom Courses from YouTube"
+              property="og:image"
+              content={`${seoCanonicalUrl}/og-image.jpg`}
             />
-            <meta
-              name="twitter:description"
-              content="Transform YouTube videos into interactive learning experiences."
-            />
+
+            {/* Twitter */}
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta property="twitter:url" content={seoCanonicalUrl} />
+            <meta property="twitter:title" content={seoTitle} />
+            <meta property="twitter:description" content={seoDescription} />
+
+            {/* Schema.org structured data */}
+            <script type="application/ld+json">
+              {JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                name: "CourseCraft",
+                url: seoCanonicalUrl,
+                description: seoDescription,
+                applicationCategory: "EducationApplication",
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "USD",
+                },
+                author: {
+                  "@type": "Person",
+                  name: "Nick Wylie",
+                },
+              })}
+            </script>
           </Helmet>
           {/* Navigation */}
           <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
@@ -181,9 +203,8 @@ const LandingPage = () => {
                     </h1>
 
                     <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                      Transform educational content into personalized learning
-                      experiences. Learn what you want, when you want, how you
-                      want.
+                      Transform YouTube videos into personalized learning
+                      experiences with AI-generated summaries and quizzes.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4">
