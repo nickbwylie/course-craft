@@ -437,58 +437,61 @@ export default function ExplorePage() {
   const { data: userGeneratedCourses } = useGeneratedCourses();
 
   // Filtered courses based on search and category
-  const filteredCourses = useMemo(() => {
-    if (!courses) return [];
+  // const filteredCourses = useMemo(() => {
+  //   if (!courses) return [];
 
-    let filtered = courses;
+  //   let filtered = courses;
 
-    // Apply search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (course) =>
-          course.course_title
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          course.course_description
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-      );
-    }
+  //   // Apply search filter
+  //   if (searchTerm) {
+  //     filtered = filtered.filter(
+  //       (course) =>
+  //         course.course_title
+  //           .toLowerCase()
+  //           .includes(searchTerm.toLowerCase()) ||
+  //         course.course_description
+  //           .toLowerCase()
+  //           .includes(searchTerm.toLowerCase())
+  //     );
+  //   }
 
-    return filtered;
-  }, [searchTerm, courses, selectedCategories]);
-
-  // Featured courses (first 4)
-  const featuredCourses = useMemo(() => {
-    return filteredCourses?.slice(0, 4) || [];
-  }, [filteredCourses]);
-
-  // Popular courses (can be all or a subset)
-  const popularCourses = useMemo(() => {
-    return filteredCourses?.slice(0, 8) || [];
-  }, [filteredCourses]);
+  //   return filtered;
+  // }, [searchTerm, courses, selectedCategories]);
 
   // Newest courses (sorted by date)
   const newestCourses = useMemo(() => {
-    return filteredCourses
-      ? [...filteredCourses]
+    return courses
+      ? [...courses]
           .sort(
             (a, b) =>
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
-          .slice(0, 8)
+          .slice(0, 6)
       : [];
-  }, [filteredCourses]);
+  }, [courses]);
+
+  // popular needs the courses with the highest view_count but not the first 6
+  const popularCourses = useMemo(() => {
+    if (!courses || courses.length === 0) return [];
+
+    const coursesSortedByDate = [...courses].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    return [...coursesSortedByDate.slice(5, coursesSortedByDate.length)].sort(
+      (a, b) => (b.view_count || 0) - (a.view_count || 0)
+    );
+  }, [courses]);
 
   // Featured course data
   const featuredCourse = {
     course_description:
-      "Want to understand AI but don't know where to start? This beginner-friendly course will teach you the basics of AI, how ChatGPT works, and how to use AI in everyday life. No tech skills needed—just curiosity! By the end, you'll have a solid foundation in AI and be able to use AI tools with confidence.",
-    course_id: "c91a6877-8a56-4135-9c87-bb198f34ae06",
-    thumbnail_url: "https://i.ytimg.com/vi/aircAruvnKk/maxresdefault.jpg",
-    course_title: "AI for Beginners",
-    created_at: "2025-03-08T19:11:34.66",
+      "Learn how to start and run your own business with this fun, practical course from Crash Course Business: Entrepreneurship. In 17 short videos, you’ll explore how to find a business idea, build a plan, manage money, market your product, and grow your company — all explained in a clear, engaging way. Perfect for future entrepreneurs!",
+    course_id: "af514280-3d63-47f0-9764-2e1c511e6f05",
+    thumbnail_url: "https://i.ytimg.com/vi/aozlwC3XwfY/hqdefault.jpg",
+    course_title: "Crash Course Business: Entrepreneurship",
+    created_at: "2025-04-06 23:09:39.773+00",
   };
   const pageTitle = "Explore Courses - CourseCraft";
   const pageDescription =
@@ -519,33 +522,6 @@ export default function ExplorePage() {
         <meta property="twitter:title" content={pageTitle} />
         <meta property="twitter:description" content={pageDescription} />
       </Helmet>
-      {/* Search and Filter Bar */}
-      {/* <div className="mb-10 bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-gray-700">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-grow">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-slate-400" />
-            </div>
-            <Input
-              type="text"
-              placeholder="Search courses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-gray-900 rounded-lg"
-            />
-          </div>
-          <div className="w-full md:w-60">
-            <SearchableDropdown
-              options={categoryOptions}
-              placeholder="Select categories"
-              emptyMessage="No categories found"
-              value={selectedCategories}
-              onValueChange={setSelectedCategories}
-              className="border-slate-200 dark:border-slate-700"
-            />
-          </div>
-        </div>
-      </div> */}
 
       {/* Main content */}
       <div className="space-y-16">
@@ -691,7 +667,7 @@ export default function ExplorePage() {
               </h2>
             </div>
 
-            {!isLoading && filteredCourses && (
+            {!isLoading && userGeneratedCourses && (
               <Badge
                 variant="outline"
                 className="text-slate-600 bg-slate-50 dark:bg-gray-700 dark:text-slate-300 dark:border-gray-600 px-2.5 py-1 text-xs"

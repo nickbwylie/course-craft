@@ -83,6 +83,7 @@ export type Database = {
           id: string
           public: boolean | null
           title: string | null
+          view_count: number
         }
         Insert: {
           admin?: boolean
@@ -94,6 +95,7 @@ export type Database = {
           id?: string
           public?: boolean | null
           title?: string | null
+          view_count?: number
         }
         Update: {
           admin?: boolean
@@ -105,6 +107,7 @@ export type Database = {
           id?: string
           public?: boolean | null
           title?: string | null
+          view_count?: number
         }
         Relationships: []
       }
@@ -159,48 +162,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "summaries_video_id_fkey"
-            columns: ["video_id"]
-            isOneToOne: false
-            referencedRelation: "videos"
-            referencedColumns: ["video_id"]
-          },
-        ]
-      }
-      user_progress: {
-        Row: {
-          created_at: string
-          id: string
-          progress: boolean | null
-          quiz_completed: boolean | null
-          user_id: string | null
-          video_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          progress?: boolean | null
-          quiz_completed?: boolean | null
-          user_id?: string | null
-          video_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          progress?: boolean | null
-          quiz_completed?: boolean | null
-          user_id?: string | null
-          video_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_progress_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_progress_video_id_fkey"
             columns: ["video_id"]
             isOneToOne: false
             referencedRelation: "videos"
@@ -300,6 +261,7 @@ export type Database = {
           channel_title: string
           view_count: string
           published_at: string
+          order_by: number
         }[]
       }
       get_admin_courses_with_first_video_and_duration: {
@@ -317,6 +279,7 @@ export type Database = {
           course_difficulty: number
           detaillevel: string
           public: boolean
+          view_count: number
         }[]
       }
       get_course_data: {
@@ -356,6 +319,7 @@ export type Database = {
           channel_title: string
           view_count: string
           published_at: string
+          order_by: number
         }[]
       }
       get_course_info: {
@@ -419,7 +383,14 @@ export type Database = {
           course_difficulty: number
           detaillevel: string
           public: boolean
+          view_count: number
         }[]
+      }
+      increment_view_count: {
+        Args: {
+          course_id: string
+        }
+        Returns: number
       }
     }
     Enums: {

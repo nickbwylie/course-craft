@@ -116,13 +116,14 @@ export function CourseListItem({
     <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl dark:hover:shadow-black/20 transition-all duration-200 flex items-start gap-3">
       {/* Thumbnail with overlay for quick access */}
       <div
-        className="w-24 h-16 md:w-28 md:h-20 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0 cursor-pointer group relative"
+        className="w-24 aspect-video md:w-28 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0 cursor-pointer group relative"
         onClick={() => navigate(`/course/${course.course_id}`)}
       >
         <img
           src={course.thumbnail_url}
           alt={course.course_title}
           className="w-full h-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
+          style={{ imageRendering: "auto" }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-1">
           <PlayCircle className="h-6 w-6 text-white" />

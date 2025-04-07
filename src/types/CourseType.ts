@@ -30,6 +30,7 @@ export interface CourseWithFirstVideo {
   course_difficulty: number;
   detaillevel: string;
   public: boolean;
+  view_count: number;
 }
 
 export const courseDifficultyMap = {

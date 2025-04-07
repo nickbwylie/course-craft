@@ -126,7 +126,12 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
       <div className="side-nav-header dark:bg-gray-900">
         {navOpen ? (
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => {
+                navigate("/");
+              }}
+            >
               <FaFeatherAlt className="h-5 w-5 text-slate-800 dark:text-slate-200" />
               <span className="ml-2 font-semibold text-slate-800 dark:text-slate-200">
                 CourseCraft

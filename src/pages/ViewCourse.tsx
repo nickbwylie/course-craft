@@ -211,7 +211,10 @@ export default function ViewCourse() {
       console.log("Fetched course content:", data);
 
       if (data) {
-        setCourseVideos(data);
+        const sortedByOrder = data.sort((a, b) => {
+          return a.order_by - b.order_by;
+        });
+        setCourseVideos(sortedByOrder);
       }
 
       if (error) {
@@ -224,9 +227,27 @@ export default function ViewCourse() {
     }
   }
 
+  async function incrementViewCount(courseId: string) {
+    try {
+      const { data, error } = await supabase.rpc("increment_view_count", {
+        course_id: courseId,
+      });
+
+      console.log("Incremented view count:", data);
+
+      if (error) {
+        console.error("Error incrementing view count:", error);
+        return;
+      }
+    } catch (e) {
+      console.error("Error incrementing view count:", e);
+    }
+  }
+
   useEffect(() => {
     if (id) {
       getCourseContent(id);
+      incrementViewCount(id);
 
       // Load saved progress if available
       const savedProgress = getCourseProgress(id);
