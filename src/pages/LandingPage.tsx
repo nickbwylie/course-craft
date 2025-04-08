@@ -26,7 +26,8 @@ import { useTheme } from "@/styles/useTheme";
 // Import your images
 import createPageScreen from "../assets/create_course.png";
 import exploreScreen from "../assets/explore_page.png";
-import demoScreenshot from "../assets/demoScreenshot.png";
+import demoScreenshot from "../assets/view_course.png";
+import createcoursedemo from "../assets/create_course_demo.mp4";
 import { Helmet } from "react-helmet-async";
 
 const BenefitItem = ({ children, icon: Icon }) => (
@@ -42,6 +43,19 @@ const BenefitItem = ({ children, icon: Icon }) => (
     </div>
   </div>
 );
+
+const SunburstRays = () => {
+  const rays = Array.from({ length: 36 });
+
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 z-2 pointer-events-none"
+    >
+      <div className="w-full h-full bg-gradient-to-br from-transparent via-cyan-400/10 to-transparent [mask-image:repeating-linear-gradient(135deg,black,black_2px,transparent_4px,transparent_10px)]" />
+    </div>
+  );
+};
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -74,7 +88,7 @@ const LandingPage = () => {
   return (
     <div className="mobile-layout">
       <div className="mobile-content">
-        <div className="min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white">
+        <div className="min-h-screen bg-white dark:bg-gray-900 text-slate-900 dark:text-white overflow-x-hidden ">
           <Helmet>
             {/* Primary Meta Tags */}
             <title>{seoTitle}</title>
@@ -126,7 +140,7 @@ const LandingPage = () => {
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2 ">
-                  <FaFeatherAlt className="h-6 w-6 text-[#407e8b] dark:text-[#60a5fa]" />
+                  <FaFeatherAlt className="h-6 w-6 text-[#407e8b] dark:text-primary" />
                   <span className="font-bold text-md sm:text-xl">
                     CourseCraft
                   </span>
@@ -147,7 +161,7 @@ const LandingPage = () => {
                     About
                   </Button>
                   <Button
-                    className="bg-[#407e8b] hover:bg-[#305f6b] text-white dark:bg-[#407e8b] dark:hover:bg-[#54adbf]  text-xs p-2 sm:text-sm"
+                    className="bg-primary hover:bg-[#305f6b] text-white dark:bg-primary/70 dark:hover:bg-primary/50  text-xs p-2 sm:text-sm"
                     onClick={() => navigate("/create")}
                   >
                     Create Course
@@ -158,8 +172,9 @@ const LandingPage = () => {
           </nav>
 
           {/* Hero Section */}
-          <section className="pt-32 pb-24 relative overflow-hidden">
+          <section className="pt-48 pb-24 relative overflow-hidden">
             {/* Decorative elements that respond to mouse movement */}
+            <SunburstRays />
             <div
               className="absolute top-40 left-20 w-64 h-64 rounded-full bg-cyan-400/10 dark:bg-cyan-600/10 blur-3xl"
               style={{
@@ -178,23 +193,14 @@ const LandingPage = () => {
             ></div>
 
             <div className="max-w-7xl mx-auto px-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-                <div className="lg:col-span-6">
+              <div className="grid grid-cols-1 gap-16 items-center">
+                <div className="flex justify-center text-center">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                   >
-                    <div className="inline-flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 rounded-full px-4 py-2 mb-6">
-                      <span className="bg-[#407e8b] text-white text-xs font-bold px-2 py-1 rounded-full">
-                        AI-POWERED
-                      </span>
-                      <span className="text-sm font-medium">
-                        Custom Learning Paths
-                      </span>
-                    </div>
-
-                    <h1 className="text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                    <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 leading-tight">
                       Create{" "}
                       <span className="bg-gradient-to-r from-[#407e8b] to-[#60a5fa] bg-clip-text text-transparent">
                         Custom Courses
@@ -202,68 +208,38 @@ const LandingPage = () => {
                       from YouTube in Seconds
                     </h1>
 
-                    <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                      Transform YouTube videos into personalized learning
-                      experiences with AI-generated summaries and quizzes.
-                    </p>
+                    <div className="w-full flex justify-center">
+                      <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed w-5/6">
+                        Transform YouTube videos into personalized learning
+                        experiences with AI-generated summaries and quizzes.
+                      </p>
+                    </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
-                        className="text-lg px-8 py-6 rounded-full bg-[#407e8b] hover:bg-[#305f6b] text-white shadow-lg hover:shadow-[#407e8b]/25 transition-all"
+                        variant="outline"
+                        className="text-sm px-6 py-4 rounded-lg border-2 border-[#73aff7] hover:border-[#a0cbff] hover:bg-transparent  shadow-lg hover:shadow-[#407e8b]/25 transition-all hover:border:animate-pulse"
                         onClick={() => navigate("/create")}
                       >
                         Start Creating
-                        <ArrowRight className="ml-2 h-5 w-5" />
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
 
                       <Button
                         variant="outline"
-                        className="text-lg px-8 py-6 rounded-full border-2 hover:bg-slate-50 border-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 hover:border-[#407e8b] dark:hover:border-[#60a5fa] transition-all"
+                        className="text-sm px-6 py-4 rounded-lg border-2 hover:bg-slate-50 border-slate-300 dark:border-slate-700 dark:hover:bg-slate-800 hover:border-[#407e8b] dark:hover:border-[#60a5fa]  transition-all"
                         onClick={() => navigate("/explore")}
                       >
                         Explore Courses
                       </Button>
                     </div>
-                  </motion.div>
-                </div>
-
-                <div className="lg:col-span-6">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  >
-                    <div className="relative">
-                      {/* Main image - course creation interface */}
-                      <div className="bg-gradient-to-r from-[#407e8b] to-[#60a5fa] p-6 rounded-2xl shadow-2xl transform rotate-1 transition-all hover:rotate-0 duration-300">
+                    <div className="flex w-full justify-center mt-12">
+                      <div className="bg-gradient-to-r from-[#407e8b] to-[#60a5fa] p-2 rounded-2xl shadow-2xl transform rotate-1 transition-all hover:rotate-0 duration-300 max-w-3xl">
                         <img
                           src={demoScreenshot}
                           alt="Course Creation Interface"
                           className="rounded-xl shadow-lg"
                         />
-                      </div>
-
-                      {/* Floating elements */}
-                      <div className="absolute -top-8 -right-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 transform rotate-6 hover:rotate-0 transition-all duration-300">
-                        <div className="flex items-center space-x-2">
-                          <div className="bg-green-100 p-2 rounded-full">
-                            <CheckCircle className="text-green-600 h-5 w-5" />
-                          </div>
-                          <p className="text-sm font-medium">
-                            AI-Generated Quizzes
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="absolute -bottom-10 -left-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 transform -rotate-3 hover:rotate-0 transition-all duration-300">
-                        <div className="flex items-center space-x-2">
-                          <div className="bg-cyan-100 dark:bg-cyan-900/40 p-2 rounded-full">
-                            <Sparkles className="text-[#407e8b] dark:text-cyan-400 h-5 w-5" />
-                          </div>
-                          <p className="text-sm font-medium">
-                            Personalized Learning
-                          </p>
-                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -353,7 +329,8 @@ const LandingPage = () => {
           </section>
 
           {/* Take Control Section */}
-          <section className="py-24 bg-white dark:bg-gray-900 overflow-hidden">
+          <section className="py-24 bg-white dark:bg-gray-900 overflow-hidden relative">
+            <SunburstRays />
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
                 {/* Image Section */}
@@ -522,7 +499,8 @@ const LandingPage = () => {
           </section>
 
           {/* Testimonials */}
-          <section className="py-24 bg-slate-50 dark:bg-gray-800/50">
+          <section className="py-24 bg-slate-50 dark:bg-gray-800/50 relative">
+            <SunburstRays />
             <div className="max-w-7xl mx-auto px-6">
               <div className="text-center mb-16">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-100 dark:bg-cyan-900/30 rounded-2xl mb-6">
@@ -635,7 +613,8 @@ const LandingPage = () => {
           </section>
 
           {/* Footer */}
-          <footer className="bg-slate-900 text-white py-12">
+          <footer className="bg-slate-900 text-white py-12 relative">
+            <SunburstRays />
             <div className="max-w-7xl mx-auto px-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                 <div className="col-span-1 md:col-span-2">

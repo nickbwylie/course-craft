@@ -1,9 +1,14 @@
 /* src/styles/theme.css */
 :root {
   /* Primary color - using the RGB values of rgb(64, 126, 139) which appears to be your main branding color */
+  /* --color-primary: 84 150 204;
+  --color-primary-light: 130 180 224;
+  --color-primary-dark: 45 100 148; */
+
   --color-primary: 64 126 139;
   --color-primary-light: 86 156 170;
   --color-primary-dark: 54 116 129;
+
   --color-primary-foreground: 255 255 255;
 
   /* Secondary color */
@@ -84,6 +89,10 @@
   --color-shadow-dark: 0 0 0;
 
   /* Adjusted colors for readability in dark mode */
+  /* --color-primary: 84 150 204;
+  --color-primary-light: 130 180 224;
+  --color-primary-dark: 45 100 148; */
+
   --color-primary: 86 156 170; /* Lighter version for dark theme */
   --color-primary-light: 106 176 190;
   --color-primary-dark: 64 126 139;

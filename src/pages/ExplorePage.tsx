@@ -172,8 +172,8 @@ export const CustomCarousel: React.FC<{
         <div
           className={`absolute rounded-lg ${
             title === "Popular Courses"
-              ? "right-4 top-2  bg-primary-dark/90"
-              : "left-4 bg-primary-dark/90 top-4"
+              ? "right-4 top-2  bg-primary/90"
+              : "left-4 bg-primary/90 top-4"
           } w-full h-full `}
           style={{
             display: "inline-block",
@@ -269,7 +269,7 @@ const CourseCard = React.memo(function CourseCard({
   return (
     <HoverCard openDelay={200} closeDelay={50}>
       <HoverCardTrigger
-        className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer hover:-translate-y-1"
+        className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer "
         onClick={onViewCourse}
       >
         <div className="rounded-xl overflow-hidden">
@@ -356,7 +356,7 @@ const CourseCard = React.memo(function CourseCard({
 
         <div className="border-t border-slate-100 dark:border-gray-700 p-4">
           <Button
-            className="w-full bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white shadow-md hover:shadow-lg transition-all duration-300"
+            className="w-full bg-primary hover:bg-primary-light dark:bg-primary dark:hover:bg-primary text-white shadow-md hover:shadow-lg transition-all duration-300"
             onClick={onViewCourse}
           >
             Start Learning
@@ -467,7 +467,7 @@ export default function ExplorePage() {
               new Date(b.created_at).getTime() -
               new Date(a.created_at).getTime()
           )
-          .slice(0, 6)
+          .slice(0, 5)
       : [];
   }, [courses]);
 
@@ -528,7 +528,7 @@ export default function ExplorePage() {
         {/* Featured courses section */}
         <section>
           <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="text-[rgb(64,126,139)] dark:text-[rgb(86,156,170)] h-5 w-5" />
+            <TrendingUp className="text-[rgb(64,126,139)] dark:text-primary h-5 w-5" />
             <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-200">
               Featured Course
             </h2>
@@ -565,7 +565,7 @@ export default function ExplorePage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-start flex-grow">
-                  <h1 className="text-2xl font-semibold text-[rgb(64,126,139)] dark:text-[rgb(86,156,170)] w-full">
+                  <h1 className="text-2xl font-semibold text-slate-600 dark:text-slate-200 w-full">
                     {featuredCourse.course_title}
                   </h1>
                   <div className="flex items-center gap-2 mt-1 mb-2">
@@ -590,7 +590,7 @@ export default function ExplorePage() {
                       onClick={() =>
                         navigate(`/course/${featuredCourse.course_id}`)
                       }
-                      className="bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
+                      className="bg-primary hover:bg-primary-light dark:bg-primary dark:hover:bg-primary-dark text-white"
                     >
                       Start Learning{" "}
                     </Button>
@@ -635,7 +635,7 @@ export default function ExplorePage() {
             <CustomCarousel
               videos={newestCourses}
               title="New Courses"
-              icon={<Plus className="text-primary h-6 w-6" />}
+              icon={<Plus className="text-[rgb(64,126,139)] h-6 w-6" />}
               subtitle="Recently added learning paths"
             />
           </section>

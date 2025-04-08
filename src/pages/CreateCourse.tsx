@@ -463,7 +463,7 @@ export default function CreateCoursePage() {
                     <Button
                       onClick={handleAddVideo}
                       disabled={isAddingVideo || !videoUrl.trim()}
-                      className="bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
+                      className="bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
                     >
                       {isAddingVideo ? "Adding..." : "Add Video"}
                     </Button>
@@ -672,8 +672,8 @@ export default function CreateCoursePage() {
 
                 <div className="space-y-4">
                   {/* Course stats */}
-                  <div className="flex items-center gap-3 bg-cyan-50 dark:bg-cyan-900/20 p-3 rounded-lg">
-                    <div className="h-10 w-10 rounded-full bg-cyan-100 dark:bg-cyan-800 flex items-center justify-center">
+                  <div className="flex items-center gap-3 bg-primary/10 dark:bg-primary/10 p-3 rounded-lg">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 dark:bg-primary-dark/90 flex items-center justify-center">
                       <MonitorPlay className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
                     </div>
                     <div>
@@ -743,7 +743,7 @@ export default function CreateCoursePage() {
                   {/* Create button */}
                   <Button
                     type="submit"
-                    className="w-full mt-4 bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)] dark:bg-[rgb(74,136,149)] dark:hover:bg-[rgb(84,146,159)] text-white"
+                    className="w-full mt-4 bg-primary hover:bg-[rgb(54,116,129)] dark:bg-primary dark:hover:bg-primary-dark text-white"
                     disabled={isSubmitting || courseVideos.length === 0}
                   >
                     {isSubmitting ? "Creating Course..." : "Create Course"}

@@ -207,9 +207,9 @@ export default function Quiz({ quiz }: QuizProps) {
                   >
                     <div className="mr-2 mt-1">
                       {isCorrect ? (
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <CheckCircle className="h-5 w-5 text-green-300" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-red-500" />
+                        <XCircle className="h-5 w-5 text-red-400" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -221,7 +221,7 @@ export default function Quiz({ quiz }: QuizProps) {
                         {answers[question.id] || "Not answered"}
                       </p>
                       {!isCorrect && (
-                        <p className="text-xs mt-1 text-green-600 dark:text-green-400">
+                        <p className="text-xs mt-1 text-green-600 dark:text-green-300">
                           <span className="font-medium">Correct answer:</span>{" "}
                           {question.correctAnswer}
                         </p>
@@ -235,8 +235,7 @@ export default function Quiz({ quiz }: QuizProps) {
           <CardFooter className="bg-gray-50 dark:bg-slate-800 p-4 flex justify-center">
             <Button
               onClick={handleRestart}
-              className="flex items-center text-white"
-              style={{ backgroundColor: "rgb(64, 126, 139)" }}
+              className="flex items-center text-white bg-primary/80 "
             >
               <RotateCcw className="h-4 w-4 mr-2" />
               Restart Quiz
@@ -253,10 +252,9 @@ export default function Quiz({ quiz }: QuizProps) {
       <Card className="shadow-lg border-0 dark:bg-slate-800 dark:border-slate-700">
         <div className="h-1 w-full bg-gray-200 dark:bg-gray-700">
           <div
-            className="h-1 transition-all duration-300 ease-in-out"
+            className="h-1 transition-all duration-300 ease-in-out bg-primary/80"
             style={{
               width: `${progress}%`,
-              backgroundColor: "rgb(64, 126, 139)",
             }}
           />
         </div>
@@ -285,9 +283,9 @@ export default function Quiz({ quiz }: QuizProps) {
             {currentQuestion?.choices.map((choice, i) => (
               <div
                 key={i}
-                className={`border rounded-lg transition-all hover:border-gray-400 dark:hover:border-gray-500 ${
+                className={`border-2  rounded-lg transition-all hover:border-gray-400 dark:hover:border-gray-500 ${
                   answers[currentQuestion?.id] === choice
-                    ? "border-2 border-cyan-600 dark:border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30"
+                    ? "border-primary/30 dark:border-primary/50 bg-primary/10 dark:bg-primary/10"
                     : "border-gray-200 dark:border-gray-700"
                 }`}
               >
@@ -332,8 +330,7 @@ export default function Quiz({ quiz }: QuizProps) {
               <Button
                 onClick={handleNext}
                 disabled={!isCurrentQuestionAnswered}
-                className="flex items-center text-white"
-                style={{ backgroundColor: "rgb(64, 126, 139)" }}
+                className="flex items-center text-white bg-primary/80 hover:bg-primary-dark"
               >
                 Next
                 <ArrowRight className="h-4 w-4 ml-2" />

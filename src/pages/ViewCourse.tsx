@@ -551,13 +551,13 @@ export default function ViewCourse() {
                         }}
                         className={`flex items-start p-3 mb-2 rounded-lg cursor-pointer ${
                           index === selectedCourse
-                            ? "bg-cyan-50 dark:bg-cyan-900/30 border border-cyan-200 dark:border-cyan-800"
+                            ? "bg-primary/20 dark:bg-primary/10 border border-primary-light dark:border-primary-dark"
                             : "hover:bg-slate-50 dark:hover:bg-slate-800"
                         }`}
                       >
                         <div className="flex-shrink-0 mr-3 relative">
                           {index === selectedCourse && (
-                            <div className="absolute inset-0 bg-cyan-500/30 rounded flex items-center justify-center">
+                            <div className="absolute inset-0 bg-primary/30 rounded flex items-center justify-center">
                               <img
                                 src={`https://img.youtube.com/vi/${courseVideo?.youtube_id}/hqdefault.jpg`}
                                 alt="Video Thumbnail"
@@ -714,7 +714,7 @@ export default function ViewCourse() {
                         size="sm"
                         onClick={goToNextVideo}
                         disabled={isLoading || !courseVideos}
-                        className="bg-cyan-600 hover:bg-cyan-500 text-white"
+                        className="bg-primary hover:bg-primary-dark text-white"
                       >
                         Next
                         <ChevronRight className="h-4 w-4 ml-1" />
@@ -821,7 +821,7 @@ export default function ViewCourse() {
                             onClick={() => setSelectedCourse(index)}
                             className={`p-3 rounded-lg cursor-pointer transition-colors ${
                               index === selectedCourse
-                                ? "bg-[#407e8b14] dark:bg-[#407e8b40]"
+                                ? "bg-[#407e8b14] dark:bg-primary/20"
                                 : "hover:bg-slate-50 dark:hover:bg-slate-800"
                             }`}
                           >
@@ -829,10 +829,10 @@ export default function ViewCourse() {
                               <div className="flex-shrink-0 mr-3">
                                 <div className="w-8 h-8 rounded-full flex items-center justify-center">
                                   {index < selectedCourse ? (
-                                    <CheckCircle className="h-5 w-5 text-cyan-700 dark:text-cyan-500" />
+                                    <CheckCircle className="h-5 w-5 text-primary/50 dark:text-primary/50" />
                                   ) : index === selectedCourse ? (
-                                    <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-1.5">
-                                      <Play className="h-4 w-4 text-cyan-600 dark:text-cyan-400 fill-cyan-600 dark:fill-cyan-400" />
+                                    <div className="bg-primary/40 dark:bg-primary/40 rounded-full p-1.5">
+                                      <Play className="h-4 w-4 text-primary dark:primary/10 fill-primary/70 dark:fill-primary" />
                                     </div>
                                   ) : (
                                     <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
@@ -869,15 +869,11 @@ export default function ViewCourse() {
                                     variant={
                                       showSummary ? "default" : "outline"
                                     }
-                                    className={`text-xs ${
+                                    className={`text-xs cursor-default ${
                                       showSummary
-                                        ? "bg-cyan-600 text-white hover:bg-cyan-500"
+                                        ? "bg-primary/70 text-white"
                                         : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
                                     }`}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowSummary(true);
-                                    }}
                                   >
                                     Summary
                                   </Badge>
@@ -885,15 +881,11 @@ export default function ViewCourse() {
                                     variant={
                                       !showSummary ? "default" : "outline"
                                     }
-                                    className={`text-xs ${
+                                    className={`text-xs cursor-default ${
                                       !showSummary
-                                        ? "bg-cyan-600 text-white hover:bg-cyan-500"
+                                        ? "bg-primary/70 text-white"
                                         : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
                                     }`}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowSummary(false);
-                                    }}
                                   >
                                     Quiz
                                   </Badge>
@@ -1005,7 +997,7 @@ export default function ViewCourse() {
                   size="sm"
                   onClick={goToNextVideo}
                   disabled={isLoading || !courseVideos}
-                  className="bg-cyan-600 hover:bg-cyan-500 text-white"
+                  className="bg-primary hover:bg-primary-dark text-white"
                 >
                   Next
                   <ChevronRight className="h-4 w-4 ml-1" />
