@@ -19,7 +19,7 @@ import {
   Scale,
 } from "lucide-react";
 import { Progress } from "../components/ui/progress";
-import { ScaledClick } from "@/animations/scaledClick";
+import { ScaledClick } from "@/animations/ScaledClick";
 
 // Define the QuizQuestion type
 export type QuizQuestion = {

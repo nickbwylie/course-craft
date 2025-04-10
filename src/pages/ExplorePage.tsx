@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
 import { Helmet } from "react-helmet-async";
-import { ScaledClick } from "@/animations/scaledClick";
+import { ScaledClick } from "@/animations/ScaledClick";
 
 const months = [
   "January",

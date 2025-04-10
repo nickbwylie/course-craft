@@ -39,7 +39,7 @@ import {
 import { SpeechButton } from "@/myComponents/Speak.tsx";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 import { Helmet } from "react-helmet-async";
-import { ScaledClick } from "@/animations/scaledClick.tsx";
+import { ScaledClick } from "@/animations/ScaledClick";
 
 export interface CourseVideo {
   course_description: string;
