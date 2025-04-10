@@ -121,7 +121,7 @@ const Layout = () => {
     <div style={{ minHeight: "100vh", width: "100%" }}>
       <TooltipProvider>
         <ToastProvider>
-          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-gray-900">
+          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-gray-900 ">
             {!user?.id && <LoginModal />}
 
             {/* Show side navigation on desktop */}
@@ -141,7 +141,7 @@ const Layout = () => {
                 <div
                   className="mobile-content"
                   ref={contentRef}
-                  style={{ paddingBottom: "180px" }}
+                  style={{ paddingBottom: "180px", overflowX: "hidden" }}
                 >
                   <Outlet />
                 </div>

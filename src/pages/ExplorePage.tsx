@@ -315,7 +315,7 @@ const CourseCard = React.memo(function CourseCard({
       <HoverCardContent
         className="w-80 p-0 shadow-xl  dark:bg-gray-900 rounded-xl hidden sm:block z-50"
         side="right"
-        align="start"
+        align="center"
         sideOffset={5}
       >
         <div className="p-5 space-y-3">

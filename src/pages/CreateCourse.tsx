@@ -64,6 +64,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTracking } from "@/hooks/useTracking";
 import { Helmet } from "react-helmet-async";
+import ReorderableVideoList from "@/myComponents/ReorderableVideoList";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -186,13 +187,6 @@ export default function CreateCoursePage() {
     }
   }
 
-  // Handle removing a video from the course
-  function handleRemoveVideo(videoId: string) {
-    setCourseVideos((prev) =>
-      prev.filter((video) => video.videoId !== videoId)
-    );
-  }
-
   // Form submission
   async function onSubmit(data: CourseFormValues) {
     if (!user?.id) {
@@ -308,6 +302,16 @@ export default function CreateCoursePage() {
         variant: "destructive",
       });
     }
+  }
+
+  const handleReorderVideos = (reorderedVideos: YoutubeVideoPreview[]) => {
+    setCourseVideos(reorderedVideos);
+  };
+
+  function handleRemoveVideo(videoId: string) {
+    setCourseVideos((prev) =>
+      prev.filter((video) => video.videoId !== videoId)
+    );
   }
 
   const isOverDurationLimit = useMemo(() => {
@@ -484,30 +488,7 @@ export default function CreateCoursePage() {
                 {/* Video list */}
                 {courseVideos.length > 0 ? (
                   <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="font-medium text-gray-800 dark:text-gray-200">
-                        Course Videos ({courseVideos.length})
-                      </h3>
-                      {courseVideos.length > 1 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs"
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Are you sure you want to remove all videos?"
-                              )
-                            ) {
-                              setCourseVideos([]);
-                            }
-                          }}
-                        >
-                          Clear All
-                        </Button>
-                      )}
-                    </div>
-
+                    {/* 
                     <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                       {courseVideos.map((video) => (
                         <div
@@ -544,7 +525,31 @@ export default function CreateCoursePage() {
                           </Button>
                         </div>
                       ))}
-                    </div>
+                    </div> */}
+                    {courseVideos.length > 0 && (
+                      <div className="mt-6">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-gray-700 dark:text-gray-300">
+                            Arrange Course Order
+                          </h3>
+                          {totalDuration && (
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              Total Duration:{" "}
+                              <span className="font-medium">
+                                {totalDuration}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                          <ReorderableVideoList
+                            videos={courseVideos}
+                            onReorder={handleReorderVideos}
+                            onDelete={handleRemoveVideo}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center bg-gray-50 dark:bg-gray-900">
@@ -673,7 +678,7 @@ export default function CreateCoursePage() {
                 <div className="space-y-4">
                   {/* Course stats */}
                   <div className="flex items-center gap-3 bg-primary/10 dark:bg-primary/10 p-3 rounded-lg">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 dark:bg-primary-dark/90 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-full bg-primary/0 dark:bg-primary-dark/90 flex items-center justify-center">
                       <MonitorPlay className="h-5 w-5 text-cyan-700 dark:text-cyan-300" />
                     </div>
                     <div>

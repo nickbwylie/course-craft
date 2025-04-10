@@ -1,52 +1,63 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  Lightbulb,
-  Brain,
-  Clock,
-  Pen,
-  Sun,
-  Tv,
-  Compass,
-  PlayCircle,
-  Search,
-  Star,
-  CheckCircle,
-  Sparkles,
-} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Pen, Sun, Tv, X, Play, Expand, Pause } from "lucide-react";
 import { FaFeatherAlt } from "react-icons/fa";
-
-// UI Components
 import { Button } from "@/components/ui/button";
 import AboutUsModal from "@/myComponents/AboutUsModal";
-import { useTheme } from "@/styles/useTheme";
-
-// Import your images
 import createPageScreen from "../assets/create_course.png";
-import exploreScreen from "../assets/explore_page.png";
 import demoScreenshot from "../assets/view_course.png";
-import createcoursedemo from "../assets/create_course_demo.mp4";
+import ai_course_poster from "../assets/ai_course_screenshot.png";
 import { Helmet } from "react-helmet-async";
+import ViewCourseScreenshot from "../assets/view_course_clean.png";
 
-const BenefitItem = ({ children, icon: Icon }) => (
-  <div className="flex items-start space-x-4 mb-6 group p-4 rounded-xl transition-all duration-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-    <div className="bg-cyan-50 dark:bg-cyan-900/40 p-3 rounded-full transition-all duration-300 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-800">
-      <Icon
-        className="text-cyan-700 dark:text-cyan-400 flex-shrink-0"
-        size={22}
-      />
-    </div>
-    <div>
-      <p className="text-slate-700 dark:text-slate-300">{children}</p>
-    </div>
-  </div>
-);
+interface StepProps {
+  step: number;
+  icon: JSX.Element;
+  title: string;
+  description: string;
+  details: string[];
+  videoRef: HTMLVideoElement | null;
+  videoSrc: string;
+  poster: string;
+  playing: boolean;
+  onPlay: () => void;
+  onVideoEnded: () => void;
+  gradientClasses: {
+    bg: string;
+    text: string;
+    bgLight: string;
+    transform: string;
+    stepBadge: string;
+    hoverBg: string;
+  };
+  layout?: "left" | "right";
+  buttonAction?: () => void;
+  onPauseVideo: () => void;
+}
+
+const videos = {
+  step1: {
+    title: "Choose Your Videos",
+    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//addVideosDemo.mp4",
+    description:
+      "Choose from millions of educational videos across all subjects and skill levels.",
+  },
+  step2: {
+    title: "AI Creates Your Course",
+    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//customize_course.mp4",
+    description:
+      "Our AI processes content to create structured learning materials for you.",
+  },
+  step3: {
+    title: "Learn Your Way",
+    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//view_course.mp4",
+    description:
+      "Learn at your own pace with interactive elements to reinforce your knowledge.",
+  },
+} as const;
 
 const SunburstRays = () => {
-  const rays = Array.from({ length: 36 });
-
   return (
     <div
       aria-hidden="true"
@@ -57,11 +68,274 @@ const SunburstRays = () => {
   );
 };
 
+const DecorativeBackground = () => (
+  <div className="absolute inset-0 opacity-5 pointer-events-none">
+    <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-cyan-500 blur-[100px]" />
+    <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-indigo-500 blur-[120px]" />
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-fuchsia-500 blur-[150px] opacity-20" />
+  </div>
+);
+
+const stepStyles = [
+  {
+    gradientClasses: {
+      bg: "from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20",
+      text: "text-red-600 dark:text-red-400",
+      bgLight: "bg-red-100 dark:bg-red-900/30",
+      transform: "-rotate-3",
+      stepBadge: "bg-red-500",
+      hoverBg:
+        "bg-gradient-to-br from-red-300 to-amber-300 dark:from-red-700 dark:to-amber-700 rotate-2",
+    },
+    icon: <Tv size={30} />,
+  },
+  {
+    gradientClasses: {
+      bg: "from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20",
+      text: "text-amber-600 dark:text-amber-400",
+      bgLight: "bg-amber-100 dark:bg-amber-900/30",
+      transform: "rotate-2",
+      stepBadge: "bg-amber-500",
+      hoverBg:
+        "bg-gradient-to-br from-amber-300 to-lime-300 dark:from-amber-700 dark:to-lime-700 -rotate-2",
+    },
+    icon: <Sun size={30} />,
+  },
+  {
+    gradientClasses: {
+      bg: "from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20",
+      text: "text-cyan-600 dark:text-cyan-400",
+      bgLight: "bg-cyan-100 dark:bg-cyan-900/30",
+      transform: "-rotate-1",
+      stepBadge: "bg-cyan-500",
+      hoverBg:
+        "bg-gradient-to-br from-cyan-300 to-blue-300 dark:from-cyan-700 dark:to-blue-700 rotate-1",
+    },
+    icon: <Pen size={30} />,
+  },
+];
+
+const Step = ({
+  step,
+  icon,
+  title,
+  description,
+  details,
+  videoRef,
+  videoSrc,
+  poster,
+  playing,
+  onPlay,
+  onVideoEnded,
+  gradientClasses,
+  layout = "left", // "left" or "right"
+  buttonAction,
+  onPauseVideo,
+}: StepProps) => {
+  const isContentLeft = layout === "left";
+  const containerFlex = isContentLeft ? "lg:flex-row" : "lg:flex-row-reverse";
+
+  return (
+    <div
+      className={`flex flex-col ${containerFlex} items-center mb-48 relative`}
+    >
+      {/* Connection line (improved with clearer positioning) */}
+      <div
+        className={`absolute left-1/2 ${
+          isContentLeft ? "lg:right-0" : "lg:left-0"
+        } top-full lg:top-1/2 w-px lg:w-32 h-20 lg:h-px border-dashed border-cyan-300 dark:border-cyan-700 lg:transform lg:-translate-y-1/2`}
+      />
+      {/* Text content */}
+      <div
+        className={`w-full lg:w-5/12 ${
+          isContentLeft ? "lg:pr-12" : "lg:pl-12"
+        } relative z-10 mb-10 lg:mb-0`}
+      >
+        <div className="relative">
+          <div
+            className={`bg-gradient-to-br ${gradientClasses.bg} ${gradientClasses.text} w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform ${gradientClasses.transform}`}
+          >
+            {icon}
+          </div>
+          <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-slate-800 dark:text-slate-200">
+            {title}
+          </h3>
+          <p className="text-slate-600 dark:text-slate-400 text-lg mb-6">
+            {description}
+          </p>
+          <div className="space-y-3">
+            {details.map((item, index) => (
+              <div key={index} className="flex items-start">
+                <div
+                  className={`flex items-center justify-center w-8 h-8 rounded-full ${gradientClasses.bgLight} mr-3 mt-0.5 flex-shrink-0`}
+                >
+                  <span className={`text-sm font-bold ${gradientClasses.text}`}>
+                    {index + 1}
+                  </span>
+                </div>
+                <p className="text-slate-600 dark:text-slate-400">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Video content */}
+      <div className={`w-full lg:w-7/12 relative z-10`}>
+        <div className="relative group">
+          <div
+            className={`absolute ${
+              isContentLeft ? "-right-6" : "-left-6"
+            } -bottom-6 w-full h-full ${
+              gradientClasses.hoverBg
+            } rounded-2xl transform opacity-30 group-hover:rotate-0 transition-transform duration-300`}
+          />
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="aspect-video rounded-xl overflow-hidden">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loop={step !== 1} // for example, step 1 plays once
+                muted
+                playsInline
+                src={videoSrc}
+                poster={poster}
+                onEnded={onVideoEnded}
+              >
+                Your browser does not support the video tag.
+              </video>
+              {!playing && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center  transition-opacity duration-300"
+                  aria-label="Play video"
+                >
+                  <button
+                    onClick={onPlay}
+                    aria-label="Play"
+                    className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-transform duration-300 transform hover:scale-110"
+                  >
+                    <Play className="h-12 w-12 text-white drop-shadow-lg" />
+                  </button>
+                </div>
+              )}
+              {playing && (
+                <div
+                  className="absolute hidden group-hover:flex inset-0 items-center justify-center transition-opacity duration-300"
+                  aria-label="Playing"
+                >
+                  <button
+                    onClick={onPauseVideo}
+                    aria-label="Pause"
+                    className="bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-transform duration-300 transform hover:scale-110"
+                  >
+                    <Pause className="h-12 w-12 text-white drop-shadow-lg" />
+                  </button>
+                </div>
+              )}
+              <div className="absolute w-full bottom-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="w-full">
+                  <p className="text-white text-sm mb-3 max-w-md">
+                    {/* {buttonLabel && "Learn more about this step"} */}
+                    Full screen
+                  </p>
+                  {buttonAction && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-white/90 text-slate-900 hover:bg-white border-none"
+                      onClick={buttonAction}
+                    >
+                      <Expand className="bg-white/90 text-slate-900 hover:bg-white border-none" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div
+              className={`absolute ${
+                isContentLeft ? "top-3 left-5" : "top-3 right-5"
+              } ${
+                gradientClasses.stepBadge
+              } text-white text-xs font-bold px-2 py-1 rounded-full`}
+            >
+              Step {step}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const VideoModal = ({
+  activeVideo,
+  onClose,
+}: {
+  activeVideo: keyof typeof videos | null;
+  onClose: () => void;
+}) => (
+  <AnimatePresence>
+    {activeVideo && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        />
+        {/* Modal Content */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", damping: 25 }}
+          className="relative bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-5xl mx-4 overflow-hidden z-10"
+        >
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              {videos[activeVideo]?.title}
+            </h3>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Close modal"
+            >
+              <X className="h-6 w-6 text-gray-500 dark:text-gray-400" />
+            </button>
+          </div>
+          <div className="aspect-video w-full relative">
+            <video
+              className="w-full h-full object-cover"
+              controls
+              autoPlay
+              src={videos[activeVideo]?.src}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              {videos[activeVideo]?.description}
+            </p>
+            <div className="flex justify-end">
+              <Button
+                onClick={onClose}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
+);
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-  const { isDark } = useTheme();
-
   // For the floating elements in the hero section
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -79,11 +353,68 @@ const LandingPage = () => {
 
   const seoTitle =
     "CourseCraft - Create Custom Courses from YouTube in Seconds";
-  const seoDescription =
-    "Transform YouTube videos into personalized learning experiences with AI-generated summaries and quizzes. Learn what you want, when you want, how you want.";
+  const seoDescription = "Change the way you watch YouTube videos forever";
   const seoKeywords =
     "online learning, custom courses, education platform, YouTube learning, AI education, personalized learning";
   const seoCanonicalUrl = "https://course-craft.tech";
+  const [activeVideo, setActiveVideo] = useState<
+    "step1" | "step2" | "step3" | null
+  >(null);
+
+  const video1Ref = useRef<HTMLVideoElement | null>(null);
+  const video2Ref = useRef<HTMLVideoElement | null>(null);
+  const video3Ref = useRef<HTMLVideoElement | null>(null);
+  const [playingVideos, setPlayingVideos] = useState({
+    step1: false,
+    step2: false,
+    step3: false,
+  });
+
+  const playVideo = (step: keyof typeof videos) => {
+    if (step === "step1") {
+      video1Ref?.current?.play();
+    } else if (step == "step2") {
+      video2Ref?.current?.play();
+    } else {
+      video3Ref?.current?.play();
+    }
+    // Implementation for playing the video using refs
+    setPlayingVideos((prev) => ({ ...prev, [step]: true }));
+  };
+
+  const pauseVideo = (step: keyof typeof videos) => {
+    console.log("pausing video for step:", step);
+    if (step === "step1") {
+      video1Ref?.current?.pause();
+    } else if (step == "step2") {
+      video2Ref?.current?.pause();
+    } else {
+      video3Ref?.current?.pause();
+    }
+    setPlayingVideos((prev) => ({ ...prev, [step]: false }));
+  };
+
+  const handleVideoEnded = (step: keyof typeof videos) => {
+    setPlayingVideos((prev) => ({ ...prev, [step]: false }));
+  };
+
+  const handleCloseModal = () => setActiveVideo(null);
+
+  // Predefined styles for each step for consist
+
+  useEffect(() => {
+    if (activeVideo) {
+      video1Ref.current?.pause();
+      video2Ref.current?.pause();
+      video3Ref.current?.pause();
+      setPlayingVideos((prev) => ({
+        ...prev,
+        step1: false,
+        step2: false,
+        step3: false,
+      }));
+    }
+  }, [activeVideo]);
 
   return (
     <div className="mobile-layout">
@@ -172,7 +503,7 @@ const LandingPage = () => {
           </nav>
 
           {/* Hero Section */}
-          <section className="pt-48 pb-24 relative overflow-hidden">
+          <section className="pt-48 pb-48 relative overflow-hidden">
             {/* Decorative elements that respond to mouse movement */}
             <SunburstRays />
             <div
@@ -210,8 +541,7 @@ const LandingPage = () => {
 
                     <div className="w-full flex justify-center">
                       <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed w-5/6">
-                        Transform YouTube videos into personalized learning
-                        experiences with AI-generated summaries and quizzes.
+                        Change the way you watch YouTube videos forever.
                       </p>
                     </div>
 
@@ -249,347 +579,101 @@ const LandingPage = () => {
           </section>
 
           {/* Features Section */}
-          <section className="py-24 bg-slate-50 dark:bg-gray-800/50">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center mb-16">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-100 dark:bg-cyan-900/30 rounded-2xl mb-6">
-                  <Lightbulb className="text-[#407e8b] dark:text-cyan-400 h-8 w-8" />
-                </div>
-                <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-                  How It Works
+          <section className="relative overflow-hidden pt-48 pb-28">
+            <SunburstRays />
+            {/* Decorative gradient blobs */}
+            <DecorativeBackground />
+            <div className="relative z-10 mx-auto max-w-7xl px-6">
+              {/* Header Section */}
+              <div className="text-center mb-20">
+                <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300">
+                  How it works
                 </h2>
                 <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                  Three simple steps to transform any YouTube video into a
-                  structured learning experience
+                  Transform any YouTube video into an interactive course.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                {/* Step 1 */}
-                <div className="group">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:bg-red-200 dark:group-hover:bg-red-800/30 relative">
-                      <Tv size={32} />
-                      <div className="absolute -right-2 -top-2 w-8 h-8 bg-[#407e8b] dark:bg-[#325783] text-white rounded-full flex items-center justify-center font-bold text-lg">
-                        1
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold mb-4">
-                      Choose Your Videos
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Select YouTube videos that align with your learning goals
-                      and interests. Pick content from any creator, on any
-                      topic.
-                    </p>
-                  </div>
-                </div>
+              {/* Steps */}
+              <Step
+                step={1}
+                icon={stepStyles[0].icon}
+                title="Choose Your Videos"
+                description="Select any YouTube videos that match your learning goals. Our platform works with any topic, from coding to cooking."
+                details={[
+                  "Find videos from your favorite YouTube educators",
+                  "Simply paste the URLs into our course builder",
+                  "Organize videos in your preferred learning sequence",
+                ]}
+                videoRef={video1Ref}
+                videoSrc={videos["step1"].src}
+                poster={createPageScreen}
+                playing={playingVideos.step1}
+                onPlay={() => playVideo("step1")}
+                onVideoEnded={() => handleVideoEnded("step1")}
+                gradientClasses={stepStyles[0].gradientClasses}
+                layout="left"
+                buttonLabel="See how it works"
+                buttonAction={() => setActiveVideo("step1")}
+                onPauseVideo={() => pauseVideo("step1")}
+              />
 
-                {/* Step 2 */}
-                <div className="group">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <div className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:bg-amber-200 dark:group-hover:bg-amber-800/30 relative">
-                      <Sun size={32} />
-                      <div className="absolute -right-2 -top-2 w-8 h-8 bg-[#407e8b] dark:bg-[#325783] text-white rounded-full flex items-center justify-center font-bold text-lg">
-                        2
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold mb-4">
-                      Let AI Do The Work
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Our AI structures your course, generates summaries, and
-                      creates quizzes—so you can focus on learning, not
-                      organizing.
-                    </p>
-                  </div>
-                </div>
+              <Step
+                step={2}
+                icon={stepStyles[1].icon}
+                title="AI Creates Your Course"
+                description="Our AI analyzes videos, generates concise summaries of key points, and creates targeted quizzes to test your understanding."
+                details={[
+                  "AI extracts key concepts from video content",
+                  "Creates structured summaries optimized for retention",
+                  "Generates relevant quizzes to test your knowledge",
+                ]}
+                videoRef={video2Ref}
+                videoSrc={videos["step2"].src}
+                poster={ai_course_poster}
+                playing={playingVideos.step2}
+                onPlay={() => playVideo("step2")}
+                onVideoEnded={() => handleVideoEnded("step2")}
+                gradientClasses={stepStyles[1].gradientClasses}
+                layout="right"
+                buttonLabel="See the magic happen"
+                buttonAction={() => setActiveVideo("step2")}
+                onPauseVideo={() => pauseVideo("step2")}
+              />
 
-                {/* Step 3 */}
-                <div className="group">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                    <div className="bg-cyan-100 dark:bg-cyan-900/30 text-[#407e8b] dark:text-cyan-400 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:bg-cyan-200 dark:group-hover:bg-cyan-800/30 relative">
-                      <Pen size={32} />
-                      <div className="absolute -right-2 -top-2 w-8 h-8 bg-[#407e8b] dark:bg-[#325783] text-white rounded-full flex items-center justify-center font-bold text-lg">
-                        3
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold mb-4">
-                      Start Learning Smarter
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
-                      Follow your custom course, test your knowledge with
-                      quizzes, track progress, and master topics at your own
-                      pace.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <Step
+                step={3}
+                icon={stepStyles[2].icon}
+                title="Study Your Course"
+                description="Experience a structured learning path with video content, AI-generated summaries, and interactive quizzes."
+                details={[
+                  "Watch videos at your own pace",
+                  "Review AI summaries to reinforce key concepts",
+                  "Test your knowledge with interactive quizzes",
+                ]}
+                videoRef={video3Ref}
+                videoSrc={videos["step3"].src}
+                poster={ViewCourseScreenshot}
+                playing={playingVideos.step3}
+                onPlay={() => playVideo("step3")}
+                onVideoEnded={() => handleVideoEnded("step3")}
+                gradientClasses={stepStyles[2].gradientClasses}
+                layout="left"
+                buttonLabel="See the learning experience"
+                buttonAction={() => setActiveVideo("step3")}
+                onPauseVideo={() => pauseVideo("step3")}
+              />
             </div>
-          </section>
 
-          {/* Take Control Section */}
-          <section className="py-24 bg-white dark:bg-gray-900 overflow-hidden relative">
-            <SunburstRays />
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-                {/* Image Section */}
-                <div className="lg:col-span-6 order-2 lg:order-1">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#407e8b]/20 to-[#60a5fa]/20 rounded-3xl transform rotate-6 scale-105"></div>
-                    <div className="relative bg-gradient-to-r from-[#407e8b] to-[#60a5fa] p-2 md:p-4 rounded-3xl shadow-2xl">
-                      <img
-                        src={createPageScreen}
-                        alt="Course Creation Screen"
-                        className="rounded-2xl w-full"
-                      />
-
-                      {/* Decorative elements */}
-                      <div className="absolute w-20 h-20 bg-yellow-400 rounded-full -top-6 -right-6 blur-2xl opacity-40"></div>
-                      <div className="absolute w-32 h-32 bg-[#407e8b] rounded-full -bottom-10 -left-10 blur-2xl opacity-40"></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="lg:col-span-6 order-1 lg:order-2">
-                  <span className="inline-block py-2 px-4 text-sm font-medium bg-cyan-100 dark:bg-cyan-900/30 text-[#407e8b] dark:text-cyan-400 rounded-full mb-6">
-                    Your Learning, Your Rules
-                  </span>
-
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-                    Take Control of Your Learning Journey
-                  </h2>
-
-                  <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-                    Stop wasting time on courses that don't meet your needs. Our
-                    platform gives you the power to
-                    <span className="font-bold italic">
-                      {" "}
-                      choose what, how, and when you learn.
-                    </span>
-                  </p>
-
-                  <div className="space-y-4 mb-8">
-                    <BenefitItem icon={Compass}>
-                      <span className="font-bold">Choose videos </span>
-                      that match your exact learning goals
-                    </BenefitItem>
-
-                    <BenefitItem icon={Brain}>
-                      <span className="font-bold">AI-powered</span> course
-                      creation with
-                      <span className="font-bold">
-                        {" "}
-                        summaries & quizzes
-                      </span>{" "}
-                      for deep learning
-                    </BenefitItem>
-
-                    <BenefitItem icon={Clock}>
-                      <span className="font-bold">Flexible learning</span> at
-                      your own pace, with progress tracking & unlimited revisits
-                    </BenefitItem>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    className="rounded-full px-8 py-6 bg-[#407e8b] hover:bg-[#305f6b] text-white shadow-lg hover:shadow-[#407e8b]/25 transition-all"
-                    onClick={() => navigate("/create")}
-                  >
-                    Create My Course
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Explore Section */}
-          <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-gray-800 dark:to-gray-900">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-                {/* Content */}
-                <div className="lg:col-span-6">
-                  <span className="inline-block py-2 px-4 text-sm font-medium bg-cyan-100 dark:bg-cyan-900/30 text-[#407e8b] dark:text-cyan-400 rounded-full mb-6">
-                    Community Learning
-                  </span>
-
-                  <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-                    Explore User-Generated Courses for Free
-                  </h2>
-
-                  <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-                    Curious about what's possible? Discover a library of courses
-                    created by other learners,
-                    <span className="font-bold italic">
-                      {" "}
-                      all available for free.
-                    </span>
-                  </p>
-
-                  <div className="space-y-4 mb-8">
-                    <BenefitItem icon={Search}>
-                      <strong>Browse</strong> courses across various topics—from
-                      business and technology to creative skills
-                    </BenefitItem>
-
-                    <BenefitItem icon={Lightbulb}>
-                      <strong>Get Inspired</strong> by how others have
-                      customized their learning paths and share new approaches
-                    </BenefitItem>
-
-                    <BenefitItem icon={PlayCircle}>
-                      <strong>Start Learning</strong> right away—no sign-ups, no
-                      fees, just pure learning
-                    </BenefitItem>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full px-8 py-6 border-2 border-[#407e8b] dark:border-[#60a5fa] text-[#407e8b] dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 transition-all"
-                    onClick={() => navigate("/explore")}
-                  >
-                    Explore Courses
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* Image */}
-                <div className="lg:col-span-6">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#407e8b]/20 to-[#60a5fa]/20 rounded-3xl transform -rotate-3 scale-105"></div>
-                    <div className="relative bg-gradient-to-r from-[#407e8b] to-[#60a5fa] p-2 md:p-4 rounded-3xl shadow-2xl">
-                      <img
-                        src={exploreScreen}
-                        alt="Explore courses"
-                        className="rounded-2xl w-full"
-                      />
-
-                      {/* Course cards floating above */}
-                      <div className="absolute -top-10 -right-6 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg transform rotate-6 transition-all hover:rotate-0 w-48">
-                        <div className="flex items-center mb-2">
-                          <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-2">
-                            <Sparkles className="h-4 w-4 text-green-600" />
-                          </div>
-                          <p className="text-sm font-medium">Web Development</p>
-                        </div>
-                        <div className="h-2 bg-green-100 dark:bg-green-900/40 rounded-full overflow-hidden">
-                          <div className="h-full w-3/4 bg-green-500 rounded-full"></div>
-                        </div>
-                      </div>
-
-                      <div className="absolute -bottom-8 -left-6 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg transform -rotate-3 transition-all hover:rotate-0 w-48">
-                        <div className="flex items-center mb-2">
-                          <div className="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center mr-2">
-                            <Sparkles className="h-4 w-4 text-[#407e8b] dark:text-cyan-400" />
-                          </div>
-                          <p className="text-sm font-medium">Digital Art</p>
-                        </div>
-                        <div className="h-2 bg-cyan-100 dark:bg-cyan-900/40 rounded-full overflow-hidden">
-                          <div className="h-full w-1/2 bg-[#407e8b] dark:bg-[#60a5fa] rounded-full"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Testimonials */}
-          <section className="py-24 bg-slate-50 dark:bg-gray-800/50 relative">
-            <SunburstRays />
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center mb-16">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-cyan-100 dark:bg-cyan-900/30 rounded-2xl mb-6">
-                  <Star className="text-[#407e8b] dark:text-cyan-400 h-8 w-8" />
-                </div>
-                <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-                  What Our Users Say
-                </h2>
-                <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                  Join a community of learners who have transformed their
-                  education experience
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  {
-                    quote:
-                      "I created a custom AI course using YouTube videos from my favorite creators. The AI-generated quizzes helped me retain what I learned.",
-                    name: "Sarah J.",
-                    role: "Data Scientist",
-                    color: "cyan",
-                  },
-                  {
-                    quote:
-                      "As a teacher, this platform allows me to curate video content for my students with built-in assessment tools. A game-changer for hybrid learning.",
-                    name: "Mark T.",
-                    role: "High School Teacher",
-                    color: "cyan",
-                  },
-                  {
-                    quote:
-                      "I completed three courses in the time it would have taken me to finish one traditional course. The focused learning approach is incredibly efficient.",
-                    name: "Priya M.",
-                    role: "Software Developer",
-                    color: "cyan",
-                  },
-                ].map((testimonial, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
-                  >
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
-                      <div className="absolute top-0 left-0 right-0 h-2 bg-[#407e8b] dark:bg-[#60a5fa] rounded-t-2xl"></div>
-
-                      <div className="flex items-center mb-6">
-                        <div className="ml-4">
-                          <div className="flex mb-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className="h-5 w-5 text-yellow-400 fill-current"
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-
-                      <p className="text-slate-600 dark:text-slate-300 mb-6 italic">
-                        "{testimonial.quote}"
-                      </p>
-
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full mr-3 bg-cyan-100 dark:bg-cyan-900/40 flex items-center justify-center">
-                          <span className="text-[#407e8b] dark:text-cyan-400 font-bold">
-                            {testimonial.name.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium">{testimonial.name}</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            {testimonial.role}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
+            {/* Video Modal */}
+            <VideoModal activeVideo={activeVideo} onClose={handleCloseModal} />
           </section>
 
           {/* CTA Section */}
           <section className="py-24 bg-gradient-to-r from-[#1e2b38] to-[#1c446f] text-white">
             <div className="max-w-4xl mx-auto text-center px-6">
               <h2 className="text-3xl lg:text-5xl font-bold mb-8">
-                Ready to Reimagine Your Learning Journey?
+                Ready to Get Started
               </h2>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
