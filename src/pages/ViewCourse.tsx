@@ -39,6 +39,7 @@ import {
 import { SpeechButton } from "@/myComponents/Speak.tsx";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 import { Helmet } from "react-helmet-async";
+import { ScaledClick } from "@/animations/scaledClick.tsx";
 
 export interface CourseVideo {
   course_description: string;
@@ -208,8 +209,6 @@ export default function ViewCourse() {
         course_id: courseId,
       });
 
-      console.log("Fetched course content:", data);
-
       if (data) {
         const sortedByOrder = data.sort((a, b) => {
           return a.order_by - b.order_by;
@@ -233,8 +232,6 @@ export default function ViewCourse() {
         course_id: courseId,
       });
 
-      console.log("Incremented view count:", data);
-
       if (error) {
         console.error("Error incrementing view count:", error);
         return;
@@ -257,12 +254,6 @@ export default function ViewCourse() {
         // Make sure we have default empty arrays if these properties don't exist
         setCompletedVideos(savedProgress.completedVideos || []);
         setWatchedVideos(savedProgress.watchedVideos || []);
-
-        console.log("Loaded progress:", {
-          lastVideoIndex: savedProgress.lastVideoIndex,
-          watchedVideos: savedProgress.watchedVideos || [],
-          completedVideos: savedProgress.completedVideos || [],
-        });
       } else {
         // Reset to defaults if no saved progress
         setSelectedCourse(0);
@@ -324,7 +315,6 @@ export default function ViewCourse() {
 
           // Update localStorage
           if (id) {
-            console.log("Marking video as watched in storage:", selectedCourse);
             markVideoWatchedInStorage(id, selectedCourse);
             markVideoCompletedInStorage(id, selectedCourse);
           }
@@ -457,7 +447,6 @@ export default function ViewCourse() {
   };
 
   const parsedSummary = useMemo(() => {
-    console.log("rerendering now");
     return currentVideo ? (
       parseSummary(currentVideo.video_summary, !!user)
     ) : (
@@ -647,15 +636,20 @@ export default function ViewCourse() {
                     )}
 
                     {!isLoading && currentVideo && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleShareCourse}
-                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                      <ScaledClick
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <Share className="h-4 w-4 mr-2" />
-                        Share
-                      </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleShareCourse}
+                          className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                        >
+                          <Share className="h-4 w-4 mr-2" />
+                          Share
+                        </Button>
+                      </ScaledClick>
                     )}
                   </div>
 
@@ -700,25 +694,35 @@ export default function ViewCourse() {
 
                     {/* Navigation Buttons */}
                     <div className="flex items-center gap-3">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={goToPreviousVideo}
-                        disabled={isLoading || !courseVideos}
-                        className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      <ScaledClick
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <ChevronLeft className="h-4 w-4 mr-1" />
-                        Previous
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={goToNextVideo}
-                        disabled={isLoading || !courseVideos}
-                        className="bg-primary hover:bg-primary-dark text-white"
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={goToPreviousVideo}
+                          disabled={isLoading || !courseVideos}
+                          className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                        >
+                          <ChevronLeft className="h-4 w-4 mr-1" />
+                          Previous
+                        </Button>
+                      </ScaledClick>
+                      <ScaledClick
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        Next
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
+                        <Button
+                          size="sm"
+                          onClick={goToNextVideo}
+                          disabled={isLoading || !courseVideos}
+                          className="bg-primary hover:bg-primary-dark text-white"
+                        >
+                          Next
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </ScaledClick>
                     </div>
                   </div>
                 </div>
@@ -934,15 +938,20 @@ export default function ViewCourse() {
                 )}
 
                 {!isLoading && currentVideo && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleShareCourse}
-                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                  <ScaledClick
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <Share className="h-4 w-4 mr-1" />
-                    Share
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleShareCourse}
+                      className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                    >
+                      <Share className="h-4 w-4 mr-1" />
+                      Share
+                    </Button>
+                  </ScaledClick>
                 )}
               </div>
 
@@ -983,25 +992,35 @@ export default function ViewCourse() {
 
               {/* Navigation buttons */}
               <div className="flex items-center justify-end gap-3 mt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToPreviousVideo}
-                  disabled={isLoading || !courseVideos}
-                  className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                <ScaledClick
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Previous
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={goToNextVideo}
-                  disabled={isLoading || !courseVideos}
-                  className="bg-primary hover:bg-primary-dark text-white"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToPreviousVideo}
+                    disabled={isLoading || !courseVideos}
+                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Previous
+                  </Button>
+                </ScaledClick>
+                <ScaledClick
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
+                  <Button
+                    size="sm"
+                    onClick={goToNextVideo}
+                    disabled={isLoading || !courseVideos}
+                    className="bg-primary hover:bg-primary-dark text-white"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </ScaledClick>
               </div>
             </div>
 

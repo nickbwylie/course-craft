@@ -10,7 +10,7 @@ import {
   Sparkles,
   Trash,
 } from "lucide-react";
-
+import { motion } from "framer-motion";
 // UI Components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,6 +65,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTracking } from "@/hooks/useTracking";
 import { Helmet } from "react-helmet-async";
 import ReorderableVideoList from "@/myComponents/ReorderableVideoList";
+import { ScaledClick } from "@/animations/scaledClick";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -304,8 +305,12 @@ export default function CreateCoursePage() {
     }
   }
 
-  const handleReorderVideos = (reorderedVideos: YoutubeVideoPreview[]) => {
-    setCourseVideos(reorderedVideos);
+  const handleReorderVideos = (reorderedVideos: string[]) => {
+    const reorderedVideosData = reorderedVideos
+      .map((videoId) => courseVideos.find((video) => video.videoId === videoId))
+      .filter((video): video is YoutubeVideoPreview => !!video);
+
+    setCourseVideos(reorderedVideosData);
   };
 
   function handleRemoveVideo(videoId: string) {
@@ -464,13 +469,15 @@ export default function CreateCoursePage() {
                         }}
                       />
                     </div>
-                    <Button
-                      onClick={handleAddVideo}
-                      disabled={isAddingVideo || !videoUrl.trim()}
-                      className="bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
-                    >
-                      {isAddingVideo ? "Adding..." : "Add Video"}
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.05 }}>
+                      <Button
+                        onClick={handleAddVideo}
+                        disabled={isAddingVideo || !videoUrl.trim()}
+                        className="bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
+                      >
+                        {isAddingVideo ? "Adding..." : "Add Video"}
+                      </Button>
+                    </motion.div>
                   </div>
 
                   {addVideoError && (
@@ -488,44 +495,6 @@ export default function CreateCoursePage() {
                 {/* Video list */}
                 {courseVideos.length > 0 ? (
                   <div>
-                    {/* 
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                      {courseVideos.map((video) => (
-                        <div
-                          key={video.videoId}
-                          className="flex items-center gap-3 border border-gray-200 dark:border-gray-700 rounded-md p-3 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-                        >
-                          <div className="w-24 h-16 relative flex-shrink-0">
-                            <img
-                              src={video.thumbnail}
-                              alt={video.title}
-                              className="w-full h-full object-cover rounded"
-                            />
-                            <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs py-0.5 px-1 rounded">
-                              {parseYouTubeDuration(video.duration)}
-                            </div>
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm line-clamp-1 text-gray-800 dark:text-gray-200">
-                              {video.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {video.channel}
-                            </p>
-                          </div>
-
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex-shrink-0 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400"
-                            onClick={() => handleRemoveVideo(video.videoId)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div> */}
                     {courseVideos.length > 0 && (
                       <div className="mt-6">
                         <div className="flex justify-between items-center mb-4">
@@ -746,13 +715,18 @@ export default function CreateCoursePage() {
                   )}
 
                   {/* Create button */}
-                  <Button
-                    type="submit"
-                    className="w-full mt-4 bg-primary hover:bg-[rgb(54,116,129)] dark:bg-primary dark:hover:bg-primary-dark text-white"
-                    disabled={isSubmitting || courseVideos.length === 0}
+                  <ScaledClick
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
                   >
-                    {isSubmitting ? "Creating Course..." : "Create Course"}
-                  </Button>
+                    <Button
+                      type="submit"
+                      className="w-full mt-4 bg-primary hover:bg-[rgb(54,116,129)] dark:bg-primary dark:hover:bg-primary-dark text-white"
+                      disabled={isSubmitting || courseVideos.length === 0}
+                    >
+                      {isSubmitting ? "Creating Course..." : "Create Course"}
+                    </Button>
+                  </ScaledClick>
 
                   {/* Validation notice */}
                   {courseVideos.length === 0 && (

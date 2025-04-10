@@ -31,7 +31,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
         <DialogHeader>
           <DialogTitle className="flex items-center text-2xl">
             <FaFeatherAlt className="h-6 w-6 text-[#407f8b] mr-2" />
-            About CourseCreator
+            About CourseCraft
           </DialogTitle>
           <DialogDescription className="text-base">
             Transforming passive watching into active learning
@@ -46,14 +46,14 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
               Our Story
             </h3>
             <p className="text-slate-600 dark:text-gray-300">
-              CourseCreator was founded in 2024 by Nick Wylie as a solo project
+              CourseCraft was founded in 2024 by Nick Wylie as a solo project
               with a clear mission: to transform the way people learn from
               online video content. The idea emerged from recognizing that while
               YouTube is filled with incredible educational content, it lacks
               the structure and engagement tools needed for optimal learning.
             </p>
             <p className="text-slate-600 dark:text-gray-300">
-              By leveraging AI technology, CourseCreator transforms scattered
+              By leveraging AI technology, CourseCraft transforms scattered
               YouTube videos into cohesive learning experiences, complete with
               summaries and knowledge checks, turning passive watching into
               active learning.
@@ -67,9 +67,9 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
               How It Works
             </h3>
             <p className="text-slate-600 dark:text-gray-300">
-              CourseCreator allows you to build personalized learning
-              experiences by selecting YouTube videos that align with your
-              learning goals. Our platform then:
+              CourseCraft allows you to build personalized learning experiences
+              by selecting YouTube videos that align with your learning goals.
+              Our platform then:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg flex">
@@ -106,7 +106,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
               Learning Benefits
             </h3>
             <p className="text-slate-600 dark:text-gray-300">
-              CourseCreator transforms passive video consumption into an active
+              CourseCraft transforms passive video consumption into an active
               learning experience with several key benefits:
             </p>
             <ul className="space-y-2 text-slate-600 dark:text-gray-300 list-disc pl-6">
@@ -192,7 +192,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
             </p>
             <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>Email:</strong> coursecreatortech@gmail.com
+                <strong>Email:</strong> coursecrafttech@gmail.com
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                 <strong>LinkedIn:</strong>{" "}

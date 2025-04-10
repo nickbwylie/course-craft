@@ -16,8 +16,10 @@ import {
   Award,
   ArrowRight,
   RotateCcw,
+  Scale,
 } from "lucide-react";
 import { Progress } from "../components/ui/progress";
+import { ScaledClick } from "@/animations/scaledClick";
 
 // Define the QuizQuestion type
 export type QuizQuestion = {
@@ -305,37 +307,44 @@ export default function Quiz({ quiz }: QuizProps) {
           </RadioGroup>
         </CardContent>
         <CardFooter className="bg-gray-50 dark:bg-slate-800 p-4 flex justify-between">
-          <Button
-            onClick={handlePrevious}
-            variant="outline"
-            disabled={currentQuestionIndex === 0}
-            className="px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
-          >
-            Previous
-          </Button>
+          <ScaledClick whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Button
+              onClick={handlePrevious}
+              variant="outline"
+              disabled={currentQuestionIndex === 0}
+              className="px-3 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              Previous
+            </Button>
+          </ScaledClick>
           <div>
-            {currentQuestionIndex === quiz.length - 1 ? (
-              <Button
-                onClick={handleSubmit}
-                disabled={
-                  !Object.keys(answers).length ||
-                  Object.keys(answers).length < quiz.length
-                }
-                className="text-white"
-                style={{ backgroundColor: "rgb(64, 126, 139)" }}
-              >
-                Finish Quiz
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                disabled={!isCurrentQuestionAnswered}
-                className="flex items-center text-white bg-primary/80 hover:bg-primary-dark"
-              >
-                Next
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            )}
+            <ScaledClick
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {currentQuestionIndex === quiz.length - 1 ? (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={
+                    !Object.keys(answers).length ||
+                    Object.keys(answers).length < quiz.length
+                  }
+                  className="text-white"
+                  style={{ backgroundColor: "rgb(64, 126, 139)" }}
+                >
+                  Finish Quiz
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNext}
+                  disabled={!isCurrentQuestionAnswered}
+                  className="flex items-center text-white bg-primary/80 hover:bg-primary-dark"
+                >
+                  Next
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              )}
+            </ScaledClick>
           </div>
         </CardFooter>
       </Card>

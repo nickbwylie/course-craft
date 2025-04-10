@@ -595,74 +595,107 @@ const LandingPage = () => {
               </div>
 
               {/* Steps */}
-              <Step
-                step={1}
-                icon={stepStyles[0].icon}
-                title="Choose Your Videos"
-                description="Select any YouTube videos that match your learning goals. Our platform works with any topic, from coding to cooking."
-                details={[
-                  "Find videos from your favorite YouTube educators",
-                  "Simply paste the URLs into our course builder",
-                  "Organize videos in your preferred learning sequence",
-                ]}
-                videoRef={video1Ref}
-                videoSrc={videos["step1"].src}
-                poster={createPageScreen}
-                playing={playingVideos.step1}
-                onPlay={() => playVideo("step1")}
-                onVideoEnded={() => handleVideoEnded("step1")}
-                gradientClasses={stepStyles[0].gradientClasses}
-                layout="left"
-                buttonLabel="See how it works"
-                buttonAction={() => setActiveVideo("step1")}
-                onPauseVideo={() => pauseVideo("step1")}
-              />
+              <motion.div
+                initial={{ opacity: 0, y: 100 }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 1.4, delay: 0 },
+                }}
+                viewport={{ once: true, amount: "some" }}
+              >
+                <Step
+                  step={1}
+                  icon={stepStyles[0].icon}
+                  title="Choose Your Videos"
+                  description="Select any YouTube videos that match your learning goals. Our platform works with any topic, from coding to cooking."
+                  details={[
+                    "Find videos from your favorite YouTube educators",
+                    "Simply paste the URLs into our course builder",
+                    "Organize videos in your preferred learning sequence",
+                  ]}
+                  videoRef={video1Ref}
+                  videoSrc={videos["step1"].src}
+                  poster={createPageScreen}
+                  playing={playingVideos.step1}
+                  onPlay={() => playVideo("step1")}
+                  onVideoEnded={() => handleVideoEnded("step1")}
+                  gradientClasses={stepStyles[0].gradientClasses}
+                  layout="left"
+                  buttonLabel="See how it works"
+                  buttonAction={() => setActiveVideo("step1")}
+                  onPauseVideo={() => pauseVideo("step1")}
+                />
+              </motion.div>
 
-              <Step
-                step={2}
-                icon={stepStyles[1].icon}
-                title="AI Creates Your Course"
-                description="Our AI analyzes videos, generates concise summaries of key points, and creates targeted quizzes to test your understanding."
-                details={[
-                  "AI extracts key concepts from video content",
-                  "Creates structured summaries optimized for retention",
-                  "Generates relevant quizzes to test your knowledge",
-                ]}
-                videoRef={video2Ref}
-                videoSrc={videos["step2"].src}
-                poster={ai_course_poster}
-                playing={playingVideos.step2}
-                onPlay={() => playVideo("step2")}
-                onVideoEnded={() => handleVideoEnded("step2")}
-                gradientClasses={stepStyles[1].gradientClasses}
-                layout="right"
-                buttonLabel="See the magic happen"
-                buttonAction={() => setActiveVideo("step2")}
-                onPauseVideo={() => pauseVideo("step2")}
-              />
+              {/* Steps */}
+              <motion.div
+                initial={{ opacity: 0, y: 100 }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 1.4, delay: 0 },
+                }}
+                viewport={{ once: true, amount: "some" }}
+              >
+                <Step
+                  step={2}
+                  icon={stepStyles[1].icon}
+                  title="AI Creates Your Course"
+                  description="Our AI analyzes videos, generates concise summaries of key points, and creates targeted quizzes to test your understanding."
+                  details={[
+                    "AI extracts key concepts from video content",
+                    "Creates structured summaries optimized for retention",
+                    "Generates relevant quizzes to test your knowledge",
+                  ]}
+                  videoRef={video2Ref}
+                  videoSrc={videos["step2"].src}
+                  poster={ai_course_poster}
+                  playing={playingVideos.step2}
+                  onPlay={() => playVideo("step2")}
+                  onVideoEnded={() => handleVideoEnded("step2")}
+                  gradientClasses={stepStyles[1].gradientClasses}
+                  layout="right"
+                  buttonLabel="See the magic happen"
+                  buttonAction={() => setActiveVideo("step2")}
+                  onPauseVideo={() => pauseVideo("step2")}
+                />
+              </motion.div>
 
-              <Step
-                step={3}
-                icon={stepStyles[2].icon}
-                title="Study Your Course"
-                description="Experience a structured learning path with video content, AI-generated summaries, and interactive quizzes."
-                details={[
-                  "Watch videos at your own pace",
-                  "Review AI summaries to reinforce key concepts",
-                  "Test your knowledge with interactive quizzes",
-                ]}
-                videoRef={video3Ref}
-                videoSrc={videos["step3"].src}
-                poster={ViewCourseScreenshot}
-                playing={playingVideos.step3}
-                onPlay={() => playVideo("step3")}
-                onVideoEnded={() => handleVideoEnded("step3")}
-                gradientClasses={stepStyles[2].gradientClasses}
-                layout="left"
-                buttonLabel="See the learning experience"
-                buttonAction={() => setActiveVideo("step3")}
-                onPauseVideo={() => pauseVideo("step3")}
-              />
+              {/* Steps */}
+
+              <motion.div
+                initial={{ opacity: 0, y: 100 }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 1.4, delay: 0.1 },
+                }}
+                viewport={{ once: true, amount: "some" }}
+              >
+                <Step
+                  step={3}
+                  icon={stepStyles[2].icon}
+                  title="Study Your Course"
+                  description="Experience a structured learning path with video content, AI-generated summaries, and interactive quizzes."
+                  details={[
+                    "Watch videos at your own pace",
+                    "Review AI summaries to reinforce key concepts",
+                    "Test your knowledge with interactive quizzes",
+                  ]}
+                  videoRef={video3Ref}
+                  videoSrc={videos["step3"].src}
+                  poster={ViewCourseScreenshot}
+                  playing={playingVideos.step3}
+                  onPlay={() => playVideo("step3")}
+                  onVideoEnded={() => handleVideoEnded("step3")}
+                  gradientClasses={stepStyles[2].gradientClasses}
+                  layout="left"
+                  buttonLabel="See the learning experience"
+                  buttonAction={() => setActiveVideo("step3")}
+                  onPauseVideo={() => pauseVideo("step3")}
+                />
+              </motion.div>
             </div>
 
             {/* Video Modal */}
@@ -747,7 +780,7 @@ const LandingPage = () => {
                     </li>
                     <li>
                       <a
-                        href="mailto:coursecreatortech@gmail.com"
+                        href="mailto:coursecrafttech@gmail.com"
                         className="hover:text-white transition-colors"
                       >
                         Contact

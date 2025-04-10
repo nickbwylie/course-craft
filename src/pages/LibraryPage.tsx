@@ -33,6 +33,19 @@ import {
   useUserCourses,
 } from "@/hooks/useUserCourses";
 import { Helmet } from "react-helmet-async";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
@@ -40,6 +53,22 @@ interface CourseListItemProps {
   showProgress?: boolean;
   completionPercentage?: number;
   lastViewed?: string;
+}
+
+function ProfileForm({ className }: React.ComponentProps<"form">) {
+  return (
+    <form className={cn("grid items-start gap-4", className)}>
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input type="email" id="email" defaultValue="shadcn@example.com" />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="username">Username</Label>
+        <Input id="username" defaultValue="@shadcn" />
+      </div>
+      <Button type="submit">Save changes</Button>
+    </form>
+  );
 }
 
 export function CourseListItem({
@@ -109,8 +138,6 @@ export function CourseListItem({
           course.course_difficulty as keyof typeof courseDifficultyMap
         ]
       : "Simple";
-
-  console.log(`course duration ${course.total_duration}`);
 
   return (
     <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl dark:hover:shadow-black/20 transition-all duration-200 flex items-start gap-3">
@@ -316,6 +343,7 @@ function EmptyInProgress() {
 function LibraryPage() {
   const [selected, setSelected] = useState(0);
   const tabs = ["My Courses", "In Progress"];
+  const [open, setOpen] = useState(false);
 
   const { data: courses } = useUserCourses();
 
@@ -431,6 +459,25 @@ function LibraryPage() {
           <EmptyInProgress />
         )}
       </div>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader className="text-left">
+            <DrawerTitle>Edit profile</DrawerTitle>
+            <DrawerDescription>
+              Make changes to your profile here. Click save when you're done.
+            </DrawerDescription>
+          </DrawerHeader>
+          <ProfileForm className="px-4" />
+          <DrawerFooter className="pt-2">
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

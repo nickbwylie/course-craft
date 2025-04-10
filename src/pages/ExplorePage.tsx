@@ -14,6 +14,7 @@ import {
   Star,
   PlusCircle,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
 import { Helmet } from "react-helmet-async";
+import { ScaledClick } from "@/animations/scaledClick";
 
 const months = [
   "January",
@@ -146,24 +148,28 @@ export const CustomCarousel: React.FC<{
         </div>
         <div className="flex gap-2">
           {showLeftArrow && (
-            <Button
-              onClick={scrollLeft}
-              variant="outline"
-              size="icon"
-              className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+            <ScaledClick whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                onClick={scrollLeft}
+                variant="outline"
+                size="icon"
+                className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+            </ScaledClick>
           )}
           {showRightArrow && (
-            <Button
-              onClick={scrollRight}
-              variant="outline"
-              size="icon"
-              className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+            <ScaledClick whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                onClick={scrollRight}
+                variant="outline"
+                size="icon"
+                className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </ScaledClick>
           )}
         </div>
       </div>
@@ -199,19 +205,6 @@ export const CustomCarousel: React.FC<{
                 scrollSnapAlign: "start",
               }}
             >
-              {/* <div
-                className={`absolute left-4 top-4 opacity-60 ${
-                  title === "Popular Courses" ? "right-4" : "left-4 top-2"
-                } w-full h-full bg-primary-light`}
-                style={{
-                  transform: `${
-                    title === "Popular Courses"
-                      ? "rotate(0deg)"
-                      : "rotate(0deg)"
-                  }`,
-                  display: "inline-block",
-                }}
-              /> */}
               <CourseCard {...video} />
             </div>
           ))}
@@ -586,14 +579,19 @@ export default function ExplorePage() {
                   </p>
 
                   <div>
-                    <Button
-                      onClick={() =>
-                        navigate(`/course/${featuredCourse.course_id}`)
-                      }
-                      className="bg-primary hover:bg-primary-light dark:bg-primary dark:hover:bg-primary-dark text-white"
+                    <ScaledClick
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      Start Learning{" "}
-                    </Button>
+                      <Button
+                        onClick={() =>
+                          navigate(`/course/${featuredCourse.course_id}`)
+                        }
+                        className="bg-primary hover:bg-primary-light dark:bg-primary dark:hover:bg-primary-dark text-white"
+                      >
+                        Start Learning{" "}
+                      </Button>
+                    </ScaledClick>
                   </div>
                 </div>
               </div>
