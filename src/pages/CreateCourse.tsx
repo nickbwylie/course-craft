@@ -65,7 +65,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTracking } from "@/hooks/useTracking";
 import { Helmet } from "react-helmet-async";
 import ReorderableVideoList from "@/myComponents/ReorderableVideoList";
-import { ScaledClick } from "@/animations/scaledClick";
+import { ScaledClick } from "@/animations/ScaledClick";
 
 // Form schema
 const courseFormSchema = z.object({

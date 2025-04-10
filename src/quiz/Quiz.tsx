@@ -16,7 +16,6 @@ import {
   Award,
   ArrowRight,
   RotateCcw,
-  Scale,
 } from "lucide-react";
 import { Progress } from "../components/ui/progress";
 import { ScaledClick } from "@/animations/ScaledClick";
