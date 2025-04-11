@@ -541,20 +541,6 @@ export default function ExplorePage() {
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                       alt={featuredCourse.course_title}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-center">
-                      <div className="w-full p-4">
-                        <Button
-                          size="sm"
-                          className="w-full bg-white text-black hover:bg-slate-100 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-                          onClick={() =>
-                            navigate(`/course/${featuredCourse.course_id}`)
-                          }
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          View Course
-                        </Button>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <div className="flex flex-col items-start flex-grow">
