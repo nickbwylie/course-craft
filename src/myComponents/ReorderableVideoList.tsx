@@ -98,6 +98,8 @@ export default function ReorderableVideoList({
     [onDelete]
   );
 
+  const videoIds = videos.map((video) => video.videoId);
+
   return (
     <div className="w-full rounded-lg bg-white dark:bg-gray-800 p-1">
       {videos.length === 0 ? (
@@ -107,9 +109,7 @@ export default function ReorderableVideoList({
       ) : (
         <Reorder.Group
           axis="y"
-          values={videos.map((video) => {
-            return video.videoId;
-          })}
+          values={videoIds}
           onReorder={onReorder}
           className="space-y-2"
         >

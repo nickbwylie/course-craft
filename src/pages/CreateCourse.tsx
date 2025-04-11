@@ -503,14 +503,14 @@ export default function CreateCoursePage() {
                           </h3>
                           {totalDuration && (
                             <div className="text-sm text-gray-600 dark:text-gray-400">
-                              Total Duration:{" "}
+                              Duration:{" "}
                               <span className="font-medium">
                                 {totalDuration}
                               </span>
                             </div>
                           )}
                         </div>
-                        <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                        <div className="space-y-3 max-h-[800px] overflow-y-auto">
                           <ReorderableVideoList
                             videos={courseVideos}
                             onReorder={handleReorderVideos}
