@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash, GripVertical } from "lucide-react";
 import {
@@ -26,8 +26,31 @@ const DraggableVideoItem = ({
   const y = useMotionValue(0);
   //const boxShadow = useRaisedShadow(y);
 
+  const iRef = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    const touchHandler: React.TouchEventHandler<HTMLElement> = (e) =>
+      e.preventDefault();
+
+    const iTag = iRef.current;
+
+    if (iTag) {
+      //@ts-ignore
+      iTag.addEventListener("touchstart", touchHandler, { passive: false });
+
+      return () => {
+        //@ts-ignore
+        iTag.removeEventListener("touchstart", touchHandler, {
+          passive: false,
+        });
+      };
+    }
+    return;
+  }, [iRef]);
+
   return (
     <Reorder.Item
+      ref={iRef}
       value={video}
       id={video.videoId}
       className="list-none w-full"
@@ -134,10 +157,7 @@ export default function ReorderableVideoList({
         </div>
       ) : (
         <div className="mb-2 text-xs text-gray-500 dark:text-gray-400 px-2">
-          <span className="flex items-center">
-            <GripVertical className="h-4 w-4 mr-1" />
-            Drag videos to reorder them
-          </span>
+          <span className="flex items-center">Drag videos to reorder them</span>
         </div>
       )}
 
