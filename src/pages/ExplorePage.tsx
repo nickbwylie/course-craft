@@ -30,6 +30,7 @@ import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
 import { Helmet } from "react-helmet-async";
 import { ScaledClick } from "@/animations/ScaledClick";
+import { DecorativeBackground, SunburstRays } from "./LandingPage";
 
 const months = [
   "January",
@@ -200,7 +201,7 @@ export const CustomCarousel: React.FC<{
           {videos.map((video, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-72 relative"
+              className="flex-shrink-0 w-80 relative"
               style={{
                 scrollSnapAlign: "start",
               }}
@@ -262,25 +263,24 @@ const CourseCard = React.memo(function CourseCard({
   return (
     <HoverCard openDelay={200} closeDelay={50}>
       <HoverCardTrigger
-        className="block w-full transition-all duration-300 border border-slate-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer "
+        className="block w-full relative transition-all duration-300 border-2 border-slate-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer "
         onClick={onViewCourse}
       >
         <div className="rounded-xl overflow-hidden">
           {/* Thumbnail with overlay */}
-          <div className="w-full relative pb-[56.25%] overflow-hidden bg-slate-100 dark:bg-gray-700">
+          <div className="w-full relative pb-[56.25%] overflow-hidden bg-slate-100 dark:bg-gray-700 mb-24 ">
             <img
               src={thumbnail_url}
               alt={course_title}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
-            <div className="absolute top-2 right-2 bg-black/75 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-md">
+            <div className="absolute top-2 right-2 bg-gray-800/75 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-md">
               {shortTime}
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-4">
+          <div className="p-4 pt-20 absolute bottom-0 left-0 right-0 rounded-b-xl bg-gradient-to-t from-gray-900 via-[#1F2A38]/100 to-transparent z-10">
             <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">
               {course_title}
             </h3>
@@ -306,12 +306,12 @@ const CourseCard = React.memo(function CourseCard({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 shadow-xl  dark:bg-gray-900 rounded-xl hidden sm:block z-50"
+        className="w-80 p-0 z-[9999] bg-white/80 dark:bg-gray-900/70 backdrop-blur-3xl border border-slate-200 dark:border-gray-700 shadow-xl dark:shadow-2xl dark:shadow-black/50 rounded-xl"
         side="right"
         align="center"
         sideOffset={5}
       >
-        <div className="p-5 space-y-3">
+        <div className="p-5 space-y-2">
           <h4 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
             {course_title}
           </h4>
@@ -491,7 +491,7 @@ export default function ExplorePage() {
     "Browse and discover custom learning paths created by the CourseCraft community. Find courses on any topic that matches your learning goals.";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 relative">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -515,7 +515,6 @@ export default function ExplorePage() {
         <meta property="twitter:title" content={pageTitle} />
         <meta property="twitter:description" content={pageDescription} />
       </Helmet>
-
       {/* Main content */}
       <div className="space-y-16">
         {/* Featured courses section */}
@@ -532,10 +531,10 @@ export default function ExplorePage() {
               <SkeletonFeatureCard />
             </div>
           ) : (
-            <div className="flex flex-col border border-slate-200 dark:border-gray-600 p-6 items-start dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="flex flex-col border border-slate-200 dark:border-gray-600 p-6 items-start dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
                 <div className="sm:min-w-60 sm:w-60 w-full">
-                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-md">
+                  <div className="relative aspect-video rounded-lg overflow-hidden shadow-md ">
                     <img
                       src={featuredCourse.thumbnail_url}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"

@@ -57,7 +57,7 @@ const videos = {
   },
 } as const;
 
-const SunburstRays = () => {
+export const SunburstRays = () => {
   return (
     <div
       aria-hidden="true"
@@ -68,7 +68,7 @@ const SunburstRays = () => {
   );
 };
 
-const DecorativeBackground = () => (
+export const DecorativeBackground = () => (
   <div className="absolute inset-0 opacity-5 pointer-events-none">
     <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-cyan-500 blur-[100px]" />
     <div className="absolute bottom-20 right-10 w-80 h-80 rounded-full bg-indigo-500 blur-[120px]" />
