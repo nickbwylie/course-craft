@@ -26,31 +26,31 @@ const DraggableVideoItem = ({
   const y = useMotionValue(0);
   //const boxShadow = useRaisedShadow(y);
 
-  const iRef = React.useRef<HTMLElement | null>(null);
+  // const iRef = React.useRef<HTMLElement | null>(null);
 
-  React.useEffect(() => {
-    const touchHandler: React.TouchEventHandler<HTMLElement> = (e) =>
-      e.preventDefault();
+  // React.useEffect(() => {
+  //   const touchHandler: React.TouchEventHandler<HTMLElement> = (e) =>
+  //     e.preventDefault();
 
-    const iTag = iRef.current;
+  //   const iTag = iRef.current;
 
-    if (iTag) {
-      //@ts-ignore
-      iTag.addEventListener("touchstart", touchHandler, { passive: false });
+  //   if (iTag) {
+  //     //@ts-ignore
+  //     iTag.addEventListener("touchstart", touchHandler, { passive: false });
 
-      return () => {
-        //@ts-ignore
-        iTag.removeEventListener("touchstart", touchHandler, {
-          passive: false,
-        });
-      };
-    }
-    return;
-  }, [iRef]);
+  //     return () => {
+  //       //@ts-ignore
+  //       iTag.removeEventListener("touchstart", touchHandler, {
+  //         passive: false,
+  //       });
+  //     };
+  //   }
+  //   return;
+  // }, [iRef]);
 
   return (
     <Reorder.Item
-      ref={iRef}
+      // ref={iRef}
       value={video}
       id={video.videoId}
       className="list-none w-full"
@@ -69,6 +69,7 @@ const DraggableVideoItem = ({
           e.preventDefault();
           dragControls.start(e);
         }}
+        style={{ touchAction: "none" }}
         className="flex p-3 items-center mb-2 border rounded-md bg-gray-50 dark:bg-gray-900 shadow-sm hover:shadow-md w-full cursor-grab active:cursor-grabbing"
       >
         <div className="w-20 h-14 relative flex-shrink-0 rounded overflow-hidden">
