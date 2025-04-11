@@ -40,6 +40,9 @@ export default {
         DEFAULT: "rgb(var(--color-border))",
         input: "rgb(var(--color-input))",
       },
+      backgroundImage: {
+        radial: "radial-gradient(var(--tw-gradient-stops))",
+      },
     },
   },
   fontFamily: {

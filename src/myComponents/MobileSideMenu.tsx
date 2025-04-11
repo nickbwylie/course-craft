@@ -30,7 +30,7 @@ import SupportModal from "./SupportModal";
 import "./SideNav.css";
 import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
-import ThemeToggle from "./ThemeToggle";
+// import ThemeToggle from "./ThemeToggle";
 import { useUserCourses } from "@/hooks/useUserCourses";
 
 interface MobileSideMenuProps {
@@ -170,7 +170,7 @@ export default function MobileSideMenu({
 
               <span className="ml-3 text-sm font-medium">Help</span>
             </div>
-            <ThemeToggle variant="ghost" size="sm" />
+            {/* <ThemeToggle variant="ghost" size="sm" /> */}
           </div>
           {user?.id ? (
             <Button

@@ -34,7 +34,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip.tsx";
 import SupportModal from "./SupportModal.tsx";
-import ThemeToggle from "./ThemeToggle.tsx";
 import { useDeleteCourse, useUserCourses } from "@/hooks/useUserCourses.ts";
 
 // Define navigation items including Settings
@@ -323,7 +322,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               <span className="ml-3 text-sm font-medium">Help</span>
             )}
           </div>
-          {delayedOpen && <ThemeToggle variant="ghost" size="sm" />}
+          {/* {delayedOpen && <ThemeToggle variant="ghost" size="sm" />} */}
         </div>
 
         {user?.id ? (
