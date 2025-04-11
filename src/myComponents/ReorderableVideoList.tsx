@@ -5,7 +5,12 @@ import {
   YoutubeVideoPreview,
   parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
-import { motion, Reorder, useDragControls } from "framer-motion";
+import {
+  motion,
+  Reorder,
+  useDragControls,
+  useMotionValue,
+} from "framer-motion";
 
 // Component for each draggable video item
 const DraggableVideoItem = ({
@@ -18,12 +23,17 @@ const DraggableVideoItem = ({
   onDelete: (videoId: string) => void;
 }) => {
   const dragControls = useDragControls();
+  const y = useMotionValue(0);
+  //const boxShadow = useRaisedShadow(y);
 
   return (
     <Reorder.Item
       value={video}
       id={video.videoId}
-      className="list-none w-full cursor-grab active:cursor-grabbing"
+      className="list-none w-full"
+      dragControls={dragControls}
+      dragListener={false} // Disable automatic drag detection
+      style={{ y }}
     >
       <motion.div
         layout
@@ -31,7 +41,12 @@ const DraggableVideoItem = ({
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className="flex p-3 gap-3 items-center mb-2 border rounded-md bg-gray-50 dark:bg-gray-900 shadow-sm hover:shadow-md w-full"
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          dragControls.start(e);
+        }}
+        className="flex p-3 items-center mb-2 border rounded-md bg-gray-50 dark:bg-gray-900 shadow-sm hover:shadow-md w-full cursor-grab active:cursor-grabbing"
       >
         <div className="w-20 h-14 relative flex-shrink-0 rounded overflow-hidden">
           <img
@@ -119,17 +134,18 @@ export default function ReorderableVideoList({
         </div>
       ) : (
         <div className="mb-2 text-xs text-gray-500 dark:text-gray-400 px-2">
-          <span className="flex items-center">Drag videos to reorder them</span>
+          <span className="flex items-center">
+            <GripVertical className="h-4 w-4 mr-1" />
+            Drag videos to reorder them
+          </span>
         </div>
       )}
 
       <Reorder.Group
         axis="y"
-        layoutScroll
         values={reorderedVideos}
         onReorder={handleReorder}
-        className="space-y-2 w-full max-h-[400px]"
-        style={{ overflowY: "auto", overflowX: "hidden" }}
+        className="space-y-2 w-full"
       >
         {reorderedVideos.map((video, index) => (
           <DraggableVideoItem
