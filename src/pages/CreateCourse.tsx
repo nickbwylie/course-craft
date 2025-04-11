@@ -510,7 +510,7 @@ export default function CreateCoursePage() {
                             </div>
                           )}
                         </div>
-                        <div className="space-y-3 max-h-[800px] overflow-y-auto">
+                        <div className="space-y-3 ">
                           <ReorderableVideoList
                             videos={courseVideos}
                             onReorder={handleReorderVideos}
