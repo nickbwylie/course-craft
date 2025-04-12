@@ -7,6 +7,7 @@ import {
   CheckCircle,
   HelpCircle,
   MonitorPlay,
+  Plus,
   Sparkles,
   Trash,
 } from "lucide-react";
@@ -470,12 +471,23 @@ export default function CreateCoursePage() {
                       />
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }}>
+                      {/* <Button
+                        onClick={handleAddVideo}
+                        disabled={isAddingVideo || !videoUrl.trim()}
+                        className="hidden sm:hidden bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
+                      >
+                        {isAddingVideo ? "Adding..." : "Add Video"}
+                      </Button> */}
                       <Button
                         onClick={handleAddVideo}
                         disabled={isAddingVideo || !videoUrl.trim()}
-                        className="bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
+                        className="flex bg-primary hover:bg-primary-dark dark:bg-primary dark:hover:bg-primary-dark text-white"
                       >
-                        {isAddingVideo ? "Adding..." : "Add Video"}
+                        {isAddingVideo ? (
+                          <Plus className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Plus className="w-4 h-4" />
+                        )}
                       </Button>
                     </motion.div>
                   </div>

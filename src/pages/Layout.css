@@ -23,20 +23,15 @@
 
 /* Disable scrolling on body when in mobile mode */
 @media (max-width: 767px) {
-  body {
-    overflow-y: auto;
-  }
-
-  /* Hide all other potential scrollbars */
   html,
-  div.overflow-x-hidden,
-  div.overflow-hidden {
-    overflow: hidden !important;
+  body {
+    height: 100%;
+    overflow: hidden;
   }
 
-  /* Make sure only the mobile content scrolls */
-  .mobile-content {
-    overflow-y: auto !important;
+  body {
+    display: flex;
+    flex-direction: column;
   }
 }
 

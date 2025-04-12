@@ -932,7 +932,7 @@ export default function ViewCourse() {
                 {isLoading || !currentVideo ? (
                   <Skeleton className="h-6 w-2/3 dark:bg-slate-700" />
                 ) : (
-                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mr-1">
                     {currentVideo.video_title}
                   </h2>
                 )}

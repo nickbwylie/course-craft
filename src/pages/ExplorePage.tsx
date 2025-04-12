@@ -10,11 +10,9 @@ import {
   TrendingUp,
   Plus,
   Calendar,
-  BookOpen,
   Star,
   PlusCircle,
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,8 +28,6 @@ import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
 import { Helmet } from "react-helmet-async";
 import { ScaledClick } from "@/animations/ScaledClick";
-import { DecorativeBackground, SunburstRays } from "./LandingPage";
-
 const months = [
   "January",
   "February",
@@ -619,7 +615,7 @@ export default function ExplorePage() {
               videos={newestCourses}
               title="New Courses"
               icon={<Plus className="text-[rgb(64,126,139)] h-6 w-6" />}
-              subtitle="Recently added learning paths"
+              subtitle="Recently added courses"
             />
           </section>
         ) : (

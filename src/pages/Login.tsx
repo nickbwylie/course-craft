@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { X } from "lucide-react";
+import { AlertCircle, X } from "lucide-react";
 import { supabase } from "@/supabaseconsant";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -118,7 +118,7 @@ function SignupForm({
   }
 
   return (
-    <div className="relative flex flex-col gap-6  w-[340px] sm:w-[400px]">
+    <div className="relative flex flex-col gap-6 w-[340px] sm:w-[400px]">
       <Button
         className="absolute top-2 right-2 h-8 w-8 p-0 rounded-full"
         variant="ghost"
@@ -141,7 +141,7 @@ function SignupForm({
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
@@ -149,6 +149,11 @@ function SignupForm({
                         type="email"
                         placeholder="you@example.com"
                         {...field}
+                        className={
+                          fieldState.error
+                            ? "border-rose-300 dark:border-rose-800"
+                            : ""
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -158,7 +163,7 @@ function SignupForm({
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
@@ -166,11 +171,16 @@ function SignupForm({
                         type="password"
                         placeholder="Create a password"
                         {...field}
+                        className={
+                          fieldState.error
+                            ? "border-rose-300 dark:border-rose-800"
+                            : ""
+                        }
                       />
                     </FormControl>
-                    <FormDescription>
+                    {/* <FormDescription>
                       Must be at least 8 characters
-                    </FormDescription>
+                    </FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -178,8 +188,14 @@ function SignupForm({
               <FormField
                 control={form.control}
                 name="terms"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                render={({ field, fieldState }) => (
+                  <FormItem
+                    className={`flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 ${
+                      fieldState.error
+                        ? "border-rose-300 dark:border-rose-800 bg-rose-50/50 dark:bg-rose-900/10"
+                        : ""
+                    }`}
+                  >
                     <FormControl>
                       <Checkbox
                         checked={field.value}
@@ -340,13 +356,6 @@ export default function LoginModal() {
                     <div className="grid gap-2">
                       <div className="flex items-center">
                         <Label htmlFor="password">Password</Label>
-                        <a
-                          href="#"
-                          className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                          onClick={() => forgotPassword()}
-                        >
-                          Forgot your password?
-                        </a>
                       </div>
                       <Input
                         id="password"
@@ -368,7 +377,7 @@ export default function LoginModal() {
                     Don&apos;t have an account?{" "}
                     <a
                       onClick={() => setShowSignUpModal(true)}
-                      className="underline underline-offset-4 cursor-pointer"
+                      className="underline underline-offset-4 cursor-pointer text-white"
                     >
                       Sign up
                     </a>

@@ -33,28 +33,6 @@ export default function BottomNav() {
   const { theme } = useTheme();
   const isDarkMode = theme === darkTheme;
 
-  // Update safe area inset
-  useEffect(() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-    const updateSafeArea = () => {
-      if (isIOS) {
-        setSafeAreaBottom(`max(env(safe-area-inset-bottom, 16px), 16px)`);
-      } else {
-        setSafeAreaBottom("16px");
-      }
-    };
-
-    updateSafeArea();
-    window.addEventListener("resize", updateSafeArea);
-    window.addEventListener("orientationchange", updateSafeArea);
-
-    return () => {
-      window.removeEventListener("resize", updateSafeArea);
-      window.removeEventListener("orientationchange", updateSafeArea);
-    };
-  }, []);
-
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
@@ -75,50 +53,33 @@ export default function BottomNav() {
         }}
       >
         <div className="flex items-center justify-between px-3">
-          {isCoursePage ? (
-            <Button
-              variant="ghost"
-              className={getButtonStyles(false)}
-              onClick={() => {
-                if (window.history.state && window.history.length > 1) {
-                  navigate(-1);
-                } else {
-                  navigate("/explore");
-                }
-              }}
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="text-sm font-medium mt-1">Back</span>
-            </Button>
-          ) : (
-            <>
-              {navItems.map((item) => {
-                if (item.requiresAuth && !user?.id) return null;
-                const isActive = item.href === location.pathname;
-                const Icon = item.icon;
+          <>
+            {navItems.map((item) => {
+              if (item.requiresAuth && !user?.id) return null;
+              const isActive = item.href === location.pathname;
+              const Icon = item.icon;
 
-                return (
-                  <Button
-                    key={item.href}
-                    variant="ghost"
-                    className={getButtonStyles(isActive)}
-                    onClick={() => {
-                      if (item.requiresAuth && !user?.id) {
-                        setShowLoginModal(true);
-                      } else {
-                        navigate(item.href);
-                      }
-                    }}
-                  >
-                    <Icon className="h-6 w-6" />
-                    <span className="text-sm font-medium mt-1 capitalize">
-                      {item.name}
-                    </span>
-                  </Button>
-                );
-              })}
-            </>
-          )}
+              return (
+                <Button
+                  key={item.href}
+                  variant="ghost"
+                  className={getButtonStyles(isActive)}
+                  onClick={() => {
+                    if (item.requiresAuth && !user?.id) {
+                      setShowLoginModal(true);
+                    } else {
+                      navigate(item.href);
+                    }
+                  }}
+                >
+                  <Icon className="h-6 w-6" />
+                  <span className="text-sm font-medium mt-1 capitalize">
+                    {item.name}
+                  </span>
+                </Button>
+              );
+            })}
+          </>
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" className={getButtonStyles(false)}>
