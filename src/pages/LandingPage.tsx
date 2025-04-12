@@ -165,7 +165,7 @@ const Step = ({
           </p>
           <div className="space-y-3">
             {details.map((item, index) => (
-              <div key={index} className="flex items-start">
+              <div key={index} className="flex items-center">
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-full ${gradientClasses.bgLight} mr-3 mt-0.5 flex-shrink-0`}
                 >
