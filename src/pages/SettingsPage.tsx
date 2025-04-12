@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/supabaseconsant";
+import { Helmet } from "react-helmet-async";
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -123,8 +124,31 @@ const SettingsPage: React.FC = () => {
     return null;
   }
 
+  const pageTitle = "Settings - CourseCraft";
+  const pageDescription = "Make changes to your app settings.";
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta name="keywords" content="course settings" />
+        <link rel="canonical" href="https://course-craft.tech/settings" />
+        <meta name="robots" content="noindex,nofollow" />{" "}
+        {/* Optional: if you want to keep the library private from search engines */}
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://course-craft.tech/settings" />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        {/* Twitter */}
+        <meta
+          property="twitter:url"
+          content="https://course-craft.tech/settings"
+        />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
+      </Helmet>
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <Settings className="h-6 w-6 text-cyan-600 dark:text-cyan-500" />

@@ -159,16 +159,16 @@ export default function MobileSideMenu({
       {/* Footer with auth buttons */}
       <div className="side-nav-footer dark:bg-gray-900">
         <div className="flex flex-col space-y-2">
-          <div className="flex justify-between items-center mb-2 px-2">
+          <div className="flex justify-between items-center mb-2 px-4">
             <div
-              className={`footer-button p-2 flex items-center cursor-pointer 
+              className={`footer-button p-2 px-0 flex items-center cursor-pointer 
            justify-start
            dark:text-slate-300`}
               onClick={() => setSupportModalOpen(true)}
             >
               <HelpCircle className="h-5 w-5 text-slate-600 dark:text-slate-400" />
 
-              <span className="ml-3 text-sm font-medium">Help</span>
+              <span className="ml-2 text-sm font-medium">Help</span>
             </div>
             {/* <ThemeToggle variant="ghost" size="sm" /> */}
           </div>
@@ -190,13 +190,13 @@ export default function MobileSideMenu({
             </Button>
           ) : (
             <Button
-              className="w-full gap-2 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]  text-white"
+              className="w-full gap-2 px-3 justify-start bg-[rgb(64,126,139)] hover:bg-[rgb(54,116,129)]  text-white"
               onClick={() => {
                 setShowLoginModal(true);
                 onClose();
               }}
             >
-              <LogIn className="h-4 w-4" />
+              <LogIn className="h-5 w-5" />
               <span>Sign in</span>
             </Button>
           )}

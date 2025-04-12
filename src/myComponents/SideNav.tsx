@@ -310,9 +310,9 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
 
       {/* Fixed Footer */}
       <div className="side-nav-footer dark:bg-gray-900">
-        <div className="flex justify-between items-center mb-2 px-2">
+        <div className="flex justify-between items-center mb-2 px-3">
           <div
-            className={`footer-button p-2 flex items-center cursor-pointer ${
+            className={`footer-button p-2 px-0 flex items-center cursor-pointer ${
               !delayedOpen ? "justify-center w-10" : "justify-start"
             } dark:text-slate-300`}
             onClick={() => setSupportModalOpen(true)}
@@ -330,7 +330,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
             variant="outline"
             className={`${
               delayedOpen
-                ? "w-full justify-start px-4"
+                ? "w-full justify-start p-2 "
                 : "w-full h-10 p-0 justify-center"
             } gap-2 border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-gray-800`}
             onClick={() => {
@@ -344,7 +344,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               });
             }}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5" />
             {delayedOpen && <span className="ml-1">Log Out</span>}
           </Button>
         ) : (
