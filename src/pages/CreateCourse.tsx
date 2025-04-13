@@ -59,7 +59,6 @@ import {
   getYouTubeVideoData,
   YoutubeVideoPreview,
   calculateTotalDuration,
-  parseYouTubeDuration,
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";

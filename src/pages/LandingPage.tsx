@@ -39,19 +39,19 @@ interface StepProps {
 const videos = {
   step1: {
     title: "Choose Your Videos",
-    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//addVideosDemo.mp4",
+    src: "https://firebasestorage.googleapis.com/v0/b/resume-backend-38c74.appspot.com/o/addVideosCompressed.mp4?alt=media&token=bc60169a-067d-47c1-9f4b-ad2d5598d484",
     description:
       "Choose from millions of educational videos across all subjects and skill levels.",
   },
   step2: {
     title: "AI Creates Your Course",
-    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//customize_course.mp4",
+    src: "https://firebasestorage.googleapis.com/v0/b/resume-backend-38c74.appspot.com/o/customizeCourseCompressed.mp4?alt=media&token=cf3226de-38c1-4c19-91fb-964f416fcc52",
     description:
       "Our AI processes content to create structured learning materials for you.",
   },
   step3: {
     title: "Learn Your Way",
-    src: "https://brfywfaoiqbynekircrv.supabase.co/storage/v1/object/public/landing.page.videos//view_course.mp4",
+    src: "https://firebasestorage.googleapis.com/v0/b/resume-backend-38c74.appspot.com/o/viewCourseCompressed.mp4?alt=media&token=0464760f-c4f7-470d-9eed-637038505673",
     description:
       "Learn at your own pace with interactive elements to reinforce your knowledge.",
   },
@@ -194,10 +194,11 @@ const Step = ({
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loop={step !== 1} // for example, step 1 plays once
+                loop={false} // for example, step 1 plays once
                 muted
                 playsInline
                 src={videoSrc}
+                preload="none"
                 poster={poster}
                 onEnded={onVideoEnded}
               >
