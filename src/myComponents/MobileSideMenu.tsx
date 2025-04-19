@@ -15,6 +15,7 @@ import {
   Trash,
   Moon,
   Sun,
+  Coins,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -32,6 +33,12 @@ import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
 // import ThemeToggle from "./ThemeToggle";
 import { useUserCourses } from "@/hooks/useUserCourses";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
+import { useUserInfo } from "@/hooks/useUserInfo";
 
 interface MobileSideMenuProps {
   onClose: () => void;
@@ -52,6 +59,7 @@ export default function MobileSideMenu({
   const { id } = useParams();
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === darkTheme;
+  const { data: userInfo } = useUserInfo();
 
   const deleteCourse = async (courseId: string) => {
     try {
@@ -170,6 +178,17 @@ export default function MobileSideMenu({
 
               <span className="ml-2 text-sm font-medium">Help</span>
             </div>
+            {userInfo && (
+              <div className="flex justify-center">
+                <div className="flex flex-row gap-1 items-center">
+                  <Coins className="h-5 w-5 text-amber-500 dark:text-amber-400/80" />
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1">
+                    {userInfo.credits}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* <ThemeToggle variant="ghost" size="sm" /> */}
           </div>
           {user?.id ? (

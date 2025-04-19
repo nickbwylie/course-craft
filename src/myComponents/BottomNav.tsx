@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { href, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -8,25 +8,37 @@ import {
   CirclePlus,
   Search,
   Menu,
-  ChevronLeft,
   Library,
   Settings,
   CircleDollarSign,
+  MoreHorizontal,
+  ChevronUp,
 } from "lucide-react";
 import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-const navItems = [
-  { name: "library", href: "/library", icon: Library, requiresAuth: true },
+// Primary navigation items (always visible)
+const primaryNavItems = [
   { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
+  { name: "library", href: "/library", icon: Library, requiresAuth: true },
   {
     name: "store",
     href: "/token_store",
     icon: CircleDollarSign,
     requiresAuth: false,
   },
+] as const;
+
+// Secondary navigation items (shown in More menu)
+const secondaryNavItems = [
   { name: "settings", href: "/settings", icon: Settings, requiresAuth: true },
+  // Add more secondary items here as needed
 ] as const;
 
 export default function BottomNav() {
@@ -34,9 +46,8 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const { user, setShowLoginModal } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isCoursePage = location.pathname.includes("/course/");
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
-  const [safeAreaBottom, setSafeAreaBottom] = useState("16px");
   const { theme } = useTheme();
   const isDarkMode = theme === darkTheme;
 
@@ -46,6 +57,21 @@ export default function BottomNav() {
         ? "text-cyan-700 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
         : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
+
+  const handleNavigation = (href: string, requiresAuth: boolean) => {
+    if (requiresAuth && !user?.id) {
+      setShowLoginModal(true);
+    } else {
+      navigate(href);
+      setIsMoreMenuOpen(false);
+    }
+  };
+
+  // Show sidebar for more extensive options
+  const openSidebar = () => {
+    setIsMobileMenuOpen(true);
+    setIsMoreMenuOpen(false);
+  };
 
   return (
     <>
@@ -60,40 +86,84 @@ export default function BottomNav() {
         }}
       >
         <div className="flex items-center justify-between px-3">
-          <>
-            {navItems.map((item) => {
-              if (item.requiresAuth && !user?.id) return null;
-              const isActive = item.href === location.pathname;
-              const Icon = item.icon;
+          {/* Primary Navigation Items */}
+          {primaryNavItems.map((item) => {
+            if (item.requiresAuth && !user?.id) return null;
+            const isActive = item.href === location.pathname;
+            const Icon = item.icon;
 
-              return (
-                <Button
-                  key={item.href}
-                  variant="ghost"
-                  className={getButtonStyles(isActive)}
-                  onClick={() => {
-                    if (item.requiresAuth && !user?.id) {
-                      setShowLoginModal(true);
-                    } else {
-                      navigate(item.href);
-                    }
-                  }}
-                >
-                  <Icon className="h-6 w-6" />
-                  <span className="text-sm font-medium mt-1 capitalize">
-                    {item.name}
-                  </span>
-                </Button>
-              );
-            })}
-          </>
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
+            return (
+              <Button
+                key={item.href}
+                variant="ghost"
+                className={getButtonStyles(isActive)}
+                onClick={() => handleNavigation(item.href, item.requiresAuth)}
+              >
+                <Icon className="h-6 w-6" />
+                <span className="text-sm font-medium mt-1 capitalize">
+                  {item.name}
+                </span>
+              </Button>
+            );
+          })}
+
+          {/* More Button with Popover */}
+          <Popover open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
+            <PopoverTrigger asChild>
               <Button variant="ghost" className={getButtonStyles(false)}>
-                <Menu className="h-6 w-6" />
+                {isMoreMenuOpen ? (
+                  <ChevronUp className="h-6 w-6" />
+                ) : (
+                  <MoreHorizontal className="h-6 w-6" />
+                )}
                 <span className="text-sm font-medium mt-1">More</span>
               </Button>
-            </SheetTrigger>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-48 p-2 bg-white dark:bg-slate-900 border-gray-200 dark:border-gray-700 rounded-t-lg rounded-b-none shadow-lg"
+              side="top"
+              align="end"
+            >
+              <div className="space-y-1">
+                {secondaryNavItems.map((item) => {
+                  if (item.requiresAuth && !user?.id) return null;
+                  const Icon = item.icon;
+                  const isActive = item.href === location.pathname;
+
+                  return (
+                    <Button
+                      key={item.href}
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        isActive
+                          ? "bg-gray-100 dark:bg-gray-800 text-cyan-700 dark:text-cyan-400"
+                          : "text-gray-600 dark:text-gray-300"
+                      }`}
+                      onClick={() =>
+                        handleNavigation(item.href, item.requiresAuth)
+                      }
+                    >
+                      <Icon className="h-5 w-5 mr-2" />
+                      <span className="capitalize">{item.name}</span>
+                    </Button>
+                  );
+                })}
+
+                {/* Full menu option */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-600 dark:text-gray-300"
+                  onClick={openSidebar}
+                >
+                  <Menu className="h-5 w-5 mr-2" />
+                  <span>Full Menu</span>
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Side Menu Sheet */}
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetContent
               side="right"
               className="p-0 w-[300px] dark:bg-slate-900 dark:border-slate-700"
@@ -109,7 +179,6 @@ export default function BottomNav() {
           </Sheet>
         </div>
       </div>
-      {/* Spacer to prevent content from being hidden behind the nav */}
     </>
   );
 }

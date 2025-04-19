@@ -586,7 +586,7 @@ export default function ViewCourse() {
             {/* Left Content Area - Video and Tabs */}
             <ResizablePanel
               defaultSize={isDesktop ? 65 : 100}
-              minSize={isDesktop ? 40 : 100}
+              minSize={isDesktop ? 50 : 100}
               className="relative"
             >
               <div className="px-8 pt-4 md:px-8 pb-8 relative">
@@ -639,7 +639,7 @@ export default function ViewCourse() {
                       {isLoading || !currentVideo ? (
                         <Skeleton className="h-10 w-10 rounded-full dark:bg-slate-700" />
                       ) : (
-                        <Avatar className="h-10 w-10 rounded-full border dark:border-slate-700 overflow-hidden bg-gray-100 dark:bg-gray-700">
+                        <Avatar className="flex-shrink-0 h-10 w-10 rounded-full border dark:border-slate-700 overflow-hidden bg-gray-100 dark:bg-gray-700">
                           <AvatarImage src={currentVideo?.channel_thumbnail} />
                           <AvatarFallback>
                             <div className="bg-gray-400 w-full h-full"></div>
@@ -778,7 +778,7 @@ export default function ViewCourse() {
                 />
                 <ResizablePanel
                   defaultSize={40}
-                  minSize={20}
+                  minSize={35}
                   className="hidden lg:flex flex-col border-l border-slate-200 dark:border-slate-700"
                 >
                   <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">

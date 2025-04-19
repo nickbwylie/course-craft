@@ -15,7 +15,8 @@ import {
   CreditCard,
   Coins,
   CoinsIcon,
-  CircleDollarSign, // Added Settings icon
+  CircleDollarSign,
+  Search, // Added Settings icon
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
@@ -43,28 +44,13 @@ import { useUserInfo } from "@/hooks/useUserInfo.ts";
 
 // Define navigation items including Settings
 const navItems = [
-  {
-    name: "library",
-    href: "/library",
-    icon: Library,
-    requiresAuth: true,
-  },
-  {
-    name: "explore",
-    href: "/explore",
-    icon: Compass,
-    requiresAuth: false,
-  },
-  {
-    name: "create",
-    href: "/create",
-    icon: CirclePlus,
-    requiresAuth: false,
-  },
+  { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
+  { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
+  { name: "library", href: "/library", icon: Library, requiresAuth: true },
   {
     name: "store",
     href: "/token_store",
-    icon: CircleDollarSign, // Import this from lucide-react
+    icon: CircleDollarSign,
     requiresAuth: false,
   },
 ] as const;
