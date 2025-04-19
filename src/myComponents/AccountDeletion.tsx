@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash2 } from "lucide-react";
+import { AlertTriangle, Trash, Trash2 } from "lucide-react";
 
 const AccountDeletion: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -106,6 +106,10 @@ const AccountDeletion: React.FC = () => {
 
   return (
     <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/20">
+      <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-200 flex flex-row gap-2 items-center">
+        <AlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400" />{" "}
+        Danger Zone
+      </h2>
       <div className="flex items-start space-x-4">
         <div className="p-2 bg-red-100 dark:bg-red-800 rounded-full">
           <Trash2 className="h-6 w-6 text-red-600 dark:text-red-300" />

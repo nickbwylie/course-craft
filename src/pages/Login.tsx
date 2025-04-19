@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,6 +29,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { useTracking } from "@/hooks/useTracking";
+import ConfirmEmailModal from "@/myComponents/ConfirmEmailModal";
+import { SERVER } from "@/constants";
 
 // Form validation schema
 const formSchema = z.object({
@@ -60,6 +62,37 @@ function SignupForm({
     },
   });
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const userId = useRef<string>("");
+
+  const addUserToDatabase = async (userId: string, email: string) => {
+    try {
+      const response = await fetch(`${SERVER}/create_stripe_user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, email }),
+      });
+
+      if (!response.ok) {
+        console.error("Error creating user record:", response.status);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating user record:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
 
@@ -84,23 +117,14 @@ function SignupForm({
       }
 
       if (data?.user?.id) {
-        // Create user record in the users table
-        await supabase.from("users").insert({
-          id: data.user.id,
-          email: values.email,
-          created_at: new Date().toISOString(),
-          name: "",
-        });
+        userId.current = data.user.id;
+        setShowConfirmModal(true);
 
-        toast({
-          title: "Account Created",
-          description: "Your account has been successfully created.",
-          variant: "success",
-        });
-
-        // Switch back to login view
-        setShowLoginModal(false);
-
+        // toast({
+        //   title: "Account Created",
+        //   description: "Your account has been successfully created.",
+        //   variant: "success",
+        // });
         trackEvent("signup", data.user.id, {
           email: values.email,
         });
@@ -115,6 +139,34 @@ function SignupForm({
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (showConfirmModal) {
+    return (
+      <ConfirmEmailModal
+        email={form.getValues().email}
+        password={form.getValues().password}
+        showConfirmModal={showConfirmModal}
+        setShowConfirmModal={setShowConfirmModal}
+        onSuccessfulVerification={async () => {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: form.getValues().email,
+            password: form.getValues().password,
+          });
+          addUserToDatabase(userId.current, form.getValues().email);
+          // Handle successful verification (optional)
+          setShowConfirmModal(false);
+          setShowLoginModal(false);
+          setShowSignUpModal(false);
+          toast({
+            title: "Email Verified",
+            description: "Your email has been successfully verified.",
+            variant: "success",
+          });
+          trackEvent("email_verified", form.getValues().email, {});
+        }}
+      />
+    );
   }
 
   return (
@@ -260,16 +312,16 @@ export default function LoginModal() {
     return <></>;
   }
 
-  async function forgotPassword() {
-    try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+  // async function forgotPassword() {
+  //   try {
+  //     const { data, error } = await supabase.auth.resetPasswordForEmail(email);
 
-      console.log(data);
-      console.log(error);
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  //     console.log(data);
+  //     console.log(error);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
   async function signInWithEmail() {
     const { data, error } = await supabase.auth.signInWithPassword({

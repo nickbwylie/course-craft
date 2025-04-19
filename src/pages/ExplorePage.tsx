@@ -527,7 +527,7 @@ export default function ExplorePage() {
               <SkeletonFeatureCard />
             </div>
           ) : (
-            <div className="flex flex-col border border-slate-200 dark:border-gray-600 p-6 items-start dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="flex flex-col border border-slate-200 p-6 items-start dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
               <div className="flex flex-col sm:flex-row w-full gap-8 items-start">
                 <div className="sm:min-w-60 sm:w-60 w-full">
                   <div className="relative aspect-video rounded-lg overflow-hidden shadow-md ">

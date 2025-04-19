@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { href, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   Library,
   Settings,
+  CircleDollarSign,
 } from "lucide-react";
 import { useTheme } from "@/styles/useTheme";
 import { lightTheme, darkTheme } from "@/styles/myTheme";
@@ -19,6 +20,12 @@ const navItems = [
   { name: "library", href: "/library", icon: Library, requiresAuth: true },
   { name: "explore", href: "/explore", icon: Search, requiresAuth: false },
   { name: "create", href: "/create", icon: CirclePlus, requiresAuth: false },
+  {
+    name: "store",
+    href: "/token_store",
+    icon: CircleDollarSign,
+    requiresAuth: false,
+  },
   { name: "settings", href: "/settings", icon: Settings, requiresAuth: true },
 ] as const;
 

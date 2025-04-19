@@ -38,11 +38,10 @@ export async function createCourse(courseRequest: AddCourseRequest) {
       return;
     }
     token = data.session?.access_token || "";
-    console.log("Refreshed Token:", token);
   }
 
   try {
-    const res = await fetch(`${SERVER}/create_course`, {
+    const res = await fetch(`${SERVER}/create_course_embed`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +51,10 @@ export async function createCourse(courseRequest: AddCourseRequest) {
     });
 
     const data = await res.json();
-    console.log("data returned", data);
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
 
     if (!res.ok) {
       throw new Error(data.message || "Failed to create course");
@@ -60,7 +62,9 @@ export async function createCourse(courseRequest: AddCourseRequest) {
 
     return data;
   } catch (e: any) {
-    console.error("Error creating course:", e);
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
     throw new Error("Failed to create course");
   }
 }
@@ -163,5 +167,39 @@ export async function getYouTubeVideoData(
   } catch (e) {
     console.error(e);
     return null;
+  }
+}
+
+export async function getCourseTitleDescriptionFromYoutubeVideos(
+  videoInfo: { channel: string; title: string }[]
+): Promise<{
+  title: string;
+  description: string;
+} | null> {
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+  const token = session?.access_token || " ";
+
+  try {
+    const res = await fetch(`${SERVER}/generate_title_description`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Include JWT
+      },
+      body: JSON.stringify({ videoInfo: videoInfo }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    return null;
+  } catch (e: any) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+    throw new Error("Failed to create course");
   }
 }

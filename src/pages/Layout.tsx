@@ -8,6 +8,7 @@ import { ToastProvider, ToastViewport } from "../components/ui/toast.tsx";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 import { TooltipProvider } from "@/components/ui/tooltip.tsx";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Layout = () => {
   const [navOpen, setNavOpen] = useState(true);
@@ -17,7 +18,7 @@ const Layout = () => {
   const { pathname } = useLocation();
   const contentRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
-
+  const queryClient = useQueryClient();
   // Check if screen is mobile
   useEffect(() => {
     const checkIfMobile = () => {
@@ -117,11 +118,15 @@ const Layout = () => {
       };
     }
   }, [isMobile, handleScroll]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+  }, []);
   return (
     <div style={{ minHeight: "100vh", width: "100%" }}>
       <TooltipProvider>
         <ToastProvider>
-          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-gray-900 ">
+          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-slate-900 ">
             {!user?.id && <LoginModal />}
 
             {/* Show side navigation on desktop */}
@@ -152,7 +157,7 @@ const Layout = () => {
             ) : (
               /* Desktop layout */
               <div
-                className={`w-full rounded-2xl bg-background dark:bg-gray-800 flex-1 ${
+                className={`w-full rounded-2xl bg-background dark:bg-slate-900 flex-1 ${
                   navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
                 }`}
                 style={{

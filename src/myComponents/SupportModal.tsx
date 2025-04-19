@@ -135,9 +135,7 @@ function SupportModal({
               Free Access
             </h3>
             <p className="text-sm text-slate-600 dark:text-gray-400">
-              CourseCraft is completely free to use. Create an unlimited number
-              of courses, learn at your own pace, and share your knowledge with
-              others.
+              When you create your account you get two courses for free.
             </p>
           </div>
         </div>

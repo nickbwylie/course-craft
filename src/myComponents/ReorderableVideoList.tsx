@@ -151,7 +151,7 @@ export default function ReorderableVideoList({
   );
 
   return (
-    <div className="w-full rounded-lg bg-white dark:bg-gray-800">
+    <div className="w-full rounded-lg bg-white dark:bg-gray-900">
       {videos.length === 0 ? (
         <div className="text-center p-6 text-gray-500 dark:text-gray-400 text-sm border border-dashed border-gray-300 dark:border-gray-700 rounded-md">
           No videos added yet. Add videos using the form above.

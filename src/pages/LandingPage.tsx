@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Pen, Sun, Tv, X, Play, Expand, Pause } from "lucide-react";
-import { FaFeatherAlt } from "react-icons/fa";
+import { FaBuffer, FaFeatherAlt } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import AboutUsModal from "@/myComponents/AboutUsModal";
 import createPageScreen from "../assets/create_course.png";

@@ -11,7 +11,11 @@ import {
   Trash,
   Library,
   ArrowRightToLine,
-  Settings, // Added Settings icon
+  Settings,
+  CreditCard,
+  Coins,
+  CoinsIcon,
+  CircleDollarSign, // Added Settings icon
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import "./SideNav.css";
@@ -27,7 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
-import { FaFeatherAlt, FaHammer } from "react-icons/fa";
+import { FaFeatherAlt, FaHammer, FaMoneyBill } from "react-icons/fa";
 import {
   Tooltip,
   TooltipContent,
@@ -35,6 +39,7 @@ import {
 } from "@/components/ui/tooltip.tsx";
 import SupportModal from "./SupportModal.tsx";
 import { useDeleteCourse, useUserCourses } from "@/hooks/useUserCourses.ts";
+import { useUserInfo } from "@/hooks/useUserInfo.ts";
 
 // Define navigation items including Settings
 const navItems = [
@@ -54,6 +59,12 @@ const navItems = [
     name: "create",
     href: "/create",
     icon: CirclePlus,
+    requiresAuth: false,
+  },
+  {
+    name: "store",
+    href: "/token_store",
+    icon: CircleDollarSign, // Import this from lucide-react
     requiresAuth: false,
   },
 ] as const;
@@ -76,6 +87,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
   const { id } = useParams();
   const [supportModalOpen, setSupportModalOpen] = useState(false);
   const { data: courses } = useUserCourses();
+  const { data: userInfo } = useUserInfo();
   const deleteUserCourse = useDeleteCourse();
 
   const deleteCourse = async (courseId: string) => {
@@ -119,10 +131,10 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
     <div
       className={`side-nav ${
         navOpen ? "open" : "closed"
-      } dark:bg-gray-900 dark:border-gray-700`}
+      } dark:bg-slate-900 dark:border-slate-700`}
     >
       {/* Fixed Header */}
-      <div className="side-nav-header dark:bg-gray-900">
+      <div className="side-nav-header dark:bg-slate-900">
         {navOpen ? (
           <div className="flex items-center justify-between w-full">
             <div
@@ -141,7 +153,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-2 action-button justify-self-end rounded-full dark:hover:bg-gray-800"
+                  className="p-2 action-button justify-self-end rounded-full dark:hover:bg-slate-800"
                   onClick={() => setNavOpen(false)}
                 >
                   <ArrowLeftToLine size={18} className="bg-transparent" />
@@ -170,7 +182,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="p-2 action-button rounded-full dark:hover:bg-gray-800"
+                  className="p-2 action-button rounded-full dark:hover:bg-slate-800"
                   onClick={() => setNavOpen(true)}
                 >
                   <ArrowRightToLine size={18} className="bg-transparent" />
@@ -190,26 +202,41 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
       {/* Scrollable Content Area */}
       <div className="side-nav-content">
         {/* Main navigation */}
-        <div className="space-y-1 pb-2">
+        <div className="space-y-1 pb-2 ">
           {navItems.map((item) => {
             if (item.requiresAuth && !user?.id) return null;
             const isActive = item.href === url;
 
             return (
-              <div
-                key={item.href}
-                className={`nav-item ${isActive ? "active" : ""} ${
-                  !delayedOpen ? "justify-center" : ""
-                } dark:hover:bg-gray-800 dark:text-slate-300`}
-                onClick={() => navigate(item.href)}
-              >
-                <item.icon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                {delayedOpen && (
-                  <span className="ml-3 text-sm font-medium capitalize">
-                    {item.name}
-                  </span>
-                )}
-              </div>
+              <Tooltip key={item.href}>
+                <TooltipTrigger asChild>
+                  <div
+                    className={`nav-item ${isActive ? "active" : ""} ${
+                      !delayedOpen ? "justify-center" : ""
+                    } dark:hover:bg-slate-800 dark:text-slate-300`}
+                    onClick={() => navigate(item.href)}
+                  >
+                    <item.icon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                    {delayedOpen && (
+                      <span className="ml-3 text-sm font-medium capitalize">
+                        {item.name}
+                      </span>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="-mt-2 bg-slate-800 text-white z-50"
+                  style={{
+                    width: !delayedOpen ? "auto" : "0",
+                    opacity: !delayedOpen ? 1 : 0,
+                    zIndex: 100000000,
+                    // transition: "width 0.2s ease, opacity 0.2s ease",
+                  }}
+                >
+                  <p>{item.name}</p>
+                </TooltipContent>
+              </Tooltip>
             );
           })}
 
@@ -218,7 +245,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
             <div
               className={`nav-item ${url === "/settings" ? "active" : ""} ${
                 !delayedOpen ? "justify-center" : ""
-              } dark:hover:bg-gray-800 dark:text-slate-300`}
+              } dark:hover:bg-slate-800 dark:text-slate-300`}
               onClick={() => navigate("/settings")}
             >
               <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
@@ -234,7 +261,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
         {/* My Courses Section */}
         {delayedOpen && courses && courses.length > 0 && (
           <div className="mt-4">
-            <Separator className="my-4 dark:bg-gray-700" />
+            <Separator className="my-4 dark:bg-slate-700" />
             <div className="mb-2 px-2">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 My Courses
@@ -249,7 +276,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                       key={course.course_id}
                       className={`course-item cursor-pointer p-2 relative ${
                         isActive ? "active" : ""
-                      } dark:hover:bg-gray-800 dark:text-slate-300 animate-fade-in-up`}
+                      } dark:hover:bg-slate-800 dark:text-slate-300 animate-fade-in-up`}
                       style={{
                         animationDelay: `${index * 30}ms`,
                         animationFillMode: "both",
@@ -273,14 +300,14 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
                               hoveredCourse === course.course_id
                                 ? "opacity-100"
                                 : "opacity-0"
-                            } dark:hover:bg-gray-700`}
+                            } dark:hover:bg-slate-700`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent
-                          className="p-0 w-32 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700"
+                          className="p-0 w-32 shadow-md bg-white dark:bg-slate-800 dark:border-slate-700"
                           align="end"
                           side="right"
                           sideOffset={5}
@@ -309,7 +336,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
       </div>
 
       {/* Fixed Footer */}
-      <div className="side-nav-footer dark:bg-gray-900">
+      <div className="side-nav-footer dark:bg-slate-900">
         <div className="flex justify-between items-center mb-2 px-3">
           <div
             className={`footer-button p-2 px-0 flex items-center cursor-pointer ${
@@ -322,7 +349,26 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               <span className="ml-3 text-sm font-medium">Help</span>
             )}
           </div>
-          {/* {delayedOpen && <ThemeToggle variant="ghost" size="sm" />} */}
+          {delayedOpen && userInfo && (
+            <div className="flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex flex-row gap-1 items-center">
+                    <Coins className="h-5 w-5 text-amber-500 dark:text-amber-400/80" />
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1">
+                      {userInfo.credits}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="z-50 bg-slate-800 text-white"
+                >
+                  <p>Your Credits</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
         </div>
 
         {user?.id ? (
@@ -332,7 +378,7 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
               delayedOpen
                 ? "w-full justify-start p-2 "
                 : "w-full h-10 p-0 justify-center"
-            } gap-2 border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-gray-800`}
+            } gap-2 border-slate-300 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800`}
             onClick={() => {
               if (url === "/dashboard") {
                 navigate("/");

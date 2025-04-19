@@ -4,7 +4,6 @@ import CreateCourse from "./pages/CreateCourse";
 import ViewCourse from "./pages/ViewCourse";
 import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/Layout";
-import Dashboard from "./pages/Dashboard";
 import { useEffect, useMemo } from "react";
 import LibraryPage from "./pages/LibraryPage";
 import { ThemeProvider } from "./styles/useTheme"; // Import ThemeProvider
@@ -19,6 +18,9 @@ import SettingsPage from "./pages/SettingsPage";
 import { useTracking } from "./hooks/useTracking";
 import { useAuth } from "./contexts/AuthContext";
 import { HelmetProvider } from "react-helmet-async";
+import SubscriptionPage from "./pages/Subscription";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import CheckoutWrapper from "./pages/CheckoutForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +50,14 @@ persistQueryClient({
 
 export default function App() {
   const { trackEvent } = useTracking();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  const paypalInitialOptions = {
+    clientId:
+      "AV49t3oB86cKoxzNEeeUrFkw96P-qgmgJT37FVtAllS9zafljeru81E5UC_UDGdZLMrpbnRAKYjWxxB9", // Replace with your actual client ID
+    currency: "USD",
+    intent: "capture",
+  };
 
   useEffect(() => {
     trackEvent("website visit", user?.id, {
@@ -65,45 +74,48 @@ export default function App() {
       page_title: document.title,
     });
     const authRoutes = ["/library", "/settings"];
-    if (!user && authRoutes.includes(window.location.pathname)) {
+    if (!user && !isLoading && authRoutes.includes(window.location.pathname)) {
       window.location.href = "/explore";
     }
-  }, [window.location.pathname, trackEvent, user?.id]);
+  }, [window.location.pathname, trackEvent, user?.id, isLoading]);
 
   return useMemo(
     () => (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <HelmetProvider>
-            <BrowserRouter>
-              {/* Wrap Routes with AnimatedLayout for page transitions */}
+        <PayPalScriptProvider options={paypalInitialOptions}>
+          <ThemeProvider>
+            <HelmetProvider>
+              <BrowserRouter>
+                {/* Wrap Routes with AnimatedLayout for page transitions */}
 
-              <Routes>
-                {/* Home Page Route */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsOfService />} />
+                <Routes>
+                  {/* Home Page Route */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
 
-                {/* Routes that require the side navigation */}
-                <Route element={<Layout />}>
-                  <Route
-                    path="course/:id"
-                    element={<ViewCourse key={window.location.pathname} />}
-                  />
+                  {/* Routes that require the side navigation */}
+                  <Route element={<Layout />}>
+                    <Route path="course/:id" element={<ViewCourse />} />
 
-                  {/* Explore Page Route */}
-                  <Route path="/explore" element={<ExplorePage />} />
+                    {/* Explore Page Route */}
+                    <Route path="/explore" element={<ExplorePage />} />
 
-                  {/* Fallback Route for 404 or unmatched paths */}
-                  <Route path="/create" element={<CreateCourse />} />
+                    {/* Fallback Route for 404 or unmatched paths */}
+                    <Route path="/create" element={<CreateCourse />} />
 
-                  <Route path="/library" element={<LibraryPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </HelmetProvider>
-        </ThemeProvider>
+                    <Route path="/library" element={<LibraryPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+
+                    <Route path="/token_store" element={<SubscriptionPage />} />
+
+                    {/* <Route path="/checkout" element={<CheckoutWrapper />} /> */}
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+            </HelmetProvider>
+          </ThemeProvider>
+        </PayPalScriptProvider>
       </QueryClientProvider>
     ),
     []

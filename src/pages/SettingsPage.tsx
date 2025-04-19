@@ -128,7 +128,7 @@ const SettingsPage: React.FC = () => {
   const pageDescription = "Make changes to your app settings.";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 relative">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -160,14 +160,10 @@ const SettingsPage: React.FC = () => {
       <div className="space-y-8">
         {/* Password Section */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Key className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-              Change Password
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+            <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100 flex flex-row gap-2 items-center">
+              <Key className="w-5 h-5" /> Change Password
             </h2>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <form onSubmit={handlePasswordUpdate} className="space-y-4">
               {/* Note: Current password might not be needed if using Supabase magic links */}
               <div className="space-y-2">
@@ -178,7 +174,7 @@ const SettingsPage: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder="Enter your current password"
-                  className="bg-white dark:bg-gray-700"
+                  className="bg-white dark:bg-slate-700"
                 />
               </div>
 
@@ -190,7 +186,7 @@ const SettingsPage: React.FC = () => {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter your new password"
-                  className="bg-white dark:bg-gray-700"
+                  className="bg-white dark:bg-slate-700"
                 />
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Must be at least 8 characters
@@ -205,7 +201,7 @@ const SettingsPage: React.FC = () => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your new password"
-                  className="bg-white dark:bg-gray-700"
+                  className="bg-white dark:bg-slate-700"
                 />
               </div>
 
@@ -229,14 +225,13 @@ const SettingsPage: React.FC = () => {
 
         {/* Email Preferences */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Bell className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-              Email Preferences
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+            <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100 flex flex-row gap-2 items-center">
+              <Bell className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                Email Preferences
+              </h2>
             </h2>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -255,9 +250,14 @@ const SettingsPage: React.FC = () => {
                 />
               </div>
 
-              <Separator className="my-4 dark:bg-gray-700" />
+              <Separator className="my-4 dark:bg-slate-700" />
 
-              <div className="flex justify-end">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    {user?.email}
+                  </p>
+                </div>
                 <Button
                   onClick={handlePreferencesUpdate}
                   disabled={isUpdatingPreferences}
@@ -272,13 +272,6 @@ const SettingsPage: React.FC = () => {
 
         {/* Account Deletion */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400" />
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-              Danger Zone
-            </h2>
-          </div>
-
           <AccountDeletion />
         </div>
       </div>

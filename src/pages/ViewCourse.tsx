@@ -40,6 +40,8 @@ import { SpeechButton } from "@/myComponents/Speak.tsx";
 import { useAuth } from "@/contexts/AuthContext.tsx";
 import { Helmet } from "react-helmet-async";
 import { ScaledClick } from "@/animations/ScaledClick";
+import YouTubeCourseVideo from "@/myComponents/YoutubeCourseVideo.tsx";
+import { useMediaQuery } from "react-responsive";
 
 export interface CourseVideo {
   course_description: string;
@@ -463,6 +465,8 @@ export default function ViewCourse() {
     currentVideo?.course_description ||
     "Learn at your own pace with structured content, summaries, and knowledge checks.";
 
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+
   return (
     <>
       <div className="flex flex-col max-w-7xl mx-auto min-h-screen">
@@ -600,26 +604,27 @@ export default function ViewCourse() {
         </div>
 
         {/* Main Content Area with Resizable Panels */}
-        <div className="flex-1 hidden lg:block">
+        <div className="flex-1 lg:block">
           <ResizablePanelGroup
             direction="horizontal"
             className="min-h-[calc(100vh-145px)]"
           >
             {/* Left Content Area - Video and Tabs */}
-            <ResizablePanel defaultSize={65} minSize={40} className="relative">
+            <ResizablePanel
+              defaultSize={isDesktop ? 65 : 100}
+              minSize={isDesktop ? 40 : 100}
+              className="relative"
+            >
               <div className="px-8 pt-4 md:px-8 pb-8 relative">
                 {/* Video Container */}
                 <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
                   {isLoading || !currentVideo ? (
                     <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
                   ) : (
-                    <iframe
-                      className="w-full h-full"
-                      src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
-                      title={currentVideo.video_title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                    ></iframe>
+                    <YouTubeCourseVideo
+                      key={`desktop-${currentVideo.youtube_id}`}
+                      videoId={currentVideo.youtube_id}
+                    />
                   )}
                 </div>
 
@@ -791,298 +796,129 @@ export default function ViewCourse() {
             </ResizablePanel>
 
             {/* Resizable Handle */}
-            <ResizableHandle withHandle />
+            {isDesktop && (
+              <>
+                <ResizableHandle
+                  withHandle
+                  className="hidden lg:flex h-screen items-center justify-center"
+                />
+                <ResizablePanel
+                  defaultSize={40}
+                  minSize={20}
+                  className="hidden lg:flex flex-col border-l border-slate-200 dark:border-slate-700"
+                >
+                  <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">
+                    <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                      <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
+                        Course Content
+                      </h2>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {courseVideos
+                          ? `${courseVideos.length} videos`
+                          : "Loading..."}
+                      </p>
+                    </div>
 
-            {/* Right Sidebar - Course Modules */}
-            <ResizablePanel defaultSize={35} minSize={20}>
-              <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">
-                <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                  <h2 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
-                    Course Content
-                  </h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    {courseVideos
-                      ? `${courseVideos.length} videos`
-                      : "Loading..."}
-                  </p>
-                </div>
-
-                <ScrollArea className="flex-1">
-                  <div className="p-4">
-                    {isLoading ? (
-                      Array(5)
-                        .fill(0)
-                        .map((_, i) => (
-                          <div key={i} className="mb-4">
-                            <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
-                          </div>
-                        ))
-                    ) : (
-                      <div className="space-y-2">
-                        {courseVideos?.map((courseVideo, index) => (
-                          <div
-                            key={index}
-                            onClick={() => setSelectedCourse(index)}
-                            className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                              index === selectedCourse
-                                ? "bg-[#407e8b14] dark:bg-primary/20"
-                                : "hover:bg-slate-50 dark:hover:bg-slate-800"
-                            }`}
-                          >
-                            <div className="flex items-start">
-                              <div className="flex-shrink-0 mr-3">
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center">
-                                  {index < selectedCourse ? (
-                                    <CheckCircle className="h-5 w-5 text-primary/50 dark:text-primary/50" />
-                                  ) : index === selectedCourse ? (
-                                    <div className="bg-primary/40 dark:bg-primary/40 rounded-full p-1.5">
-                                      <Play className="h-4 w-4 text-primary dark:primary/10 fill-primary/70 dark:fill-primary" />
+                    <ScrollArea className="flex-1">
+                      <div className="p-4">
+                        {isLoading ? (
+                          Array(5)
+                            .fill(0)
+                            .map((_, i) => (
+                              <div key={i} className="mb-4">
+                                <Skeleton className="h-16 w-full mb-2 dark:bg-slate-700" />
+                              </div>
+                            ))
+                        ) : (
+                          <div className="space-y-2">
+                            {courseVideos?.map((courseVideo, index) => (
+                              <div
+                                key={index}
+                                onClick={() => setSelectedCourse(index)}
+                                className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                                  index === selectedCourse
+                                    ? "bg-[#407e8b14] dark:bg-primary/20"
+                                    : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                                }`}
+                              >
+                                <div className="flex items-start">
+                                  <div className="flex-shrink-0 mr-3">
+                                    <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                                      {index < selectedCourse ? (
+                                        <CheckCircle className="h-5 w-5 text-primary/50 dark:text-primary/50" />
+                                      ) : index === selectedCourse ? (
+                                        <div className="bg-primary/40 dark:bg-primary/40 rounded-full p-1.5">
+                                          <Play className="h-4 w-4 text-primary dark:primary/10 fill-primary/70 dark:fill-primary" />
+                                        </div>
+                                      ) : (
+                                        <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                          {index + 1}
+                                        </span>
+                                      )}
                                     </div>
-                                  ) : (
-                                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
-                                      {index + 1}
-                                    </span>
-                                  )}
+                                  </div>
+                                  <div className="flex-1">
+                                    <h4
+                                      className={`text-sm ${
+                                        index === selectedCourse
+                                          ? "font-medium text-slate-800 dark:text-slate-200"
+                                          : "text-slate-700 dark:text-slate-300"
+                                      } line-clamp-2`}
+                                    >
+                                      {courseVideo.video_title}
+                                    </h4>
+                                    <div className="flex items-center mt-1">
+                                      <Tv className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
+                                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                                        {parseYouTubeDuration(
+                                          courseVideo.video_duration
+                                        )}
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="flex-1">
-                                <h4
-                                  className={`text-sm ${
-                                    index === selectedCourse
-                                      ? "font-medium text-slate-800 dark:text-slate-200"
-                                      : "text-slate-700 dark:text-slate-300"
-                                  } line-clamp-2`}
-                                >
-                                  {courseVideo.video_title}
-                                </h4>
-                                <div className="flex items-center mt-1">
-                                  <Tv className="h-3 w-3 text-slate-400 dark:text-slate-500 mr-1" />
-                                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                                    {parseYouTubeDuration(
-                                      courseVideo.video_duration
-                                    )}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
 
-                            {index === selectedCourse && (
-                              <div className="mt-2 pl-11">
-                                <div className="flex gap-2">
-                                  <Badge
-                                    variant={
-                                      showSummary ? "default" : "outline"
-                                    }
-                                    className={`text-xs cursor-default ${
-                                      showSummary
-                                        ? "bg-primary/70 text-white"
-                                        : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
-                                    }`}
-                                  >
-                                    Summary
-                                  </Badge>
-                                  <Badge
-                                    variant={
-                                      !showSummary ? "default" : "outline"
-                                    }
-                                    className={`text-xs cursor-default ${
-                                      !showSummary
-                                        ? "bg-primary/70 text-white"
-                                        : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
-                                    }`}
-                                  >
-                                    Quiz
-                                  </Badge>
-                                </div>
+                                {index === selectedCourse && (
+                                  <div className="mt-2 pl-11">
+                                    <div className="flex gap-2">
+                                      <Badge
+                                        variant={
+                                          showSummary ? "default" : "outline"
+                                        }
+                                        className={`text-xs cursor-default ${
+                                          showSummary
+                                            ? "bg-primary/70 text-white"
+                                            : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
+                                        }`}
+                                      >
+                                        Summary
+                                      </Badge>
+                                      <Badge
+                                        variant={
+                                          !showSummary ? "default" : "outline"
+                                        }
+                                        className={`text-xs cursor-default ${
+                                          !showSummary
+                                            ? "bg-primary/70 text-white"
+                                            : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300"
+                                        }`}
+                                      >
+                                        Quiz
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            ))}
                           </div>
-                        ))}
+                        )}
                       </div>
-                    )}
+                    </ScrollArea>
                   </div>
-                </ScrollArea>
-              </div>
-            </ResizablePanel>
+                </ResizablePanel>
+              </>
+            )}
           </ResizablePanelGroup>
-        </div>
-
-        {/* Mobile Layout (non-resizable) */}
-        <div className="flex-1 lg:hidden flex flex-col">
-          <div className="px-4 md:px-8 pt-4 pb-8">
-            {/* Video Container */}
-            <div className="relative bg-black rounded-lg overflow-hidden shadow-lg aspect-video mb-6">
-              {isLoading || !currentVideo ? (
-                <Skeleton className="w-full h-full bg-slate-800 dark:bg-slate-700" />
-              ) : (
-                <iframe
-                  className="w-full h-full"
-                  src={`https://www.youtube.com/embed/${currentVideo.youtube_id}?rel=0&modestbranding=1&showinfo=0&autohide=1`}
-                  title={currentVideo.video_title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                ></iframe>
-              )}
-            </div>
-
-            {/* Video Title and Controls (Mobile) */}
-            <div className="mb-6">
-              {/* Title with Share Button */}
-              <div className="flex justify-between items-start mb-4">
-                {isLoading || !currentVideo ? (
-                  <Skeleton className="h-6 w-2/3 dark:bg-slate-700" />
-                ) : (
-                  <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mr-1">
-                    {currentVideo.video_title}
-                  </h2>
-                )}
-
-                {!isLoading && currentVideo && (
-                  <ScaledClick
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleShareCourse}
-                      className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
-                    >
-                      <Share className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
-                  </ScaledClick>
-                )}
-              </div>
-
-              {/* Channel Info */}
-              <div className="flex items-center mb-4">
-                {isLoading || !currentVideo ? (
-                  <div className="flex items-center w-full">
-                    <Skeleton className="h-10 w-10 rounded-full mr-3 dark:bg-slate-700" />
-                    <div>
-                      <Skeleton className="h-4 w-32 mb-1 dark:bg-slate-700" />
-                      <Skeleton className="h-3 w-24 dark:bg-slate-700" />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center w-full">
-                    <Avatar className="h-10 w-10 rounded-full border dark:border-slate-700 overflow-hidden bg-gray-100 dark:bg-gray-700 mr-3">
-                      <AvatarImage src={currentVideo?.channel_thumbnail} />
-                      <AvatarFallback>
-                        <div className="bg-gray-400 w-full h-full"></div>
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="font-medium text-slate-800 dark:text-slate-200">
-                        {currentVideo?.channel_title}
-                      </span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">
-                        {currentVideo?.view_count &&
-                          `${formatViewCount(
-                            currentVideo.view_count
-                          )} views • `}
-                        {currentVideo?.published_at &&
-                          formatTimeAgo(currentVideo.published_at)}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Navigation buttons */}
-              <div className="flex items-center justify-end gap-3 mt-2">
-                <ScaledClick
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={goToPreviousVideo}
-                    disabled={isLoading || !courseVideos}
-                    className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
-                  >
-                    <ChevronLeft className="h-4 w-4 mr-1" />
-                    Previous
-                  </Button>
-                </ScaledClick>
-                <ScaledClick
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    size="sm"
-                    onClick={goToNextVideo}
-                    disabled={isLoading || !courseVideos}
-                    className="bg-primary hover:bg-primary-dark text-white"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </ScaledClick>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <Tabs defaultValue="summary" className="w-full">
-                <TabsList className="mb-6 grid grid-cols-2 w-full bg-slate-100 dark:bg-slate-600">
-                  <TabsTrigger
-                    value="summary"
-                    className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                    onClick={() => setShowSummary(true)}
-                  >
-                    <Newspaper className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
-                    Summary
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="quiz"
-                    className="text-sm font-medium data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100 data-[state=active]:shadow-sm rounded-md"
-                    onClick={() => setShowSummary(false)}
-                  >
-                    <Pencil className="h-5 w-5 mr-2 text-slate-900 dark:text-slate-100" />
-                    Quiz
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="summary" className="mt-0">
-                  {isLoading || !currentVideo ? (
-                    Array(3)
-                      .fill(0)
-                      .map((_, i) => (
-                        <div key={i} className="mb-6">
-                          <Skeleton className="h-6 w-48 mb-2 dark:bg-slate-700" />
-                          <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                          <Skeleton className="h-4 w-full mb-1 dark:bg-slate-700" />
-                          <Skeleton className="h-4 w-3/4 dark:bg-slate-700" />
-                        </div>
-                      ))
-                  ) : (
-                    <div className="prose prose-sm w-full">{parsedSummary}</div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="quiz" className="mt-0">
-                  {isLoading || !currentVideo ? (
-                    <div className="space-y-4">
-                      <Skeleton className="h-8 w-full dark:bg-slate-700" />
-                      <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                      <Skeleton className="h-24 w-full dark:bg-slate-700" />
-                    </div>
-                  ) : (
-                    <div className="border border-slate-100 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800">
-                      {currentVideo.quiz && (
-                        <Quiz
-                          key={selectedCourse}
-                          quiz={currentVideo.quiz as QuizQuestion[]}
-                        />
-                      )}
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
         </div>
       </div>
     </>

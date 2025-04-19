@@ -140,7 +140,7 @@ export function CourseListItem({
       : "Simple";
 
   return (
-    <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 bg-white dark:bg-gray-800 hover:shadow-md dark:hover:shadow-xl dark:hover:shadow-black/20 transition-all duration-200 flex items-start gap-3">
+    <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 mb-3 bg-white dark:bg-slate-800 hover:shadow-md dark:hover:shadow-xl dark:hover:shadow-black/20 transition-all duration-200 flex items-start gap-3">
       {/* Thumbnail with overlay for quick access */}
       <div
         className="w-24 aspect-video md:w-28 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-700 flex-shrink-0 cursor-pointer group relative"
@@ -287,7 +287,7 @@ export function CourseListItem({
 // Empty state component
 function EmptyLibrary({ onCreateClick }: { onCreateClick: () => void }) {
   return (
-    <Card className="w-full border border-dashed border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50">
+    <Card className="w-full border border-dashed border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50">
       <CardContent className="flex flex-col items-center justify-center py-16">
         <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
           <BookMarked className="h-8 w-8 text-gray-400 dark:text-gray-500" />
@@ -315,7 +315,7 @@ function EmptyLibrary({ onCreateClick }: { onCreateClick: () => void }) {
 function EmptyInProgress() {
   const navigate = useNavigate();
   return (
-    <Card className="w-full border border-dashed border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50">
+    <Card className="w-full border border-dashed border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50">
       <CardContent className="flex flex-col items-center justify-center py-16">
         <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
           <BookOpenCheck className="h-8 w-8 text-gray-400 dark:text-gray-500" />
