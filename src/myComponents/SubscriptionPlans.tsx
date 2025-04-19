@@ -95,24 +95,11 @@ export const tokenPackages = [
 
 export default function SubscriptionPlans() {
   const { user, setShowLoginModal } = useAuth();
-  const [selectedPackage, setSelectedPackage] = useState<TokenPackages>();
+  const [selectedPackage, setSelectedPackage] = useState<string>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  console.log("selectedPackage", selectedPackage);
-
-  const handlePaymentSuccess = (details: any) => {
-    toast({
-      title: "Purchase Successful!",
-      description: `You've purchased ${details.tokens} tokens!`,
-    });
-
-    // Invalidate any user-related queries to fetch updated token balance
-    queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-
-    // Redirect to create page or dashboard
-    navigate("/create");
-  };
+  const [creatingCheckoutSession, setCreatingCheckoutSession] = useState(false);
 
   // Helper function to get the color class based on the package
   const getColorClasses = (packageData: (typeof tokenPackages)[0]) => {
@@ -166,7 +153,13 @@ export default function SubscriptionPlans() {
     if (!user || !user.id) return;
     console.log("price id here", priceId);
     try {
+      setCreatingCheckoutSession(true);
+      setSelectedPackage(priceId);
+
       const res = await createStripeCheckoutSession(priceId, user.id);
+
+      setCreatingCheckoutSession(false);
+      setSelectedPackage(undefined);
 
       if (res.error) {
         throw new Error(res.error);
@@ -181,7 +174,10 @@ export default function SubscriptionPlans() {
         description: "Failed to create checkout session. Please try again.",
       });
       console.error("Error creating checkout session:", error);
+      setCreatingCheckoutSession(false);
+      setSelectedPackage(undefined);
     }
+    setCreatingCheckoutSession(false);
     //navigate("/checkout", { state: { tokenPackage } });
   };
 
@@ -268,7 +264,15 @@ export default function SubscriptionPlans() {
                       className={`w-full ${colors.bg} ${colors.text} hover:opacity-90 border ${colors.border} py-2 rounded-md font-semibold transition-colors duration-200`}
                       onClick={() => onSelectPackage(pkg.priceId)}
                     >
-                      Buy
+                      {creatingCheckoutSession &&
+                      selectedPackage &&
+                      selectedPackage === pkg.priceId ? (
+                        <div className="mr-3 size-5 animate-pulse ">
+                          Buy ...
+                        </div>
+                      ) : (
+                        "Buy"
+                      )}
                     </Button>
                   ) : (
                     <Button
