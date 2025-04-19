@@ -422,32 +422,6 @@ export default function ViewCourse() {
       ? courseVideos[selectedCourse]
       : null;
 
-  // Handle sharing the course with others
-  const handleShareCourse = async () => {
-    const shareUrl = window.location.href;
-    const shareTitle =
-      courseVideos?.[0]?.course_title || "Check out this course";
-    const shareText =
-      courseVideos?.[0]?.course_description ||
-      "I found this interesting course on CourseCraft";
-
-    try {
-      // Try using the Web Share API if available
-      if (navigator.share) {
-        await navigator.share({
-          title: shareTitle,
-          text: shareText,
-          url: shareUrl,
-        });
-      } else {
-        // Fallback to copying to clipboard
-        await navigator.clipboard.writeText(shareUrl);
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-    }
-  };
-
   const parsedSummary = useMemo(() => {
     return currentVideo ? (
       parseSummary(currentVideo.video_summary, !!user)
@@ -640,7 +614,7 @@ export default function ViewCourse() {
                       </h2>
                     )}
 
-                    {!isLoading && currentVideo && (
+                    {/* {!isLoading && currentVideo && (
                       <ScaledClick
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -655,7 +629,7 @@ export default function ViewCourse() {
                           Share
                         </Button>
                       </ScaledClick>
-                    )}
+                    )} */}
                   </div>
 
                   {/* Creator Info and Navigation Controls */}
@@ -711,7 +685,7 @@ export default function ViewCourse() {
                           className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800"
                         >
                           <ChevronLeft className="h-4 w-4 mr-1" />
-                          Previous
+                          <span className="hidden sm:block">Previous</span>
                         </Button>
                       </ScaledClick>
                       <ScaledClick
@@ -724,7 +698,7 @@ export default function ViewCourse() {
                           disabled={isLoading || !courseVideos}
                           className="bg-primary hover:bg-primary-dark text-white"
                         >
-                          Next
+                          <span className="hidden sm:block">Next</span>
                           <ChevronRight className="h-4 w-4 ml-1" />
                         </Button>
                       </ScaledClick>

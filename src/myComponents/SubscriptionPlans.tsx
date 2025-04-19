@@ -186,17 +186,12 @@ export default function SubscriptionPlans() {
   };
 
   return (
-    <div className="w-full">
-      <div className="w-full flex flex-col text-start mb-10">
+    <div className="w-full flex flex-col space-y-6">
+      <div className="w-full flex flex-col text-start">
         <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200 flex flex-row gap-2 items-center">
           <Coins className="w-5 h-5" />
           Choose Your Token Package
         </h2>
-        {/* <p className="mt-3 text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Tokens power course creation. Start free, and upgrade anytime to
-          create more courses, unlock advanced AI tools, and remove ads.
-        </p> */}
-
         <div className="w-full mx-auto mt-6 text-left">
           <Alert className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <Info className="h-5 w-5 text-[#407e8b] dark:text-cyan-400" />
@@ -278,7 +273,7 @@ export default function SubscriptionPlans() {
                   ) : (
                     <Button
                       className={`w-full ${colors.bg} ${colors.text} hover:opacity-90 border ${colors.border} py-2 rounded-md font-semibold transition-colors duration-200`}
-                      //onClick={() => onSelectPackage(pkg.id)}
+                      onClick={() => setShowLoginModal(true)}
                     >
                       Login
                     </Button>
@@ -289,7 +284,7 @@ export default function SubscriptionPlans() {
         })}
       </div>
 
-      <div className="mt-12 bg-slate-50 dark:bg-slate-800/70 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+      <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
         <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4">
           Frequently Asked Questions
         </h3>
@@ -332,27 +327,6 @@ export default function SubscriptionPlans() {
           </div>
         </div>
       </div>
-      {/* <BuyTokensModal
-        isOpen={openCheckout}
-        onClose={() => setOpenCheckout(false)}
-        pkg={selectedPackage}
-      /> */}
-      {/* PayPal Checkout Modal */}
-      {/* {selectedPackage && (
-        <PayPalCheckoutModal
-          isOpen={!!selectedPackage}
-          onClose={() => setSelectedPackage(null)}
-          tokenPackage={selectedPackage}
-          onSuccess={handlePaymentSuccess}
-        />
-      )} */}
     </div>
   );
 }
-
-// const { error } = await stripe.confirmPayment({
-//     elements,
-//     confirmParams: {
-//       return_url: window.location.origin + "/order/complete",
-//     },
-//   });

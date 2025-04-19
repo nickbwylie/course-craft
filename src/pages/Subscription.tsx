@@ -21,11 +21,11 @@ export default function SubscriptionPage() {
         <link rel="canonical" href="https://course-craft.tech/subscribe" />
       </Helmet>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         <SubscriptionPlans />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
             <div className="h-12 w-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CreditCard className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
             </div>
@@ -38,7 +38,7 @@ export default function SubscriptionPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
             <div className="h-12 w-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Zap className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
             </div>
@@ -51,7 +51,7 @@ export default function SubscriptionPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
             <div className="h-12 w-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
             </div>

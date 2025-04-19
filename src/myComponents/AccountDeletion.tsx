@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, Trash, Trash2 } from "lucide-react";
+import { deleteUser } from "@/helperFunctions/deleteUser";
 
 const AccountDeletion: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -44,10 +45,27 @@ const AccountDeletion: React.FC = () => {
     try {
       // 1. Delete user-related data from database tables
       // First, delete courses created by the user
-      const { error: coursesError } = await supabase
+
+      const { data: courseIds, error: coursesError } = await supabase
         .from("courses")
-        .delete()
-        .eq("user_id", user.id);
+        .select("id")
+        .eq("author_id", user.id);
+
+      // Delete course videos for the found courses
+      if (courseIds && courseIds.length > 0) {
+        const { error: courseVideosError } = await supabase
+          .from("course_videos")
+          .delete()
+          .in(
+            "course_id",
+            courseIds.map((course) => course.id)
+          );
+
+        if (courseVideosError) {
+          console.error("Error deleting course videos:", courseVideosError);
+          throw new Error("Failed to delete course videos");
+        }
+      }
 
       if (coursesError) {
         console.error("Error deleting user courses:", coursesError);
@@ -66,15 +84,12 @@ const AccountDeletion: React.FC = () => {
         // Continue anyway, since the auth user is the important part
       }
 
-      // 3. Delete the user from Supabase Auth
-      const { error: authError } = await supabase.auth.admin.deleteUser(
-        user.id
-      );
+      await deleteUser(user.id);
 
-      if (authError) {
-        // If admin delete fails, try the standard API
-        throw new Error("Failed to delete account");
-      }
+      // if (authError) {
+      //   // If admin delete fails, try the standard API
+      //   throw new Error("Failed to delete account");
+      // }
 
       // 4. Sign out the user
       await signOut();
