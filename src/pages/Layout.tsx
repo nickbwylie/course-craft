@@ -121,6 +121,7 @@ const Layout = () => {
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+    queryClient.invalidateQueries({ queryKey: ["userCourses"] });
   }, []);
   return (
     <div style={{ minHeight: "100vh", width: "100%" }}>

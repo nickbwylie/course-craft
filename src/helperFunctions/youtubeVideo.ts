@@ -21,7 +21,52 @@ export type YoutubeVideoPreview = {
   thumbnail: string;
 };
 
-export async function createCourse(courseRequest: AddCourseRequest) {
+export const getYoutubeTranscripts = async (videoIds: string[]) => {
+  const res = await fetch(`${SERVER}/get_youtube_transcripts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ youtube_ids: videoIds }),
+  });
+  const data = await res.json();
+  console.log("data", data);
+};
+
+// success return type
+// {
+//   message: `Course '${title}' created successfully!`,
+//   course_id,
+// };
+
+// error return type
+//
+//  context.response.body = {
+//   error: "Some YouTube videos failed to fetch",
+//   failed_ids: failedIds.map((r) => r),
+// }
+//
+export interface FailedToAddVideosToCourse {
+  message: string;
+  failedToAdd: string[];
+  course_id: string;
+}
+
+export interface CourseCreationResponse {
+  message: string;
+  course_id: string;
+}
+
+export interface FailedToGetTranscripts {
+  error: string;
+  failed_ids: string[];
+}
+
+export async function createCourse(
+  courseRequest: AddCourseRequest
+): Promise<
+  FailedToAddVideosToCourse | CourseCreationResponse | FailedToGetTranscripts
+> {
   const {
     data: { session },
     error: sessionError,
@@ -34,8 +79,7 @@ export async function createCourse(courseRequest: AddCourseRequest) {
   if (isExpired) {
     const { data, error } = await supabase.auth.refreshSession();
     if (error) {
-      console.log(error);
-      return;
+      throw new Error("Login expired, please login again");
     }
     token = data.session?.access_token || "";
   }
@@ -53,15 +97,20 @@ export async function createCourse(courseRequest: AddCourseRequest) {
     const data = await res.json();
 
     if (data.error) {
-      throw new Error(data.error);
+      return data as FailedToGetTranscripts;
     }
 
     if (!res.ok) {
       throw new Error(data.message || "Failed to create course");
     }
 
-    return data;
+    if (data?.failedToAdd) {
+      return data as FailedToAddVideosToCourse;
+    }
+
+    return data as CourseCreationResponse;
   } catch (e: any) {
+    console.error("throwing error inside catch Error:", e);
     if (e instanceof Error) {
       throw new Error(e.message);
     }

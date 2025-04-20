@@ -585,8 +585,8 @@ export default function ViewCourse() {
           >
             {/* Left Content Area - Video and Tabs */}
             <ResizablePanel
-              defaultSize={isDesktop ? 65 : 100}
-              minSize={isDesktop ? 50 : 100}
+              defaultSize={isDesktop ? 70 : 100}
+              minSize={isDesktop ? 55 : 100}
               className="relative"
             >
               <div className="px-8 pt-4 md:px-8 pb-8 relative">
@@ -777,8 +777,8 @@ export default function ViewCourse() {
                   className="hidden lg:flex h-screen items-center justify-center"
                 />
                 <ResizablePanel
-                  defaultSize={40}
-                  minSize={35}
+                  defaultSize={30}
+                  minSize={20}
                   className="hidden lg:flex flex-col border-l border-slate-200 dark:border-slate-700"
                 >
                   <div className="h-full flex flex-col border-l border-slate-200 dark:border-slate-700">

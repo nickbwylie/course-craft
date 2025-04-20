@@ -14,6 +14,7 @@ import {
   Settings,
   Sparkles,
   Trash,
+  XCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
 // UI Components
@@ -38,6 +39,7 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -64,6 +66,8 @@ import {
   YoutubeVideoPreview,
   calculateTotalDuration,
   getCourseTitleDescriptionFromYoutubeVideos,
+  FailedToGetTranscripts,
+  CourseCreationResponse,
 } from "@/helperFunctions/youtubeVideo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQueryClient } from "@tanstack/react-query";
@@ -71,8 +75,7 @@ import { useTracking } from "@/hooks/useTracking";
 import { Helmet } from "react-helmet-async";
 import ReorderableVideoList from "@/myComponents/ReorderableVideoList";
 import { ScaledClick } from "@/animations/ScaledClick";
-import { channel } from "diagnostics_channel";
-import { useLocation, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -96,11 +99,6 @@ const courseFormSchema = z.object({
 });
 
 type CourseFormValues = z.infer<typeof courseFormSchema>;
-
-interface CreateCourseResponse {
-  message: string;
-  course_id: string;
-}
 
 // Main component
 export default function CreateCoursePage() {
@@ -127,6 +125,11 @@ export default function CreateCoursePage() {
   const [createdCourseId, setCreatedCourseId] = useState("");
   const queryClient = useQueryClient();
   const { trackEvent } = useTracking();
+  const [transcriptErrorVideos, setTranscriptErrorVideos] = useState<
+    YoutubeVideoPreview[]
+  >([]);
+  const [showTranscriptErrorDialog, setShowTranscriptErrorDialog] =
+    useState(false);
 
   // Calculate course stats
   const totalDuration = calculateTotalDuration(
@@ -194,6 +197,118 @@ export default function CreateCoursePage() {
       setIsAddingVideo(false);
     }
   }
+
+  const TranscriptErrorDialog = ({
+    isOpen,
+    onClose,
+  }: {
+    isOpen: boolean;
+    onClose: () => void;
+  }) => {
+    return (
+      <AlertDialog open={isOpen} onOpenChange={onClose}>
+        <AlertDialogContent className="max-w-md bg-white dark:bg-gray-800">
+          {transcriptErrorVideos.length > 0 && (
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <XCircle className="h-5 w-5 text-red-500 dark:text-red-400" />
+                Missing Transcripts Detected
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600 dark:text-gray-400">
+                CourseCraft requires videos to have captions to generate
+                summaries and quizzes. Please remove these videos or replace
+                them with videos that have captions:
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+          )}
+          <div className="max-h-60 overflow-y-auto my-4 space-y-3">
+            {transcriptErrorVideos.map((video) => (
+              <div
+                key={video.videoId}
+                className="flex items-start gap-3 p-3 rounded-md border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20"
+              >
+                <div className="w-16 h-10 relative flex-shrink-0 overflow-hidden rounded-sm bg-gray-100 dark:bg-gray-700">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-1">
+                    {video.title}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {video.channel}
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex-shrink-0 p-1 h-7 w-7 text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                  onClick={() => handleRemoveVideo(video.videoId)}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            {transcriptErrorVideos.length === 0 && (
+              <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                <p>All problematic videos have been removed.</p>
+                <p className="text-sm mt-1">
+                  You can now close this dialog and try submitting again.
+                </p>
+              </div>
+            )}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-gray-700 dark:text-gray-300 dark:hover:bg-slate-900 border-gray-300 dark:border-gray-600">
+              Close
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => {
+                // Remove all failed videos
+                transcriptErrorVideos.forEach((video) =>
+                  handleRemoveVideo(video.videoId)
+                );
+                onClose();
+              }}
+            >
+              Remove All
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  };
+
+  const handleTranscriptErrors = (
+    response: CourseCreationResponse | FailedToGetTranscripts,
+    courseVideos: YoutubeVideoPreview[]
+  ) => {
+    if ("error" in response && response.failed_ids?.length > 0) {
+      const failedIds = response.failed_ids;
+
+      // Find the problematic videos to show their titles
+      const failedVideos = courseVideos.filter((video) =>
+        failedIds.includes(video.videoId)
+      );
+
+      if (failedVideos.length === 0) return false; // No matching videos found
+
+      setIsSubmitting(false); // Make sure we're not in a loading state
+
+      // Use setTimeout to ensure this happens after current state updates complete
+
+      setTranscriptErrorVideos(failedVideos);
+      setShowTranscriptErrorDialog(true);
+
+      return true; // Error was handled
+    }
+    return false; // No error or not a transcript error
+  };
 
   // Form submission
   async function onSubmit(data: CourseFormValues) {
@@ -270,9 +385,14 @@ export default function CreateCoursePage() {
         is_public: data.isPublic,
       };
 
-      const response = (await createCourse(
-        courseRequest
-      )) as CreateCourseResponse;
+      const response = await createCourse(courseRequest);
+
+      if ((response as FailedToGetTranscripts)?.error) {
+        handleTranscriptErrors(response, courseVideos);
+        setIsSubmitting(false);
+        clearInterval(timer);
+        return;
+      }
 
       // track event
       trackEvent("course_created", user?.id, {
@@ -331,6 +451,9 @@ export default function CreateCoursePage() {
 
   function handleRemoveVideo(videoId: string) {
     setCourseVideos((prev) =>
+      prev.filter((video) => video.videoId !== videoId)
+    );
+    setTranscriptErrorVideos((prev) =>
       prev.filter((video) => video.videoId !== videoId)
     );
   }
@@ -858,6 +981,10 @@ export default function CreateCoursePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <TranscriptErrorDialog
+        isOpen={showTranscriptErrorDialog}
+        onClose={() => setShowTranscriptErrorDialog(false)}
+      />
     </div>
   );
 }

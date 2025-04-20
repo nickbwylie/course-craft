@@ -28,6 +28,14 @@ import { useAdminCourses } from "@/hooks/useAdminCourses";
 import { useGeneratedCourses } from "@/hooks/useGeneratedCourses";
 import { Helmet } from "react-helmet-async";
 import { ScaledClick } from "@/animations/ScaledClick";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
 const months = [
   "January",
   "February",
@@ -144,7 +152,7 @@ export const CustomCarousel: React.FC<{
           )}
         </div>
         <div className="flex gap-2">
-          {showLeftArrow && (
+          {/* {showLeftArrow && (
             <ScaledClick whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button
                 onClick={scrollLeft}
@@ -167,7 +175,7 @@ export const CustomCarousel: React.FC<{
                 <ChevronRight className="h-5 w-5" />
               </Button>
             </ScaledClick>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -185,27 +193,22 @@ export const CustomCarousel: React.FC<{
             }`,
           }}
         />
-        <div
-          ref={carouselRef}
-          className="flex overflow-x-scroll scrollbar-hide space-x-5 py-4 pb-6"
-          style={{
-            scrollSnapType: "x mandatory",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          {videos.map((video, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-80 relative"
-              style={{
-                scrollSnapAlign: "start",
-              }}
-            >
-              <CourseCard {...video} />
-            </div>
-          ))}
-        </div>
+        <Carousel className="w-full">
+          <CarouselPrevious className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300" />
+
+          <CarouselNext className="rounded-full drop-shadow-sm border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 h-10 w-10 transition-all duration-300" />
+
+          <CarouselContent className="-ml-1">
+            {videos.map((video, index) => (
+              <CarouselItem
+                key={index}
+                className="pl-1 md:basis-1/2 lg:basis-1/3"
+              >
+                <CourseCard {...video} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
       </div>
     </div>
   );
@@ -259,7 +262,7 @@ const CourseCard = React.memo(function CourseCard({
   return (
     <HoverCard openDelay={200} closeDelay={50}>
       <HoverCardTrigger
-        className="block w-full relative transition-all duration-300 border-2 border-slate-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-gray-800 transform cursor-pointer "
+        className="block w-full relative transition-all duration-300 border-2 border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:shadow-lg dark:shadow-none dark:hover:shadow-xl dark:hover:shadow-black/30 bg-white dark:bg-slate-800 transform cursor-pointer "
         onClick={onViewCourse}
       >
         <div className="rounded-xl overflow-hidden">
@@ -302,7 +305,7 @@ const CourseCard = React.memo(function CourseCard({
       </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-80 p-0 z-[9999] bg-white/80 dark:bg-gray-900/70 backdrop-blur-3xl border border-slate-200 dark:border-gray-700 shadow-xl dark:shadow-2xl dark:shadow-black/50 rounded-xl"
+        className="w-80 p-0 z-[9999] bg-white/80 dark:bg-slate-900/70 backdrop-blur-3xl border border-slate-200 dark:border-gray-700 shadow-xl dark:shadow-2xl dark:shadow-black/50 rounded-xl"
         side="right"
         align="center"
         sideOffset={5}
