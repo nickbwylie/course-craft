@@ -245,7 +245,7 @@ const Step = ({
                       className="bg-white/90 text-slate-900 hover:bg-white border-none"
                       onClick={buttonAction}
                     >
-                      <Expand className="bg-white/90 text-slate-900 hover:bg-white border-none" />
+                      <Expand className=" text-slate-900 border-none" />
                     </Button>
                   )}
                 </div>
@@ -472,7 +472,7 @@ const LandingPage = () => {
             <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2 ">
-                  <FaFeatherAlt className="h-6 w-6 text-[#407e8b] dark:text-primary" />
+                  <FaFeatherAlt className="h-6 w-6 text-[#407e8be1] " />
                   <span className="font-bold text-md sm:text-xl">
                     CourseCraft
                   </span>
@@ -480,23 +480,24 @@ const LandingPage = () => {
                 <div className="flex items-center space-x-1 sm:space-x-4 ">
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 p-2 dark:hover:bg-slate-800 text-xs sm:text-sm"
+                    className="hover:bg-slate-100 px-2 py-1 dark:hover:bg-slate-800 text-xs sm:text-sm"
                     onClick={() => navigate("/explore")}
                   >
                     Explore
                   </Button>
                   <Button
                     variant="ghost"
-                    className="hover:bg-slate-100 dark:hover:bg-slate-800  text-xs sm:text-sm p-2"
+                    className="hover:bg-slate-100 dark:hover:bg-slate-800  text-xs sm:text-sm px-2 py-1"
                     onClick={() => setIsAboutModalOpen(true)}
                   >
                     About
                   </Button>
                   <Button
-                    className="bg-primary hover:bg-[#305f6b] text-white dark:bg-primary/70 dark:hover:bg-primary/50  text-xs p-2 sm:text-sm"
+                    variant="outline"
+                    className="hover:bg-[#305f6b]  dark:hover:bg-slate-800  text-xs py-0 px-2 flex flex-row gap-1 sm:text-sm"
                     onClick={() => navigate("/create")}
                   >
-                    Create Course
+                    Create <span className="hidden sm:flex">Course</span>
                   </Button>
                 </div>
               </div>
@@ -541,7 +542,7 @@ const LandingPage = () => {
                     </h1>
 
                     <div className="w-full flex justify-center">
-                      <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed w-5/6">
+                      <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed w-5/6">
                         Change the way you watch YouTube videos forever.
                       </p>
                     </div>
@@ -549,7 +550,7 @@ const LandingPage = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
                         variant="outline"
-                        className="text-sm px-6 py-4 rounded-lg border-2 border-[#73aff7] hover:border-[#a0cbff] hover:bg-transparent  shadow-lg hover:shadow-[#407e8b]/25 transition-all hover:border:animate-pulse"
+                        className="z-0 text-black font-semibold text-sm px-6 py-4 rounded-lg border-2 bg-[#73aff7]  hover:bg-[#6eafff]  border-[#73aff7] hover:border-[#a0cbff] shadow-lg hover:shadow-[#407e8b]/25 transition-all hover:border:animate-pulse"
                         onClick={() => navigate("/create")}
                       >
                         Start Creating
