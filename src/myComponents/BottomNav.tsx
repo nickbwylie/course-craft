@@ -54,8 +54,8 @@ export default function BottomNav() {
   const getButtonStyles = (isActive: boolean) =>
     `flex flex-col items-center justify-center flex-1 py-4 px-2 rounded-none h-full ${
       isActive
-        ? "text-cyan-700 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
-        : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+        ? "text-cyan-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-cyan-400 border-t-black dark:border-t-cyan-500 border-t-4 hover:text-cyan-700 dark:hover:text-cyan-400 mt-[-4px]"
+        : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
     }`;
 
   const handleNavigation = (href: string, requiresAuth: boolean) => {
@@ -77,7 +77,7 @@ export default function BottomNav() {
     <>
       <div
         ref={navRef}
-        className="fixed left-0 right-0 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-700 shadow-md z-50 md:hidden"
+        className="fixed left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-md z-50 md:hidden"
         style={{
           bottom: 0,
           position: "fixed",
@@ -120,7 +120,7 @@ export default function BottomNav() {
               </Button>
             </PopoverTrigger>
             <PopoverContent
-              className="w-48 p-2 bg-white dark:bg-slate-900 border-gray-200 dark:border-gray-700 rounded-t-lg rounded-b-none shadow-lg"
+              className="w-48 p-2 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 rounded-t-lg rounded-b-none shadow-lg"
               side="top"
               align="end"
             >
@@ -134,10 +134,10 @@ export default function BottomNav() {
                     <Button
                       key={item.href}
                       variant="ghost"
-                      className={`w-full justify-start ${
+                      className={`w-full justify-start hover:bg-slate-950 ${
                         isActive
-                          ? "bg-gray-100 dark:bg-gray-800 text-cyan-700 dark:text-cyan-400"
-                          : "text-gray-600 dark:text-gray-300"
+                          ? "bg-slate-100 dark:bg-slate-800 text-cyan-700 dark:text-cyan-400"
+                          : "text-slate-600 dark:text-slate-300"
                       }`}
                       onClick={() =>
                         handleNavigation(item.href, item.requiresAuth)
@@ -152,7 +152,7 @@ export default function BottomNav() {
                 {/* Full menu option */}
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-gray-600 dark:text-gray-300"
+                  className="w-full justify-start text-slate-600 dark:text-slate-300 hover:bg-slate-950"
                   onClick={openSidebar}
                 >
                   <Menu className="h-5 w-5 mr-2" />

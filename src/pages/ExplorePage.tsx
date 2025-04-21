@@ -304,11 +304,12 @@ const CourseCard = React.memo(function CourseCard({
         </div>
       </HoverCardTrigger>
 
-      <HoverCardContent
+      {/* <HoverCardContent
         className="w-80 p-0 z-[9999] bg-white/80 dark:bg-slate-900/70 backdrop-blur-3xl border border-slate-200 dark:border-gray-700 shadow-xl dark:shadow-2xl dark:shadow-black/50 rounded-xl"
         side="right"
         align="center"
         sideOffset={5}
+        style={{ zIndex: 9999 }}
       >
         <div className="p-5 space-y-2">
           <h4 className="font-semibold text-lg text-slate-800 dark:text-slate-200">
@@ -355,7 +356,7 @@ const CourseCard = React.memo(function CourseCard({
           </Button>
         </div>
         <Arrow className="fill-slate-200 dark:fill-gray-700" />
-      </HoverCardContent>
+      </HoverCardContent> */}
     </HoverCard>
   );
 });
