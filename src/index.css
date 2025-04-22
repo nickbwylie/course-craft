@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "robotMono";
+  src: url("/src/assets/Roboto_Mono/RobotoMono-VariableFont_wght.ttf")
+    format("ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+
+.jet-brains-mono-custom {
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   width: 100%;

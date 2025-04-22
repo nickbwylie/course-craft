@@ -157,7 +157,7 @@ const Step = ({
           >
             {icon}
           </div>
-          <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-slate-800 dark:text-slate-200">
+          <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-slate-800 dark:text-slate-200 jet-brains-mono-custom">
             {title}
           </h3>
           <p className="text-slate-600 dark:text-slate-400 text-lg mb-6">
@@ -473,7 +473,7 @@ const LandingPage = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-2 ">
                   <FaFeatherAlt className="h-6 w-6 text-[#407e8be1] " />
-                  <span className="font-bold text-md sm:text-xl">
+                  <span className="font-bold text-md sm:text-xl ">
                     CourseCraft
                   </span>
                 </div>
@@ -533,7 +533,7 @@ const LandingPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                   >
-                    <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 leading-tight">
+                    <h1 className="text-3xl lg:text-4xl font-extrabold mb-2 leading-tight jet-brains-mono-custom">
                       Create{" "}
                       <span className="bg-gradient-to-r from-[#407e8b] to-[#60a5fa] bg-clip-text text-transparent">
                         Custom Courses
@@ -550,7 +550,7 @@ const LandingPage = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
                         variant="outline"
-                        className="z-0 text-black font-semibold text-sm px-6 py-4 rounded-lg border-2 bg-[#73aff7]  hover:bg-[#6eafff]  border-[#73aff7] hover:border-[#a0cbff] shadow-lg hover:shadow-[#407e8b]/25 transition-all hover:border:animate-pulse"
+                        className="z-0 text-black font-semibold text-sm px-6 py-4 rounded-lg border-2 bg-[#73aff7]  hover:bg-[#6eafff]  border-[#73aff7] hover:border-[#a0cbff] shadow-lg hover:shadow-[#407e8b]/25 transition-all hover:border:animate-pulse "
                         onClick={() => navigate("/create")}
                       >
                         Start Creating
@@ -588,7 +588,7 @@ const LandingPage = () => {
             <div className="relative z-10 mx-auto max-w-7xl px-6">
               {/* Header Section */}
               <div className="text-center mb-20">
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300">
+                <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 jet-brains-mono-custom">
                   How it works
                 </h2>
                 <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
@@ -707,7 +707,7 @@ const LandingPage = () => {
           {/* CTA Section */}
           <section className="py-24 bg-gradient-to-r from-[#1e2b38] to-[#1c446f] text-white">
             <div className="max-w-4xl mx-auto text-center px-6">
-              <h2 className="text-3xl lg:text-5xl font-bold mb-8">
+              <h2 className="text-3xl lg:text-5xl font-bold mb-8 jet-brains-mono-custom">
                 Ready to Get Started
               </h2>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -739,7 +739,7 @@ const LandingPage = () => {
                 <div className="col-span-1 md:col-span-2">
                   <div className="flex items-center mb-6">
                     <FaFeatherAlt className="h-8 w-8 text-cyan-400 mr-2" />
-                    <h3 className="text-2xl font-bold">CourseCraft</h3>
+                    <h3 className="text-2xl font-bold ">CourseCraft</h3>
                   </div>
                   <p className="text-slate-400 mb-6 max-w-md">
                     Transform YouTube videos into personalized learning
