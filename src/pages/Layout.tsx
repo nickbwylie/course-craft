@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext.tsx";
 import { useCoursesActivity } from "@/contexts/CoursesActivityContext.tsx";
 import { TooltipProvider } from "@/components/ui/tooltip.tsx";
 import { useQueryClient } from "@tanstack/react-query";
+import SimpleWalkthrough from "@/animations/OnboardingAnimations.tsx";
 
 const Layout = () => {
   const [navOpen, setNavOpen] = useState(true);
@@ -19,6 +20,10 @@ const Layout = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
   const queryClient = useQueryClient();
+  const [walkthroughOpen, setWalkThroughOpen] = useState(() => {
+    // Only show walkthrough if user hasn't seen it before
+    return !localStorage.getItem("hasSeenWalkthrough");
+  });
   // Check if screen is mobile
   useEffect(() => {
     const checkIfMobile = () => {
@@ -169,6 +174,13 @@ const Layout = () => {
                 <Outlet />
               </div>
             )}
+            <SimpleWalkthrough
+              isOpen={walkthroughOpen}
+              onClose={() => {
+                window.localStorage.setItem("hasSeenWalkthrough", "true");
+                setWalkThroughOpen(false);
+              }}
+            />
           </div>
           <ToastViewport />
         </ToastProvider>

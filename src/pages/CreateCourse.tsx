@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -76,6 +76,9 @@ import { Helmet } from "react-helmet-async";
 import ReorderableVideoList from "@/myComponents/ReorderableVideoList";
 import { ScaledClick } from "@/animations/ScaledClick";
 import { useSearchParams } from "react-router";
+import lottie from "lottie-web";
+
+import confettiAnimation from "../assets/confetti.json";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -514,6 +517,37 @@ export default function CreateCoursePage() {
     // empty deps → only runs once on mount
   }, []);
 
+  const animationContainer = useRef(null);
+  const [animationComplete, setAnimationComplete] = useState(false);
+
+  useEffect(() => {
+    // Only load animation if dialog is open
+    if (successModalOpen && animationContainer.current) {
+      // Define the completion handler first so we can reference the same function
+      const handleAnimationComplete = () => {
+        setAnimationComplete(true);
+      };
+
+      const anim = lottie.loadAnimation({
+        container: animationContainer.current,
+        renderer: "svg",
+        loop: false, // Change to false to allow completion
+        autoplay: true,
+        animationData: confettiAnimation,
+      });
+
+      // Add event listener with the named function
+      anim.addEventListener("complete", handleAnimationComplete);
+
+      // Clean up
+      return () => {
+        anim.removeEventListener("complete", handleAnimationComplete);
+        anim.destroy();
+        setAnimationComplete(false);
+      };
+    }
+  }, [successModalOpen]);
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8">
       <Helmet>
@@ -546,6 +580,10 @@ export default function CreateCoursePage() {
           Create a New Course
         </h1>
       </div>
+      <div
+        ref={animationContainer}
+        className="fixed left-[35%] top-[35%] w-64 h-64  z-[999]"
+      />
 
       {/* Main form */}
       <Form {...form}>
@@ -948,7 +986,6 @@ export default function CreateCoursePage() {
           </div>
         </form>
       </Form>
-
       {/* Success dialog */}
       <AlertDialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
         <AlertDialogContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">

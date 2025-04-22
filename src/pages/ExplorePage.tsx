@@ -36,6 +36,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import SimpleWalkthrough from "@/animations/OnboardingAnimations";
 const months = [
   "January",
   "February",
