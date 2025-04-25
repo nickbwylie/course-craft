@@ -192,7 +192,7 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
             </p>
             <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                <strong>Email:</strong> coursecrafttech@gmail.com
+                <strong>Email:</strong> support@course-craft.tech
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                 <strong>LinkedIn:</strong>{" "}

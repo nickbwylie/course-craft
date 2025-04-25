@@ -169,6 +169,30 @@ export type Database = {
           },
         ]
       }
+      transcript_chunks: {
+        Row: {
+          chunk_index: number | null
+          content: string | null
+          embedding: string | null
+          id: string
+          video_id: string | null
+        }
+        Insert: {
+          chunk_index?: number | null
+          content?: string | null
+          embedding?: string | null
+          id?: string
+          video_id?: string | null
+        }
+        Update: {
+          chunk_index?: number | null
+          content?: string | null
+          embedding?: string | null
+          id?: string
+          video_id?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
@@ -176,6 +200,7 @@ export type Database = {
           email: string | null
           id: string
           paid: boolean
+          stripe_customer_id: string | null
         }
         Insert: {
           created_at?: string
@@ -183,6 +208,7 @@ export type Database = {
           email?: string | null
           id?: string
           paid?: boolean
+          stripe_customer_id?: string | null
         }
         Update: {
           created_at?: string
@@ -190,6 +216,7 @@ export type Database = {
           email?: string | null
           id?: string
           paid?: boolean
+          stripe_customer_id?: string | null
         }
         Relationships: []
       }
@@ -243,6 +270,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
       filtered_course_details: {
         Args: { course_id: string }
         Returns: {
@@ -263,6 +294,8 @@ export type Database = {
           view_count: string
           published_at: string
           order_by: number
+          public: boolean
+          author_id: string
         }[]
       }
       get_admin_courses_with_first_video_and_duration: {
@@ -317,6 +350,8 @@ export type Database = {
           view_count: string
           published_at: string
           order_by: number
+          public: boolean
+          author_id: string
         }[]
       }
       get_course_info: {
@@ -379,8 +414,111 @@ export type Database = {
           view_count: number
         }[]
       }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       increment_view_count: {
         Args: { course_id: string }
+        Returns: number
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: string
+      }
+      match_transcript_chunks: {
+        Args:
+          | { query_embedding: string; match_count: number; video_id: string }
+          | {
+              query_embedding: string
+              match_threshold: number
+              match_count: number
+              video_id: string
+            }
+        Returns: {
+          id: string
+          content: string
+          similarity: number
+        }[]
+      }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
         Returns: number
       }
     }

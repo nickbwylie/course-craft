@@ -582,7 +582,9 @@ export default function CreateCoursePage() {
       </div>
       <div
         ref={animationContainer}
-        className="fixed left-[35%] top-[35%] w-64 h-64  z-[999]"
+        className={`${
+          successModalOpen ? "fixed left-[35%] top-[35%] w-64 h-64 z-[999]" : ""
+        }`}
       />
 
       {/* Main form */}
@@ -612,7 +614,7 @@ export default function CreateCoursePage() {
                           setVideoUrl(e.target.value);
                           setAddVideoError("");
                         }}
-                        className="pl-10 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                        className="pl-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -724,7 +726,7 @@ export default function CreateCoursePage() {
                       <FormControl>
                         <Input
                           placeholder="e.g. Introduction to Machine Learning"
-                          className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                          className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                           {...field}
                         />
                       </FormControl>
@@ -744,7 +746,7 @@ export default function CreateCoursePage() {
                       <FormControl>
                         <Textarea
                           placeholder="Describe what your course covers and what students will learn"
-                          className="min-h-[100px] bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                          className="min-h-[100px] bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                           {...field}
                         />
                       </FormControl>
@@ -810,12 +812,12 @@ export default function CreateCoursePage() {
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        <FormControl>
+                        <FormControl className="z-50">
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
-                            <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                            <SelectTrigger className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                               <SelectValue placeholder="Select difficulty level" />
                             </SelectTrigger>
                             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
@@ -861,7 +863,7 @@ export default function CreateCoursePage() {
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
-                            <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
+                            <SelectTrigger className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">
                               <SelectValue placeholder="Select level of detail" />
                             </SelectTrigger>
                             <SelectContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100">

@@ -1,6 +1,6 @@
 // src/pages/SubscriptionPage.tsx
 import React from "react";
-import { Shield, Zap, CreditCard } from "lucide-react";
+import { Shield, Zap, CreditCard, BookOpen } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import SubscriptionPlans from "@/myComponents/SubscriptionPlans";
 
@@ -37,30 +37,29 @@ export default function SubscriptionPage() {
               and pay securely with Stripe.
             </p>
           </div>
-
           <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
             <div className="h-12 w-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <Zap className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
             </div>
             <h3 className="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">
-              Premium Features
+              Enhanced AI Models
             </h3>
             <p className="text-slate-600 dark:text-slate-400">
-              Use tokens to unlock advanced AI summaries, longer video input,
-              and smarter quizzes—on your terms.
+              Premium users unlock advanced AI models for higher quality
+              summaries and more effective quizzes tailored to your learning
+              style.
             </p>
           </div>
-
           <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-center">
             <div className="h-12 w-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+              <BookOpen className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
             </div>
             <h3 className="text-lg font-semibold mb-2 text-slate-800 dark:text-slate-200">
-              Ad-Free Experience
+              Extended Content
             </h3>
             <p className="text-slate-600 dark:text-slate-400">
-              All paid plans remove ads from the website and unlock the
-              smoothest experience while browsing or creating courses.
+              Process longer videos and create more comprehensive courses with
+              premium features that enhance your learning experience.
             </p>
           </div>
         </div>

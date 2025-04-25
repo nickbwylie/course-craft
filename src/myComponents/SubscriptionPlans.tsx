@@ -33,8 +33,9 @@ export const tokenPackages = [
     price: 0.0,
     description: "Get started with a few courses for free",
     features: [
-      "2 basic courses (1 hours max each)",
-      "Try summaries and quizzes",
+      "2 courses with basic AI models",
+      "1 hour max video length per course",
+      "Basic summaries and quizzes",
       "No credit card required",
     ],
     popular: false,
@@ -49,10 +50,10 @@ export const tokenPackages = [
     price: 4.99,
     description: "Enough tokens to create up to 10 basic courses",
     features: [
-      "No feature gating",
-      "Flashcards unlocked",
-      "Enhanced course creation settings",
-      "Create 10 courses",
+      "Enhanced AI models for better results",
+      "Up to 3 hours video length per course",
+      "Comprehensive summaries and quizzes",
+      "49¢ per course ($4.99 total)",
     ],
     popular: false,
     color: "blue",
@@ -66,9 +67,10 @@ export const tokenPackages = [
     price: 9.99,
     description: "Best value for regular creators",
     features: [
-      "Discounted token rate",
-      "Great for power users",
-      "Create 30 courses",
+      "All premium features included",
+      "Same high-quality AI models",
+      "33¢ per course ($9.99 total)",
+      "Perfect for consistent learners",
     ],
     popular: true,
     color: "cyan",
@@ -82,9 +84,10 @@ export const tokenPackages = [
     price: 19.99,
     description: "Create dozens of courses with premium AI options",
     features: [
-      "Biggest discount",
-      "Ideal for educators and teams",
-      "Create 100 courses",
+      "All premium features included",
+      "Same high-quality AI models",
+      "Only 20¢ per course ($19.99 total)",
+      "Ideal for schools and organizations",
     ],
     popular: false,
     color: "purple",
@@ -298,17 +301,19 @@ export default function SubscriptionPlans() {
               How do tokens work?
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
-              Each token allows you to create one course, regardless of which
-              package you purchased it in. Tokens never expire.
+              Each token allows you to create one course using our premium AI
+              models. Tokens are consumed when creating a new course and never
+              expire.
             </p>
           </div>
           <div>
             <h4 className="font-medium text-slate-800 dark:text-slate-200 mb-2">
-              Are there any feature limitations?
+              What's the difference between free and premium?
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
-              No! All users have access to all features. The only difference
-              between packages is the number of tokens (courses) you can create.
+              Premium tokens unlock advanced AI models that generate higher
+              quality summaries and more effective quizzes. They also allow for
+              processing longer videos.
             </p>
           </div>
           <div>
@@ -325,8 +330,8 @@ export default function SubscriptionPlans() {
               What happens when I run out of tokens?
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
-              You can still access and use all courses you've created. To create
-              new courses, simply purchase more tokens.
+              You can still access all your created courses. To create new
+              courses with premium features, simply purchase more tokens.
             </p>
           </div>
         </div>

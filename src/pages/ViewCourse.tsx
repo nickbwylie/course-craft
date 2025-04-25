@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { supabase } from "../supabaseconsant";
 import "./CoursePage.css";
 
@@ -60,6 +60,8 @@ export interface CourseVideo {
   channel_title: string;
   view_count: string;
   published_at: string;
+  public: boolean;
+  author_id: string;
 }
 
 const cleanedSummary = (text: string) => {
@@ -242,6 +244,31 @@ export default function ViewCourse() {
       console.error("Error incrementing view count:", e);
     }
   }
+
+  const handleShareCourse = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle =
+      courseVideos?.[0]?.course_title || "Check out this course";
+    const shareText =
+      courseVideos?.[0]?.course_description ||
+      "I found this interesting course on CourseCraft";
+
+    try {
+      // Try using the Web Share API if available
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback to copying to clipboard
+        await navigator.clipboard.writeText(shareUrl);
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -431,6 +458,23 @@ export default function ViewCourse() {
     // update when video changes or when user authentication state changes
   }, [user?.id, currentVideo?.video_summary]);
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && courseVideos && courseVideos?.length > 0) {
+      if (!courseVideos[0].public && courseVideos[0].author_id !== user.id) {
+        navigate("/explore");
+      }
+    }
+
+    // if course is not public and user is not signed in
+    if (!user && courseVideos && courseVideos?.length > 0) {
+      if (!courseVideos[0].public) {
+        navigate("/explore");
+      }
+    }
+  }, [user, courseVideos?.length]);
+
   const pageTitle = currentVideo
     ? `${currentVideo.course_title} - CourseCraft`
     : "Learning - CourseCraft";
@@ -609,9 +653,25 @@ export default function ViewCourse() {
                     {isLoading || !currentVideo ? (
                       <Skeleton className="h-6 w-3/4 dark:bg-slate-700" />
                     ) : (
-                      <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
-                        {currentVideo.video_title}
-                      </h2>
+                      <div className="w-full flex justify-between items-start mb-4">
+                        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                          {currentVideo.video_title}
+                        </h2>
+                        <ScaledClick
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleShareCourse}
+                            className="text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full"
+                          >
+                            <Share className="h-4 w-4 mr-2" />
+                            Share
+                          </Button>
+                        </ScaledClick>
+                      </div>
                     )}
 
                     {/* {!isLoading && currentVideo && (

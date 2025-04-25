@@ -40,7 +40,7 @@ const SimpleWalkthrough = ({ isOpen, onClose }) => {
     {
       title: "Build Your Personal Library",
       description:
-        "Your custom courses — plus courses created by others — stay saved forever in your library.",
+        "Your custom courses — plus courses created by others — stay saved in your library.",
       animationUrl:
         "https://assets2.lottiefiles.com/packages/lf20_myejiggj.json",
       videoUrl:
@@ -115,17 +115,6 @@ const SimpleWalkthrough = ({ isOpen, onClose }) => {
               animationLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
-
-          {/* <div className="aspect-video w-full relative">
-            <video
-              className="w-full h-full object-cover"
-              controls
-              autoPlay
-              src={steps[currentStep].videoUrl}
-            >
-              Your browser does not support the video tag.
-            </video>
-          </div> */}
         </div>
 
         {/* Step content */}

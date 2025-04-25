@@ -17,6 +17,23 @@
   font-style: normal;
 }
 
+/* h1,
+h2,
+h3,
+span {
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+button {
+  font-family: "JetBrains Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+} */
+
 body {
   margin: 0;
   width: 100%;
