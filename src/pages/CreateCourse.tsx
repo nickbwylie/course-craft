@@ -396,6 +396,22 @@ export default function CreateCoursePage() {
 
       const response = await createCourse(courseRequest);
 
+      if (
+        response &&
+        (response as any).error &&
+        (response as any).error === "Not enough credits"
+      ) {
+        clearInterval(timer);
+        setIsSubmitting(false);
+
+        toast({
+          title: "Error creating course",
+          description: "Not enough credits",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if ((response as FailedToGetTranscripts)?.error) {
         handleTranscriptErrors(response, courseVideos);
         setIsSubmitting(false);

@@ -782,7 +782,7 @@ const LandingPage = () => {
                     </li>
                     <li>
                       <a
-                        href="mailto:coursecrafttech@gmail.com"
+                        href="mailto:support@course-craft.tech"
                         className="hover:text-white transition-colors"
                       >
                         Contact

@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,144 +7,83 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  BookOpen,
-  CheckCircle,
-  Lightbulb,
-  PlusCircle,
-  Lock,
-  Eye,
-} from "lucide-react";
-import { FaFeatherAlt } from "react-icons/fa";
+import { PlusCircle, BookOpen, Lock, CheckCircle, Mail } from "lucide-react";
+
+const FEATURES = [
+  {
+    Icon: PlusCircle,
+    title: "Build Custom Courses",
+    desc: "Pick YouTube videos and let AI turn them into structured courses with summaries & quizzes.",
+  },
+  {
+    Icon: BookOpen,
+    title: "Learn Smarter",
+    desc: "Review key insights and quiz yourself—at your own pace.",
+  },
+  {
+    Icon: Lock,
+    title: "Free to Start",
+    desc: "Sign up free and get two course creations on us.",
+  },
+  {
+    Icon: CheckCircle,
+    title: "Unlimited Preview",
+    desc: "Browse any public course without logging in.",
+  },
+];
 
 function SupportModal({
   supportModalOpen,
   setSupportModalOpen,
 }: {
   supportModalOpen: boolean;
-  setSupportModalOpen: (state: boolean) => void;
+  setSupportModalOpen: (open: boolean) => void;
 }) {
+  const contactSupport = () =>
+    (window.location.href = "mailto:support@course-craft.tech");
+
   return (
     <Dialog open={supportModalOpen} onOpenChange={setSupportModalOpen}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-auto bg-white dark:bg-gray-800">
+      <DialogContent className="max-w-md bg-white dark:bg-gray-900 rounded-xl shadow-xl p-6 overflow-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <FaFeatherAlt className="h-5 w-5 text-[#407f8b] mr-2" />
+          <DialogTitle className="text-2xl font-bold">
             Welcome to CourseCraft
           </DialogTitle>
-          <DialogDescription className="flex justify-start">
-            Your personal learning platform
+          <DialogDescription className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            AI-powered courses, your way.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 my-4">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center">
-              <PlusCircle className="h-5 w-5 text-[#407f8b] mr-2" />
-              Create Custom Courses
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-gray-400">
-              Transform educational YouTube videos into structured learning
-              experiences. Select videos, and our AI will organize them into a
-              coherent course with summaries and quizzes.
-            </p>
-          </div>
+        <ul className="mt-6 divide-y divide-gray-200 dark:divide-gray-700">
+          {FEATURES.map(({ Icon, title, desc }) => (
+            <li key={title} className="py-4 flex items-start">
+              <Icon className="h-5 w-5 text-[#407f8b] flex-shrink-0 mt-1" />
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {title}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  {desc}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center">
-              <BookOpen className="h-5 w-5 text-[#407f8b] mr-2" />
-              Learn Your Way
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-gray-400">
-              Follow your custom courses at your own pace. Each video comes with
-              AI-generated summaries highlighting key points and quizzes to test
-              your knowledge.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center">
-              <Lock className="h-5 w-5 text-[#407f8b] mr-2" />
-              Account Information
-            </h3>
-            <div className="text-sm text-slate-600 space-y-2">
-              <p className="flex items-start">
-                <PlusCircle className="h-4 w-4 text-[#407f8b] mr-2 mt-0.5 flex-shrink-0" />
-                <span className="dark:text-gray-400">
-                  <strong>Creating courses</strong>: You need to sign up or log
-                  in to create courses. Account creation is completely free.
-                </span>
-              </p>
-              <p className="flex items-start">
-                <Eye className="h-4 w-4 text-[#407f8b] mr-2 mt-0.5 flex-shrink-0" />
-                <span className="dark:text-gray-400">
-                  <strong>Exploring courses</strong>: Browse and view public
-                  courses without creating an account.
-                </span>
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center">
-              <Lightbulb className="h-5 w-5 text-[#407f8b] mr-2" />
-              Tips for Getting Started
-            </h3>
-            <ul className="text-sm text-slate-600 dark:text-gray-400 space-y-2 pl-7 list-disc">
-              <li>
-                Visit the{" "}
-                <Badge
-                  variant="outline"
-                  className="font-normal dark:text-gray-300 "
-                >
-                  Explore
-                </Badge>{" "}
-                tab to discover courses created by other users
-              </li>
-              <li>
-                Use the{" "}
-                <Badge
-                  variant="outline"
-                  className="font-normal dark:text-gray-300 "
-                >
-                  Create
-                </Badge>{" "}
-                tab to build your own course from YouTube videos (login
-                required)
-              </li>
-              <li>
-                View the{" "}
-                <Badge
-                  variant="outline"
-                  className="font-normal dark:text-gray-300 "
-                >
-                  Library
-                </Badge>{" "}
-                tab to track and access your courses (login required)
-              </li>
-              <li>
-                Click on a course to start learning with summaries and quizzes
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center">
-              <CheckCircle className="h-5 w-5 text-[#407f8b] mr-2" />
-              Free Access
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-gray-400">
-              When you create your account you get two courses for free.
-            </p>
-          </div>
-        </div>
-
-        <DialogFooter>
+        <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-3">
           <Button
             onClick={() => setSupportModalOpen(false)}
-            className="bg-[#407f8b] opacity-100 hover:bg-[#407f8b] hover:opacity-75 text-white"
+            className="flex-1 bg-[#407f8b] hover:bg-[#407f8b]/90 text-white py-2 rounded-lg font-medium"
           >
-            Got it!
+            Get Started
+          </Button>
+          <Button
+            variant="outline"
+            onClick={contactSupport}
+            className="flex-1 flex items-center justify-center gap-2 border-[#407f8b] text-[#407f8b] hover:bg-slate-950 py-2 rounded-lg font-medium"
+          >
+            <Mail className="h-5 w-5" />
+            Email Support
           </Button>
         </DialogFooter>
       </DialogContent>

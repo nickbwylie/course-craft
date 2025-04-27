@@ -251,17 +251,15 @@ const SettingsPage: React.FC = () => {
               </div>
 
               <Separator className="my-4 dark:bg-slate-700" />
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {user?.email}
+                </p>
 
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
-                    {user?.email}
-                  </p>
-                </div>
                 <Button
                   onClick={handlePreferencesUpdate}
                   disabled={isUpdatingPreferences}
-                  className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                  className="mt-2 sm:mt-0 self-end sm:self-auto bg-cyan-600 hover:bg-cyan-700 text-white"
                 >
                   {isUpdatingPreferences ? "Saving..." : "Save Preferences"}
                 </Button>
