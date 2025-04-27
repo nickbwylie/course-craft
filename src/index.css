@@ -49,12 +49,12 @@ html {
 }
 
 .dark body {
-  @apply bg-gray-900 text-gray-100;
+  @apply bg-slate-900  text-gray-100;
 }
 
 /* Add other dark mode styles as needed */
 .dark .side-nav {
-  @apply bg-gray-900 border-gray-700;
+  @apply bg-slate-900  border-gray-700;
 }
 
 .dark .nav-item:hover {

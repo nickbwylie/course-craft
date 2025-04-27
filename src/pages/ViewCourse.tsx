@@ -42,6 +42,8 @@ import { Helmet } from "react-helmet-async";
 import { ScaledClick } from "@/animations/ScaledClick";
 import YouTubeCourseVideo from "@/myComponents/YoutubeCourseVideo.tsx";
 import { useMediaQuery } from "react-responsive";
+import { SERVER } from "@/constants.ts";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export interface CourseVideo {
   course_description: string;
@@ -184,11 +186,9 @@ const formatTimeAgo = (dateString: string) => {
 };
 
 export default function ViewCourse() {
-  const [courseVideos, setCourseVideos] = useState<CourseVideo[]>();
   const [selectedCourse, setSelectedCourse] = useState(0);
   const [showSummary, setShowSummary] = useState(true);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [completedVideos, setCompletedVideos] = useState<number[]>([]);
   const [watchedVideos, setWatchedVideos] = useState<number[]>([]);
   const [videoWatchTime, setVideoWatchTime] = useState<{
@@ -205,29 +205,98 @@ export default function ViewCourse() {
     markVideoCompleted: markVideoCompletedInStorage,
     markVideoWatched: markVideoWatchedInStorage,
   } = useCourseProgress();
+  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const {
+    data: courseVideos,
+    isLoading: isLoading,
+    isError: isError,
+  } = useCourseContent(id, status === "completed");
 
-  async function getCourseContent(courseId: string) {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.rpc("filtered_course_details", {
-        course_id: courseId,
-      });
+  useEffect(() => {
+    let interval: number;
 
-      if (data) {
-        const sortedByOrder = data.sort((a, b) => {
-          return a.order_by - b.order_by;
+    async function pollStatus() {
+      try {
+        const res = await fetch(`${SERVER}/api/course_status?courseId=${id}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         });
-        setCourseVideos(sortedByOrder);
-      }
+        const data = await res.json();
 
-      if (error) {
-        console.error("Error getting course content:", error);
+        setStatus(data.status);
+
+        if (data.status === "completed") {
+          clearInterval(interval);
+
+          if (id) {
+            incrementViewCount(id);
+            await queryClient.prefetchQuery({
+              queryKey: ["course", id],
+              queryFn: async () => {
+                const { data, error } = await supabase.rpc(
+                  "filtered_course_details",
+                  {
+                    course_id: id,
+                  }
+                );
+                if (error) throw new Error(error.message);
+                if (!data) throw new Error("No course data found");
+                return data.sort((a: any, b: any) => a.order_by - b.order_by);
+              },
+            });
+          }
+        }
+
+        if (data.status === "failed") {
+          clearInterval(interval);
+          setError("Failed to process the course. Please try again.");
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+        clearInterval(interval);
+        setError("An error occurred while processing your course.");
       }
-    } catch (e) {
-      console.error("Unexpected error:", e);
-    } finally {
-      setIsLoading(false);
     }
+
+    if (id) {
+      pollStatus();
+      interval = setInterval(pollStatus, 3000);
+    }
+
+    return () => clearInterval(interval);
+  }, [id]);
+
+  function useCourseContent(
+    courseId: string | undefined,
+    isCourseReady: boolean
+  ) {
+    return useQuery({
+      queryKey: ["course", courseId],
+      enabled: !!courseId && isCourseReady, // ✅ Only fetch if ready!
+      queryFn: async () => {
+        if (!courseId) return [];
+        const { data, error } = await supabase.rpc("filtered_course_details", {
+          course_id: courseId,
+        });
+
+        if (error) {
+          console.error("Error getting course content:", error);
+          throw new Error(error.message);
+        }
+
+        if (!data) {
+          throw new Error("No course data found");
+        }
+
+        const sortedByOrder = data.sort(
+          (a: any, b: any) => a.order_by - b.order_by
+        );
+        return sortedByOrder;
+      },
+      staleTime: 1000 * 60 * 5,
+    });
   }
 
   async function incrementViewCount(courseId: string) {
@@ -270,27 +339,27 @@ export default function ViewCourse() {
     }
   };
 
-  useEffect(() => {
-    if (id) {
-      getCourseContent(id);
-      incrementViewCount(id);
+  // useEffect(() => {
+  //   if (id) {
+  //     getCourseContent(id);
+  //     incrementViewCount(id);
 
-      // Load saved progress if available
-      const savedProgress = getCourseProgress(id);
-      if (savedProgress) {
-        // Restore video position and completion status
-        setSelectedCourse(savedProgress.lastVideoIndex || 0);
-        // Make sure we have default empty arrays if these properties don't exist
-        setCompletedVideos(savedProgress.completedVideos || []);
-        setWatchedVideos(savedProgress.watchedVideos || []);
-      } else {
-        // Reset to defaults if no saved progress
-        setSelectedCourse(0);
-        setCompletedVideos([]);
-        setWatchedVideos([]);
-      }
-    }
-  }, [id]);
+  //     // Load saved progress if available
+  //     const savedProgress = getCourseProgress(id);
+  //     if (savedProgress) {
+  //       // Restore video position and completion status
+  //       setSelectedCourse(savedProgress.lastVideoIndex || 0);
+  //       // Make sure we have default empty arrays if these properties don't exist
+  //       setCompletedVideos(savedProgress.completedVideos || []);
+  //       setWatchedVideos(savedProgress.watchedVideos || []);
+  //     } else {
+  //       // Reset to defaults if no saved progress
+  //       setSelectedCourse(0);
+  //       setCompletedVideos([]);
+  //       setWatchedVideos([]);
+  //     }
+  //   }
+  // }, [id]);
 
   // Load watch times from localStorage on component mount
   useEffect(() => {
@@ -788,7 +857,9 @@ export default function ViewCourse() {
                     </TabsList>
 
                     <TabsContent value="summary" className="mt-0">
-                      {isLoading || !currentVideo ? (
+                      {isLoading ||
+                      !currentVideo ||
+                      (courseVideos && courseVideos[0].video_summary === "") ? (
                         Array(3)
                           .fill(0)
                           .map((_, i) => (

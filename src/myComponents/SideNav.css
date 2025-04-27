@@ -27,7 +27,7 @@
 .side-nav {
   display: flex;
   flex-direction: column;
-  background-color: rgb(243, 243, 239);
+  /* background-color: rgb(243, 243, 239); */
   border-right: 1px solid #e5e7eb;
   transition: all 0.2s ease-in-out;
   height: 100vh;

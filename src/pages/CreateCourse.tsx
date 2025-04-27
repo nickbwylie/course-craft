@@ -969,7 +969,7 @@ export default function CreateCoursePage() {
                   >
                     <Button
                       type="submit"
-                      className="w-full mt-4 bg-primary hover:bg-[rgb(54,116,129)] dark:bg-primary dark:hover:bg-primary-dark text-white"
+                      className="w-full mt-4 cursor-pointer bg-primary hover:bg-[rgb(54,116,129)] dark:bg-primary dark:hover:bg-primary-dark text-white"
                       disabled={isSubmitting || courseVideos.length === 0}
                     >
                       {isSubmitting ? "Creating Course..." : "Create Course"}

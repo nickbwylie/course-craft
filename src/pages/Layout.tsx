@@ -132,7 +132,7 @@ const Layout = () => {
     <div style={{ minHeight: "100vh", width: "100%" }}>
       <TooltipProvider>
         <ToastProvider>
-          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-background-dark dark:bg-slate-900 ">
+          <div className="flex flex-col w-full overflow-hidden min-h-screen bg-slate-900 ">
             {!user?.id && <LoginModal />}
 
             {/* Show side navigation on desktop */}
@@ -163,7 +163,7 @@ const Layout = () => {
             ) : (
               /* Desktop layout */
               <div
-                className={`w-full rounded-2xl bg-background dark:bg-slate-900 flex-1 ${
+                className={`w-full rounded-2xl bg-slate-900 flex-1 ${
                   navOpen ? "pageWithNavOpen" : "pageWithNavClosed"
                 }`}
                 style={{
