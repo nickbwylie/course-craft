@@ -215,6 +215,9 @@ export default function ViewCourse() {
   } = useCourseContent(id, status === "completed");
 
   useEffect(() => {
+    setSelectedCourse(0);
+  }, [id]);
+  useEffect(() => {
     let interval: number;
 
     async function pollStatus() {
