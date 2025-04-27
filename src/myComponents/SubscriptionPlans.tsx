@@ -33,9 +33,9 @@ export const tokenPackages = [
     price: 0.0,
     description: "Get started with a few courses for free",
     features: [
-      "2 courses with basic AI models",
+      "2 tokens to create courses",
       "1 hour max video length per course",
-      "Basic summaries and quizzes",
+      "Full access to AI summaries and quizzes",
       "No credit card required",
     ],
     popular: false,
@@ -48,17 +48,18 @@ export const tokenPackages = [
     name: "Starter Pack",
     tokens: 10,
     price: 4.99,
-    description: "Enough tokens to create up to 10 basic courses",
+    description: "Create up to 10 courses at a budget-friendly price",
     features: [
-      "Enhanced AI models for better results",
-      "Up to 3 hours video length per course",
-      "Comprehensive summaries and quizzes",
-      "49¢ per course ($4.99 total)",
+      "10 tokens to create courses",
+      "Up to 5 hours video length per course",
+      "Same great AI summaries and quizzes",
+      "Just 49¢ per course ($4.99 total)",
     ],
     popular: false,
     color: "blue",
     link: "https://buy.stripe.com/test_9AQ4hv6BDdZnbRuaEE",
-    priceId: "price_1RF6By4K0ftCSNroD4p0DJzW",
+    testPriceId: "price_1RF6By4K0ftCSNroD4p0DJzW",
+    priceId: "price_1RIcFFKS0ZvvdOIEhGlReozz",
   },
   {
     id: TokenPackages.pro,
@@ -67,32 +68,34 @@ export const tokenPackages = [
     price: 9.99,
     description: "Best value for regular creators",
     features: [
-      "All premium features included",
-      "Same high-quality AI models",
-      "33¢ per course ($9.99 total)",
+      "30 tokens to create courses",
+      "Up to 5 hours video length per course",
+      "Only 33¢ per course ($9.99 total)",
       "Perfect for consistent learners",
     ],
     popular: true,
     color: "cyan",
     link: "https://buy.stripe.com/test_eVa15j1hjf3r6xa7st",
-    priceId: "price_1RFNJ44K0ftCSNroAIIjDE2J",
+    testPriceId: "price_1RFNJ44K0ftCSNroAIIjDE2J",
+    priceId: "price_1RIcFBKS0ZvvdOIE3gkVDqbO",
   },
   {
     id: TokenPackages.expert,
     name: "Expert Pack",
     tokens: 100,
     price: 19.99,
-    description: "Create dozens of courses with premium AI options",
+    description: "Create dozens of courses at our lowest per-token price",
     features: [
-      "All premium features included",
-      "Same high-quality AI models",
+      "100 tokens to create courses",
+      "Up to 5 hours video length per course",
       "Only 20¢ per course ($19.99 total)",
       "Ideal for schools and organizations",
     ],
     popular: false,
     color: "purple",
     link: "https://buy.stripe.com/test_eVa15j1hjf3r6xa7st",
-    priceId: "price_1RFQvd4K0ftCSNroopkxw00Y",
+    testPriceId: "price_1RFQvd4K0ftCSNroopkxw00Y",
+    priceId: "price_1RIcF8KS0ZvvdOIEITU7JFuC",
   },
 ] as const;
 
@@ -199,7 +202,8 @@ export default function SubscriptionPlans() {
             </AlertTitle>
             <AlertDescription className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               All users can browse and view public courses for free. Tokens are
-              only required when creating your own courses.
+              only required when creating your own courses - one token creates
+              one course.
             </AlertDescription>
           </Alert>
         </div>
@@ -301,19 +305,19 @@ export default function SubscriptionPlans() {
               How do tokens work?
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
-              Each token allows you to create one course using our premium AI
-              models. Tokens are consumed when creating a new course and never
-              expire.
+              Each token lets you create one course. Tokens are consumed when
+              creating a new course and never expire. All plans use the same AI
+              models - you're just buying the ability to create more courses.
             </p>
           </div>
           <div>
             <h4 className="font-medium text-slate-800 dark:text-slate-200 mb-2">
-              What's the difference between free and premium?
+              What's included in all plans?
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
-              Premium tokens unlock advanced AI models that generate higher
-              quality summaries and more effective quizzes. They also allow for
-              processing longer videos.
+              All users get access to the same AI models for summaries and
+              quizzes. The paid plans simply give you more tokens at a lower
+              per-token price, allowing you to create more courses.
             </p>
           </div>
           <div>
@@ -331,7 +335,7 @@ export default function SubscriptionPlans() {
             </h4>
             <p className="text-slate-600 dark:text-slate-400 text-sm">
               You can still access all your created courses. To create new
-              courses with premium features, simply purchase more tokens.
+              courses, simply purchase more tokens whenever you need them.
             </p>
           </div>
         </div>

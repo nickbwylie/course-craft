@@ -79,6 +79,7 @@ import { useSearchParams } from "react-router";
 import lottie from "lottie-web";
 
 import confettiAnimation from "../assets/confetti.json";
+import { useUserInfo } from "@/hooks/useUserInfo";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -118,6 +119,7 @@ export default function CreateCoursePage() {
   });
 
   const { user } = useAuth();
+  const { data: userInfo } = useUserInfo();
   const [videoUrl, setVideoUrl] = useState("");
   const [courseVideos, setCourseVideos] = useState<YoutubeVideoPreview[]>([]);
   const [isAddingVideo, setIsAddingVideo] = useState(false);
@@ -334,10 +336,14 @@ export default function CreateCoursePage() {
     }
 
     if (isOverDurationLimit) {
+      let durationLimit = 5;
+
+      if (!userInfo || !userInfo?.paid) {
+        durationLimit = 1;
+      }
       toast({
         title: "Course too long",
-        description:
-          "Total course duration exceeds the maximum limit of 10 hours. Please remove some videos.",
+        description: `Total course duration exceeds the maximum limit of ${durationLimit}. Please remove some videos.`,
         variant: "destructive",
       });
       return;
@@ -491,7 +497,12 @@ export default function CreateCoursePage() {
   const isOverDurationLimit = useMemo(() => {
     if (!totalDuration) return false;
     const [hours, minutes, seconds] = totalDuration.split(":").map(Number);
-    return hours >= 10;
+
+    if (!userInfo || (userInfo && !userInfo?.paid)) {
+      // if the user is not paid
+      return hours > 1;
+    }
+    return hours > 5;
   }, [totalDuration]);
 
   const pageTitle = "Create a Course - CourseCraft";
