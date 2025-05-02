@@ -1,30 +1,24 @@
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Separator } from "@/components/ui/separator";
-import { Settings, Key, Bell, AlertTriangle } from "lucide-react";
+import { Settings, Key } from "lucide-react";
 import AccountDeletion from "@/myComponents/AccountDeletion";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/supabaseconsant";
 import { Helmet } from "react-helmet-async";
+import { AuthError } from "@supabase/supabase-js";
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
   // Password update state
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
-
-  // Email preferences state
-  const [receiveUpdates, setReceiveUpdates] = useState(true);
-  const [isUpdatingPreferences, setIsUpdatingPreferences] = useState(false);
 
   // Redirect if not logged in
   React.useEffect(() => {
@@ -70,8 +64,6 @@ const SettingsPage: React.FC = () => {
 
       if (error) throw error;
 
-      // Clear form
-      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
 
@@ -79,44 +71,17 @@ const SettingsPage: React.FC = () => {
         title: "Password Updated",
         description: "Your password has been successfully updated",
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Password update error:", error);
       toast({
         title: "Update Failed",
         description:
-          error.message || "Failed to update password. Please try again.",
+          (error as AuthError)?.message ||
+          "Failed to update password. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsUpdatingPassword(false);
-    }
-  };
-
-  // Handle email preferences update
-  const handlePreferencesUpdate = async () => {
-    setIsUpdatingPreferences(true);
-
-    try {
-      // In a real implementation, you'd save this to your database
-      // For MVP, we'll just show a success message
-
-      setTimeout(() => {
-        toast({
-          title: "Preferences Updated",
-          description: `Email updates are now ${
-            receiveUpdates ? "enabled" : "disabled"
-          }`,
-        });
-        setIsUpdatingPreferences(false);
-      }, 500);
-    } catch (error) {
-      console.error("Preferences update error:", error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update email preferences",
-        variant: "destructive",
-      });
-      setIsUpdatingPreferences(false);
     }
   };
 
@@ -167,18 +132,6 @@ const SettingsPage: React.FC = () => {
             <form onSubmit={handlePasswordUpdate} className="space-y-4">
               {/* Note: Current password might not be needed if using Supabase magic links */}
               <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter your current password"
-                  className="bg-white dark:bg-slate-700"
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="new-password">New Password</Label>
                 <Input
                   id="new-password"
@@ -209,10 +162,7 @@ const SettingsPage: React.FC = () => {
                 <Button
                   type="submit"
                   disabled={
-                    isUpdatingPassword ||
-                    !currentPassword ||
-                    !newPassword ||
-                    !confirmPassword
+                    isUpdatingPassword || !newPassword || !confirmPassword
                   }
                   className="bg-cyan-600 hover:bg-cyan-700 text-white"
                 >
@@ -220,51 +170,6 @@ const SettingsPage: React.FC = () => {
                 </Button>
               </div>
             </form>
-          </div>
-        </div>
-
-        {/* Email Preferences */}
-        <div>
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100 flex flex-row gap-2 items-center">
-              <Bell className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
-                Email Preferences
-              </h2>
-            </h2>
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-slate-700 dark:text-slate-300">
-                    Email Updates
-                  </p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Receive notifications about platform updates and your
-                    courses
-                  </p>
-                </div>
-                <Switch
-                  checked={receiveUpdates}
-                  onCheckedChange={setReceiveUpdates}
-                  className="data-[state=checked]:bg-cyan-600"
-                />
-              </div>
-
-              <Separator className="my-4 dark:bg-slate-700" />
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {user?.email}
-                </p>
-
-                <Button
-                  onClick={handlePreferencesUpdate}
-                  disabled={isUpdatingPreferences}
-                  className="mt-2 sm:mt-0 self-end sm:self-auto bg-cyan-600 hover:bg-cyan-700 text-white"
-                >
-                  {isUpdatingPreferences ? "Saving..." : "Save Preferences"}
-                </Button>
-              </div>
-            </div>
           </div>
         </div>
 

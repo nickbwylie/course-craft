@@ -80,6 +80,9 @@ import lottie from "lottie-web";
 
 import confettiAnimation from "../assets/confetti.json";
 import { useUserInfo } from "@/hooks/useUserInfo";
+import AuthPromptComponent from "@/myComponents/AuthPromptComponent";
+import CreateCourseFallback from "@/myComponents/CreateCourseFallback";
+import LoginPromptModal from "@/myComponents/LoginModalPrompt";
 
 // Form schema
 const courseFormSchema = z.object({
@@ -135,6 +138,20 @@ export default function CreateCoursePage() {
   >([]);
   const [showTranscriptErrorDialog, setShowTranscriptErrorDialog] =
     useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Add this effect to check authentication status when page loads
+  useEffect(() => {
+    if (!user && !localStorage.getItem("loginPromptShown")) {
+      // Show login prompt after a short delay for better UX
+      const timer = setTimeout(() => {
+        setShowLoginPrompt(true);
+        localStorage.setItem("loginPromptShown", "true");
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
 
   // Calculate course stats
   const totalDuration = calculateTotalDuration(
@@ -166,7 +183,13 @@ export default function CreateCoursePage() {
   }
 
   // Handle adding a video to the course
-  async function handleAddVideo() {
+  async function handleAddVideo(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!user) {
+      setShowLoginPrompt(true);
+      return;
+    }
     setAddVideoError("");
     if (!videoUrl.trim()) {
       setAddVideoError("Please enter a YouTube URL");
@@ -317,6 +340,11 @@ export default function CreateCoursePage() {
 
   // Form submission
   async function onSubmit(data: CourseFormValues) {
+    if (!user) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     if (!user?.id) {
       toast({
         title: "Not signed in",
@@ -483,6 +511,8 @@ export default function CreateCoursePage() {
     );
   }
 
+  const [loadingSmartTitle, setLoadingSmartTitle] = useState(false);
+
   async function generateTitleAndDescription(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -492,10 +522,12 @@ export default function CreateCoursePage() {
       return { channel: video.channel, title: video.title };
     });
 
+    setLoadingSmartTitle(true);
     const res = await getCourseTitleDescriptionFromYoutubeVideos(
       youtubeVideoInfos
     );
 
+    setLoadingSmartTitle(false);
     if (res) {
       form.setValue("title", res.title, {
         shouldValidate: true,
@@ -512,6 +544,8 @@ export default function CreateCoursePage() {
 
   const isOverDurationLimit = useMemo(() => {
     if (!totalDuration) return false;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [hours, minutes, seconds] = totalDuration.split(":").map(Number);
 
     if (!userInfo || (userInfo && !userInfo?.paid)) {
@@ -644,8 +678,7 @@ export default function CreateCoursePage() {
                         className="pl-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
-                            e.preventDefault();
-                            handleAddVideo();
+                            handleAddVideo(e);
                           }
                         }}
                       />
@@ -733,7 +766,9 @@ export default function CreateCoursePage() {
                 <div className="flex justify-end my-0">
                   <Button
                     variant="outline"
-                    className="text-xs hover:bg-transparent border border-slate-300  hover:border-white flex flex-row gap-1 px-4 py-4"
+                    className={`text-xs hover:bg-slate-90 border border-slate-300  hover:border-white flex flex-row gap-1 px-4 py-4 ${
+                      loadingSmartTitle && "animate-pulse"
+                    }`}
                     disabled={courseVideos.length === 0}
                     onClick={generateTitleAndDescription}
                   >
@@ -1015,6 +1050,7 @@ export default function CreateCoursePage() {
           </div>
         </form>
       </Form>
+
       {/* Success dialog */}
       <AlertDialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
         <AlertDialogContent className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
@@ -1050,6 +1086,10 @@ export default function CreateCoursePage() {
       <TranscriptErrorDialog
         isOpen={showTranscriptErrorDialog}
         onClose={() => setShowTranscriptErrorDialog(false)}
+      />
+      <LoginPromptModal
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
       />
     </div>
   );

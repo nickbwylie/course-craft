@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { AlertCircle, X } from "lucide-react";
+import { X } from "lucide-react";
 import { supabase } from "@/supabaseconsant";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -149,7 +148,7 @@ function SignupForm({
         showConfirmModal={showConfirmModal}
         setShowConfirmModal={setShowConfirmModal}
         onSuccessfulVerification={async () => {
-          const { data, error } = await supabase.auth.signInWithPassword({
+          await supabase.auth.signInWithPassword({
             email: form.getValues().email,
             password: form.getValues().password,
           });

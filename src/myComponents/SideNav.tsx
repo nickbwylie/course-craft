@@ -1,6 +1,5 @@
 import { Separator } from "@/components/ui/separator";
 import {
-  Compass,
   CirclePlus,
   Book,
   HelpCircle,
@@ -12,9 +11,7 @@ import {
   Library,
   ArrowRightToLine,
   Settings,
-  CreditCard,
   Coins,
-  CoinsIcon,
   CircleDollarSign,
   Search, // Added Settings icon
 } from "lucide-react";
@@ -32,7 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover.tsx";
-import { FaFeatherAlt, FaHammer, FaMoneyBill } from "react-icons/fa";
+import { FaFeatherAlt } from "react-icons/fa";
 import {
   Tooltip,
   TooltipContent,
@@ -228,19 +225,34 @@ export default function SideNav({ navOpen, setNavOpen }: SideNavProps) {
 
           {/* Add Settings nav item - only show when logged in */}
           {user?.id && (
-            <div
-              className={`nav-item ${url === "/settings" ? "active" : ""} ${
-                !delayedOpen ? "justify-center" : ""
-              } dark:hover:bg-slate-800 dark:text-slate-300`}
-              onClick={() => navigate("/settings")}
-            >
-              <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-              {delayedOpen && (
-                <span className="ml-3 text-sm font-medium capitalize">
-                  Settings
-                </span>
-              )}
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className={`nav-item ${url === "/settings" ? "active" : ""} ${
+                    !delayedOpen ? "justify-center" : ""
+                  } dark:hover:bg-slate-800 dark:text-slate-300`}
+                  onClick={() => navigate("/settings")}
+                >
+                  <Settings className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                  {delayedOpen && (
+                    <span className="ml-3 text-sm font-medium capitalize">
+                      Settings
+                    </span>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="-mt-2 bg-slate-800 text-white z-50"
+                style={{
+                  width: !delayedOpen ? "auto" : "0",
+                  opacity: !delayedOpen ? 1 : 0,
+                  zIndex: 100000000,
+                }}
+              >
+                <p>settings</p>
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
 

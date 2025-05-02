@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
@@ -33,19 +33,6 @@ import {
   useUserCourses,
 } from "@/hooks/useUserCourses";
 import { Helmet } from "react-helmet-async";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 
 interface CourseListItemProps {
   course: CourseWithFirstVideo;
@@ -53,22 +40,6 @@ interface CourseListItemProps {
   showProgress?: boolean;
   completionPercentage?: number;
   lastViewed?: string;
-}
-
-function ProfileForm({ className }: React.ComponentProps<"form">) {
-  return (
-    <form className={cn("grid items-start gap-4", className)}>
-      <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" id="email" defaultValue="shadcn@example.com" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="username">Username</Label>
-        <Input id="username" defaultValue="@shadcn" />
-      </div>
-      <Button type="submit">Save changes</Button>
-    </form>
-  );
 }
 
 export function CourseListItem({
@@ -79,7 +50,7 @@ export function CourseListItem({
   lastViewed,
 }: CourseListItemProps) {
   const navigate = useNavigate();
-  const [publicCourse, setPublicCourse] = useState(course.public);
+  const publicCourse = course.public;
   const updatePrivacy = useUpdateCoursePrivacy();
 
   // Format date for display
@@ -213,7 +184,7 @@ export function CourseListItem({
                       if (
                         confirm("Are you sure you want to delete this course?")
                       ) {
-                        onDelete && onDelete(course.course_id);
+                        if (onDelete) onDelete(course.course_id);
                       }
                     }}
                   >
@@ -343,7 +314,6 @@ function EmptyInProgress() {
 function LibraryPage() {
   const [selected, setSelected] = useState(0);
   const tabs = ["My Courses", "In Progress"];
-  const [open, setOpen] = useState(false);
 
   const { data: courses } = useUserCourses();
 

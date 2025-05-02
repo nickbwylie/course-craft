@@ -157,7 +157,7 @@ export default function ReorderableVideoList({
           No videos added yet. Add videos using the form above.
         </div>
       ) : (
-        <div className="mb-2 text-xs text-gray-500 dark:text-gray-400 px-2">
+        <div className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">
           <span className="flex items-center">Drag videos to reorder them</span>
         </div>
       )}

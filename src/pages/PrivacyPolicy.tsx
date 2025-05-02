@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
 
           <div className="prose prose-slate dark:prose-invert max-w-none">
             <p className="text-slate-600 dark:text-slate-400">
-              Last updated: March 17, 2025
+              Last updated: April 28, 2025
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
@@ -62,86 +62,84 @@ export default function PrivacyPolicy() {
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
               Welcome to CourseCraft. We respect your privacy and are committed
-              to protecting your personal data. This privacy policy will inform
-              you about how we look after your personal data when you visit our
-              website and tell you about your privacy rights and how the law
-              protects you.
+              to protecting your personal data. This Privacy Policy explains how
+              we collect, use, and safeguard your information when you use our
+              website.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
-              The Data We Collect
+              Information We Collect
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              We may collect, use, store and transfer different kinds of
-              personal data about you as follows:
+              We collect the following personal information:
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-2 text-slate-600 dark:text-slate-400">
               <li>
-                <strong>Identity Data</strong> includes first name, last name,
-                username or similar identifier.
-              </li>
-              <li>
-                <strong>Contact Data</strong> includes email address.
-              </li>
-              <li>
-                <strong>Technical Data</strong> includes internet protocol (IP)
-                address, browser type and version, time zone setting and
-                location, operating system and platform, and other technology on
-                the devices you use to access this website.
-              </li>
-              <li>
-                <strong>Usage Data</strong> includes information about how you
-                use our website, products, and services.
-              </li>
-              <li>
-                <strong>Learning Activity Data</strong> includes information
-                about courses you create, view, or complete, quiz results, and
-                learning progress.
+                <strong>Email Address:</strong> collected during account
+                registration through Supabase authentication.
               </li>
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
-              How We Use Your Data
+              How We Use Your Information
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              We will only use your personal data when the law allows us to.
-              Most commonly, we will use your personal data in the following
-              circumstances:
+              We use your email address to:
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-2 text-slate-600 dark:text-slate-400">
-              <li>To register you as a new user.</li>
-              <li>To provide and improve our service to you.</li>
-              <li>To manage our relationship with you.</li>
-              <li>To personalize your experience.</li>
-              <li>To administer and protect our business and this website.</li>
+              <li>Authenticate your account securely.</li>
               <li>
-                To make suggestions and recommendations to you about features or
-                content that may be of interest to you.
+                Communicate important updates about your account or services.
               </li>
+              <li>Maintain and improve our platform functionality.</li>
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
-              YouTube API Services
+              Analytics
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              Our service uses YouTube API Services to retrieve video data for
-              educational purposes. By using our service, you are also agreeing
-              to be bound by the{" "}
+              We use Vercel Analytics to monitor website performance and usage
+              in an aggregated, anonymized way. No personally identifiable
+              information is collected through these analytics.
+            </p>
+
+            <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
+              Cookies
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              We do not use cookies for advertising or tracking purposes.
+              Cookies may be used by third-party services (such as Vercel) to
+              maintain essential website functionality.
+            </p>
+
+            <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
+              Third-Party Services
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              We integrate with external services solely to enable core
+              functionality:
+            </p>
+            <ul className="list-disc pl-6 mt-2 space-y-2 text-slate-600 dark:text-slate-400">
+              <li>
+                OpenAI API to generate course summaries and quizzes based on
+                YouTube videos you provide.
+              </li>
+              <li>YouTube Data API to retrieve video metadata.</li>
+            </ul>
+            <p className="text-slate-600 dark:text-slate-400 mt-2">
+              By using our service, you also agree to the{" "}
               <a
                 href="https://www.youtube.com/t/terms"
                 className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-500 dark:hover:text-cyan-400"
               >
                 YouTube Terms of Service
-              </a>
-              .
-            </p>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              Google's Privacy Policy can be found at{" "}
+              </a>{" "}
+              and{" "}
               <a
                 href="https://policies.google.com/privacy"
                 className="text-cyan-600 hover:text-cyan-700 dark:text-cyan-500 dark:hover:text-cyan-400"
               >
-                https://policies.google.com/privacy
+                Google's Privacy Policy
               </a>
               .
             </p>
@@ -150,68 +148,35 @@ export default function PrivacyPolicy() {
               Data Security
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              We have put in place appropriate security measures to prevent your
-              personal data from being accidentally lost, used, or accessed in
-              an unauthorized way, altered, or disclosed. We limit access to
-              your personal data to those employees, agents, contractors, and
-              other third parties who have a business need to know.
+              We take appropriate security measures to protect your personal
+              data. Authentication and account management are securely handled
+              by Supabase.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
               Data Retention
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              We will only retain your personal data for as long as necessary to
-              fulfill the purposes we collected it for, including for the
-              purposes of satisfying any legal, accounting, or reporting
-              requirements.
+              We retain your email address for as long as your account remains
+              active. You may request deletion of your account and associated
+              data at any time by contacting us.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
-              Your Legal Rights
+              Your Rights
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              Under certain circumstances, you have rights under data protection
-              laws in relation to your personal data, including the right to:
-            </p>
-            <ul className="list-disc pl-6 mt-2 space-y-2 text-slate-600 dark:text-slate-400">
-              <li>Request access to your personal data</li>
-              <li>Request correction of your personal data</li>
-              <li>Request erasure of your personal data</li>
-              <li>Object to processing of your personal data</li>
-              <li>Request restriction of processing your personal data</li>
-              <li>Request transfer of your personal data</li>
-              <li>Right to withdraw consent</li>
-            </ul>
-
-            <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
-              Cookies
-            </h2>
-            <p className="text-slate-600 dark:text-slate-400">
-              We use cookies and similar tracking technologies to track the
-              activity on our service and hold certain information. Cookies are
-              files with a small amount of data which may include an anonymous
-              unique identifier.
-            </p>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              You can instruct your browser to refuse all cookies or to indicate
-              when a cookie is being sent. However, if you do not accept
-              cookies, you may not be able to use some portions of our Service.
+              You have the right to access, update, or delete your personal
+              information. To exercise these rights, please contact us using the
+              information below.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
               Changes to This Privacy Policy
             </h2>
             <p className="text-slate-600 dark:text-slate-400">
-              We may update our Privacy Policy from time to time. We will notify
-              you of any changes by posting the new Privacy Policy on this page
-              and updating the "Last updated" date at the top of this Privacy
-              Policy.
-            </p>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              You are advised to review this Privacy Policy periodically for any
-              changes. Changes to this Privacy Policy are effective when they
-              are posted on this page.
+              We may update this Privacy Policy from time to time. We will post
+              updates on this page and revise the "Last updated" date above.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200">
@@ -222,7 +187,7 @@ export default function PrivacyPolicy() {
               contact us at:
             </p>
             <p className="text-slate-600 dark:text-slate-400 mt-2">
-              <strong>Email:</strong> coursecrafttech@gmail.com
+              <strong>Email:</strong> support@course-craft.tech
             </p>
           </div>
         </div>

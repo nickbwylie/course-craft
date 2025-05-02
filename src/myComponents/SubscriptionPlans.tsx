@@ -1,5 +1,5 @@
 // src/myComponents/TokenPackages.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Card,
@@ -14,13 +14,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import PayPalCheckoutModal from "./BuyTokens";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   createStripeCheckoutSession,
   TokenPackages,
 } from "@/helperFunctions/stripe";
-import BuyTokensModal from "@/pages/StripeBuyTokens";
 
 // price id
 
@@ -53,7 +51,7 @@ export const tokenPackages = [
       "10 tokens to create courses",
       "Up to 5 hours video length per course",
       "Same great AI summaries and quizzes",
-      "Just 49¢ per course ($4.99 total)",
+      "Just 49¢ per course",
     ],
     popular: false,
     color: "blue",
@@ -70,7 +68,7 @@ export const tokenPackages = [
     features: [
       "30 tokens to create courses",
       "Up to 5 hours video length per course",
-      "Only 33¢ per course ($9.99 total)",
+      "Only 33¢ per course",
       "Perfect for consistent learners",
     ],
     popular: true,
@@ -88,7 +86,7 @@ export const tokenPackages = [
     features: [
       "100 tokens to create courses",
       "Up to 5 hours video length per course",
-      "Only 20¢ per course ($19.99 total)",
+      "Only 20¢ per course",
       "Ideal for schools and organizations",
     ],
     popular: false,
@@ -102,8 +100,6 @@ export const tokenPackages = [
 export default function SubscriptionPlans() {
   const { user, setShowLoginModal } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<string>();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [creatingCheckoutSession, setCreatingCheckoutSession] = useState(false);
 
