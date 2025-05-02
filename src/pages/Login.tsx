@@ -311,17 +311,6 @@ export default function LoginModal() {
     return <></>;
   }
 
-  // async function forgotPassword() {
-  //   try {
-  //     const { data, error } = await supabase.auth.resetPasswordForEmail(email);
-
-  //     console.log(data);
-  //     console.log(error);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-
   async function signInWithEmail() {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,

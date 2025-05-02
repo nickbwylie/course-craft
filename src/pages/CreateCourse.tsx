@@ -475,7 +475,6 @@ export default function CreateCoursePage() {
       clearInterval(timer);
       // console.error(error);
       setIsSubmitting(false);
-      console.log("error thrown", error.message);
       if (error && (error as Error)?.message) {
         toast({
           title: "Error creating course",

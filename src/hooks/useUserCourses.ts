@@ -11,7 +11,6 @@ export function useUserCourses() {
   return useQuery<CourseWithFirstVideo[]>({
     queryKey: ["userCourses", user?.id],
     queryFn: async () => {
-      console.log("Fetching user courses for user ID:", user?.id);
       if (!user?.id) {
         return [];
       }

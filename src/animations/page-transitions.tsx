@@ -68,7 +68,6 @@ const routeTransitions: Record<string, TransitionType> = {
   "/explore": "slide-left",
   "/create": "slide-up",
   "/course": "slide-left",
-  "/dashboard": "slide-right",
   "/library": "slide-up",
 };
 

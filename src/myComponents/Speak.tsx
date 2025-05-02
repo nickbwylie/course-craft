@@ -55,7 +55,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
 
   // Function to stop all audio and cleanup resources
   const stopAndCleanupAudio = () => {
-    console.log("Stopping all audio...");
     isCancelledRef.current = true;
 
     // Stop the AudioContext source if it exists
@@ -195,7 +194,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
 
       const cancellationCheck = setInterval(() => {
         if (isCancelledRef.current) {
-          console.log("Cancellation detected during audio play");
           audio.pause();
           audio.src = "";
           cleanup();
@@ -237,7 +235,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
   // Main speech playback handler using the global audio context
   const handleSpeech = async () => {
     if (isSpeaking || isLoading) {
-      console.log("Stop button clicked");
       stopAndCleanupAudio();
       return;
     }
@@ -248,7 +245,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
       await context.resume();
     }
 
-    console.log("Starting speech playback");
     setIsSpeaking(true);
     setIsLoading(true);
     isCancelledRef.current = false;
@@ -279,7 +275,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
 
       for (const part of audioParts) {
         if (isCancelledRef.current) {
-          console.log("Cancelled during audio processing");
           break;
         }
 
@@ -345,7 +340,6 @@ export function SpeechButton({ textContent }: SpeechButtonProps) {
         }
 
         if (isCancelledRef.current) {
-          console.log("Cancelled after audio segment");
           break;
         }
       }

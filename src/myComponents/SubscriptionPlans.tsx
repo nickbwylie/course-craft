@@ -153,7 +153,7 @@ export default function SubscriptionPlans() {
 
   const onSelectPackage = async (priceId: string) => {
     if (!user || !user.id) return;
-    console.log("price id here", priceId);
+
     try {
       setCreatingCheckoutSession(true);
       setSelectedPackage(priceId);

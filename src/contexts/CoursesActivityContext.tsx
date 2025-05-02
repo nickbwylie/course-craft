@@ -37,7 +37,6 @@ export const CoursesActivityProvider: React.FC<{
 
       if (data) {
         setCourses(data);
-        console.log("Courses fetched:", data);
       }
     } catch (error) {
       console.error("Unexpected error fetching courses:", error);

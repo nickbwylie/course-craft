@@ -28,7 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Function to refresh the session
   const refreshSession = async () => {
     try {
-      console.log("Attempting to refresh session...");
       const { data, error } = await supabase.auth.refreshSession();
 
       if (error) {
@@ -42,7 +41,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       if (data?.session) {
-        console.log("Session refreshed successfully");
         setUser(data.session.user);
         setSession(data.session);
 
@@ -72,9 +70,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Refresh at 85% of the way through the token lifetime for safety
     const refreshTime = Math.max(1000, expiresIn * 0.85);
 
-    console.log(
-      `Scheduling next refresh in ${Math.round(refreshTime / 1000)} seconds`
-    );
     refreshTimerRef.current = setTimeout(refreshSession, refreshTime);
   };
 
@@ -82,7 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Check if a session exists on initial load
     const getInitialSession = async () => {
       try {
-        console.log("Getting initial session...");
         // This gets any existing session from localStorage
         const { data, error } = await supabase.auth.getSession();
 
@@ -94,14 +88,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const currentSession = data?.session;
         if (currentSession) {
-          console.log("Initial session found");
           setUser(currentSession.user);
           setSession(currentSession);
 
           // Schedule refresh for this session
           scheduleRefresh(currentSession);
         } else {
-          console.log("No initial session found");
         }
       } catch (e) {
         console.error("Unexpected error getting initial session:", e);
@@ -115,8 +107,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Listen for auth state changes
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
-        console.log(`Auth state changed: ${event}`);
-
         if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
           setUser(newSession?.user || null);
           setSession(newSession);

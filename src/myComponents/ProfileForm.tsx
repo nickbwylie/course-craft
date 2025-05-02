@@ -156,8 +156,6 @@ export function ProfileForm() {
 
     const response = await createCourse(courseRequest);
 
-    console.log(response);
-
     setCourseAdded(true);
 
     toast({

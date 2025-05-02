@@ -12,8 +12,6 @@ export function useUserInfo() {
         return null;
       }
 
-      console.log("Fetching user info from Supabase");
-
       const { data, error } = await supabase
         .from("users")
         .select("*")

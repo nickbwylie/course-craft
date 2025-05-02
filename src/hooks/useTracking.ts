@@ -7,12 +7,6 @@ export const useTracking = () => {
     metadata: Record<string, any>
   ) => {
     if (process.env.NODE_ENV === "development") {
-      console.log("Tracking event", {
-        user_id: userId,
-        event_name: eventName,
-        metadata,
-        created_at: new Date().toISOString(),
-      });
       return;
     }
 

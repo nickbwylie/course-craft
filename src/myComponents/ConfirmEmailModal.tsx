@@ -112,8 +112,6 @@ export default function ConfirmEmailModal({
     setIsResending(true);
 
     try {
-      console.log("Resending verification code to:", email);
-      console.log("Password:", password);
       // Here you would call your API to resend the verification code
       // For this example, we'll simulate a success after a delay
       const { data, error } = await supabase.auth.signUp({

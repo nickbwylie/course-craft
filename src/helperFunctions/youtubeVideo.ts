@@ -21,18 +21,6 @@ export type YoutubeVideoPreview = {
   thumbnail: string;
 };
 
-export const getYoutubeTranscripts = async (videoIds: string[]) => {
-  const res = await fetch(`${SERVER}/get_youtube_transcripts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ youtube_ids: videoIds }),
-  });
-  const data = await res.json();
-  console.log("data", data);
-};
-
 // success return type
 // {
 //   message: `Course '${title}' created successfully!`,

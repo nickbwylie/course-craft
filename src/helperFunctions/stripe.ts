@@ -24,8 +24,6 @@ export async function createStripeCheckoutSession(
     error: sessionError,
   } = await supabase.auth.getSession();
   const token = session?.access_token || " ";
-  console.log("price id here", priceId);
-  console.log("user id here", userId);
 
   const response = await fetch(`${SERVER}/create_checkout_session`, {
     method: "POST",

@@ -384,7 +384,6 @@ const LandingPage = () => {
   };
 
   const pauseVideo = (step: keyof typeof videos) => {
-    console.log("pausing video for step:", step);
     if (step === "step1") {
       video1Ref?.current?.pause();
     } else if (step == "step2") {
