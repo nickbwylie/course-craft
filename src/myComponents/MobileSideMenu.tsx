@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCoursesActivity } from "@/contexts/CoursesActivityContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaFeatherAlt } from "react-icons/fa";
 import { SERVER } from "@/constants";
 import { supabase } from "@/supabaseconsant";
@@ -60,6 +60,7 @@ export default function MobileSideMenu({
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === darkTheme;
   const { data: userInfo } = useUserInfo();
+  const navigate = useNavigate();
 
   const deleteCourse = async (courseId: string) => {
     try {
@@ -99,7 +100,12 @@ export default function MobileSideMenu({
     <div className="flex flex-col h-full bg-[#f3f3ef] dark:bg-slate-900">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <div className="flex items-center">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
           <FaFeatherAlt className="h-5 w-5 text-slate-800 dark:text-slate-200" />
           <span className="ml-2 font-semibold text-slate-800 dark:text-slate-200">
             CourseCraft
