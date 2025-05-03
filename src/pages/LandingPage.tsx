@@ -813,14 +813,9 @@ const LandingPage = () => {
                 </p>
                 <p className="text-slate-400">
                   Created by{" "}
-                  <a
-                    href="https://www.linkedin.com/in/nick-wylie-developer/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-cyan-400 hover:text-cyan-300 transition-colors"
-                  >
+                  <span className="text-cyan-400 transition-colors">
                     Nick Wylie
-                  </a>
+                  </span>
                 </p>
               </div>
             </div>

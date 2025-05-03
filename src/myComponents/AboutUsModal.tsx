@@ -194,17 +194,6 @@ const AboutUsModal: React.FC<AboutUsModalProps> = ({ isOpen, onClose }) => {
               <p className="text-sm text-slate-600 dark:text-slate-300">
                 <strong>Email:</strong> support@course-craft.tech
               </p>
-              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                <strong>LinkedIn:</strong>{" "}
-                <a
-                  href="https://www.linkedin.com/in/nick-wylie-developer/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#407f8b] hover:underline"
-                >
-                  Nick Wylie
-                </a>
-              </p>
             </div>
           </div>
         </div>

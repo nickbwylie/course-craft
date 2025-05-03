@@ -123,7 +123,7 @@ export const CustomCarousel: React.FC<{
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full relative z-0">
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-col relative">
           {/* Title with decorative accent */}
@@ -492,7 +492,7 @@ export default function ExplorePage() {
     "Browse and discover custom learning paths created by the CourseCraft community. Find courses on any topic that matches your learning goals.";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 relative">
+    <div className="max-w-5xl mx-auto px-4 sm:px-8 py-8 ">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
