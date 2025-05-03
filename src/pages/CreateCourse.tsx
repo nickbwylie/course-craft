@@ -549,9 +549,9 @@ export default function CreateCoursePage() {
 
     if (!userInfo || (userInfo && !userInfo?.paid)) {
       // if the user is not paid
-      return hours > 1;
+      return hours >= 1;
     }
-    return hours > 5;
+    return hours >= 5;
   }, [totalDuration]);
 
   const pageTitle = "Create a Course - CourseCraft";
