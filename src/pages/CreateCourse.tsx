@@ -552,7 +552,7 @@ export default function CreateCoursePage() {
       return hours >= 1;
     }
     return hours >= 5;
-  }, [totalDuration]);
+  }, [totalDuration, userInfo]);
 
   const pageTitle = "Create a Course - CourseCraft";
   const pageDescription =
