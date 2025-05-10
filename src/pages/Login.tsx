@@ -101,6 +101,14 @@ function SignupForm({
         password: values.password,
       });
 
+      if (window?.redditq) {
+        console.log("called reddit");
+        window.redditq = window.redditq || [];
+        window.redditq.push({
+          event: "SignUp", // You can also use: PageVisit, ViewContent, AddToCart, Purchase
+        });
+      }
+
       if (error) {
         toast({
           title: "Error",
